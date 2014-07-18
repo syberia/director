@@ -1,3 +1,19 @@
+# NOTE: This file is prepended with "zzz_" to ensure other files are parsed
+# first. This is because the DESCRIPTION file's "Collate" directive is obsolete.
+
+#' Convert a resource to a filename.
+#'
+#' @param filename character. The filename to convert to a full path.
+#' @param absolute character. Whether or not to return the absolute path
+#'    (i.e., prepended by the director root). The default is \code{FALSE}.
+#' @return the full path, relative to the director root if \code{full = FALSE}
+#'    and an absolute path if \code{FULL = TRUE}.
+director_.filename <- function(filename, absolute = FALSE) {
+  if (!exists(filename))
+    stop("Cannot convert resource ", sQuote(filename), " to full file path, ",
+         "as no such resource exists.")
+}
+
 #' A director is a reference class responsible for a collection of
 #' file-traversal related responsibilities.
 #'
@@ -38,6 +54,7 @@
 #'      can function as inputs to some parser that produces some final
 #'      resource object. Parsers can be defined for full directories or
 #'      specific files.}
+#' }
 #'
 #' @docType class
 #' @name director
@@ -51,7 +68,9 @@ director <- setRefClass("director",
     exists     = director_exists,
     resource   = resource,
 
-    show       = function() { cat("Director monitoring", sQuote(.root), "for", sQuote(.project_name), "project.\n") }
+    show       = function() { cat("Director monitoring", sQuote(.root), "for", sQuote(.project_name), "project.\n") },
+    .filename  = director_.filename
   )
 )
+
 
