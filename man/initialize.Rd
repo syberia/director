@@ -2,7 +2,7 @@
 \alias{initialize}
 \title{Initialize a director object.}
 \usage{
-initialize(root, project_name = "")
+initialize(root, project_name = root)
 }
 \arguments{
   \item{root}{character. The root directory for the

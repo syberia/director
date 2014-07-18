@@ -49,7 +49,9 @@ director <- setRefClass("director",
   methods = list(
     initialize = initialize,
     exists     = director_exists,
-    resource   = resource
+    resource   = resource,
+
+    show       = function() { cat("Director monitoring", sQuote(.root), "for", sQuote(.project_name), "project.\n") }
   )
 )
 

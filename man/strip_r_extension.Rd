@@ -1,0 +1,16 @@
+\name{strip_r_extension}
+\alias{strip_r_extension}
+\title{Strip R extension.}
+\usage{
+strip_r_extension(filename)
+}
+\arguments{
+  \item{filename}{character. The filename to strip.}
+}
+\value{
+the filename without the '.r' or '.R' at the end.
+}
+\description{
+Strip R extension.
+}
+
