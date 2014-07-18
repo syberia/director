@@ -1,12 +1,12 @@
-#' The \code{director} reference class is responsible for a collection
-#' of file-traversal related responsibilities.
+#' A director is a reference class responsible for a collection of
+#' file-traversal related responsibilities.
 #'
 #' @details Throughout, a "resource" refers to an R script
 #'   with possible helper functions. A resource with helpers is identified
 #'   by the following heuristic: if a filename sans extension is identical
 #'   to its directory name, it is considered the primary accessible "resource"
 #'   with any accompanying helpers (files in the same directory) natively
-#'   invisible to the director. For example, a file called \code{"foo.R"}
+#'   invisible to the directory. For example, a file called \code{"foo.R"}
 #'   residing in directory \code{"foo"} will be accessible from the director
 #'   object using \code{director_object$resource('foo')}, but any other R scripts
 #'   in the \code{"foo"} directory will not be visible to the director object.
@@ -15,18 +15,18 @@
 #'   relative to a root directory. 
 #'
 #' \itemize{
-#'   \item{Loading. }{Grabbing resources relative to the root directory
+#'   \item{"Loading"}{Grabbing resources relative to the root directory
 #'      using the \code{resource} method. This also provides information
 #'      about the last time the resource was grabbed (modification time,
 #'      previous body).}
-#'   \item{Tracking. }{Besides tracking information about the loaded resource
+#'   \item{"Tracking"}{Besides tracking information about the loaded resource
 #'      (and any previous versions of the loaded resource), the director also
 #'      maintains a stack of resources that have been loaded so far. This allows
 #'      one to, for example, force clear the stack, execute some code, and have
 #'      a list of resources that were relevant to the computation. The current
 #'      stack is available with \code{director_object$stack(all = TRUE)}, which
 #'      will also clear it.}
-#'   \item{Parsers. }{Some resources are not intended to be merely executed,
+#'   \item{"Parsers"}{Some resources are not intended to be merely executed,
 #'      but also parsed. For example, if we define several functions in an
 #'      R script, we have access to those functions if we had sourced it
 #'      with \code{base::source(script, local = some_environment)} as they
@@ -44,7 +44,7 @@
 #' @rdname director
 #' @export
 director <- setRefClass("director",
-  fields = list(),
+  fields = list(root = 'character', project_name = 'character'),
   methods = list(
     initialize = initialize
 
