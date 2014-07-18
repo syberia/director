@@ -6,7 +6,7 @@ before_install:
 install:
 - ./travis-tool.sh install_deps
 - ./travis-tool.sh install_r testthat microbenchmark knitr
-- ./travis-tool.sh install_github testthatsomemore
+- ./travis-tool.sh install_github robertzk/testthatsomemore
 script: ./travis-tool.sh run_tests
 after_failure:
 - ./travis-tool.sh dump_logs
@@ -16,7 +16,7 @@ notifications:
     on_failure: change
   hipchat:
     rooms:
-      secure: cqCZOWFsFPaWAcrklDCcRQW9LAjWqRhVqjylMcGdNgRKmqeSW8Cbc4QDVt6sWue7diNma5TynFXBMx3yeRaN7Apm/Dm0FFe5PnFRSb8S7sj5WCV3MfDV52ODZ6XvLVr6eCMm+ZmRM6G0x8q3ugXUBxx+PPLgngsRpECyr7b3FAo=
+      secure: LfVDJH6pLudx3G/tLAxY38YSmej/Bd1yxDC/fevWTVpFl4BptRhJ4mEshEbWO+yuaSqcmcnI21efBlYlixh9VFl72sQ9GYUcNOk6C2+d6JVtMxXc+8GD8TzHDrJxsFJdhELkxd7cNrTJBFJbPf2eklHzyDGcqylrFkNk0CiTtPI=
     on_success: change
     on_failure: change
     template:
