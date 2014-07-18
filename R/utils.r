@@ -79,3 +79,20 @@ strip_r_extension <- function(filename) {
   gsub("\\.[rR]$", "", filename)
 }
 
+#' Strip a root file path from an absolute filename.
+#'
+#' @param root character. The root path.
+#' @param filename character. The full file name.
+#' @return the stripped file path.
+#' @examples
+#' \dontrun{
+#'   stopifnot("test" == strip_root("foo/bar/test", "test"))
+#' }
+strip_root <- function(root, filename) {
+  stopifnot(is.character(root) && is.character(filename))
+  if (substring(filename, 1, nchar(root)) == root) {
+    filename <- substring(filename, nchar(root) + 1, nchar(filename)) 
+    gsub("^\\/", "", filename)
+  } else filename
+}
+
