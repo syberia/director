@@ -49,9 +49,33 @@ stack <- setRefClass('stack', list(elements = 'list'), methods = list(
 is.idempotent_directory <- function(dir) {
   # TODO: (RK) Case insensitivity in OSes that don't respect it, i.e. Windows?
   # TODO: (RK) File extensions besides .r and .R?
-  file.exists(file.path(dir, paste0(basename(dir), '.r'))) ||
-  file.exists(file.path(dir, paste0(basename(dir), '.R')))
-  # Don't use any + sapply because we can skip the latter check if the former
-  # succeeds.
+  extensionless_exists(file.path(dir, basename(dir)))
+}
+
+#' Determine whether an R file exists regardless of case of extension.
+#'
+#' @param filename character. The filename to test (possibly without extension).
+#' @return \code{TRUE} or \code{FALSE} if the filename exists regardless of 
+#'   R extension.
+#' @examples
+#' \dontrun{
+#'  # Assume we have a file \code{"foo.R"}. The following all return \code{TRUE}.
+#'  extensionless_exists('foo.R')
+#'  extensionless_exists('foo.r')
+#'  extensionless_exists('foo')
+extensionless_exists <- function(filename) {
+  file.exists(paste0(strip_r_extension(filename), '.r')) ||
+  file.exists(paste0(strip_r_extension(filename), '.R')) 
+  # Don't use the any + sapply trick because we can skip the latter check if the
+  # former succeeds.
+}
+
+#' Strip R extension.
+#'
+#' @param filename character. The filename to strip.
+#' @return the filename without the '.r' or '.R' at the end.
+strip_r_extension <- function(filename) {
+  stopifnot(is.character(filename))
+  gsub("\\.[rR]$", "", filename)
 }
 

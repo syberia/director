@@ -27,20 +27,30 @@ director_exists <- function(resource) {
   # with the directory they reside in.
   'Determine whether or not a resource exists in this director structure.'
 
-  non_idempotent_exists <- 
-    file.exists(tmp <- file.path(root, paste0(resource, '.r'))) || 
-    file.exists(tmp <- file.path(root, paste0(resource, '.R')))
+  rooted_resource <- file.path(root, resource)
 
-  #if (is.idempotent_directory(
+  # For a non-idempotent resource to exist, it must both be present as a .r
+  # file *and* not be a helper to an idempotent resource.
+  # TODO: (RK) Support nested idempotent resources?
+  non_idempotent_exists <-
+    extensionless_exists(rooted_resource) &&
+    !is.idempotent_directory(dirname(rooted_resource))
 
+  # Non-idempotence is preferred to idempotence when looking for resources.
   if (non_idempotent_exists) {
-    # TODO: (RK) Should we warn if an equivalent idempotent version exists?
+    # But we should still warn the user that there is a (now invisible to the
+    # director) idempotent version of the resource.
+    if (is.idempotent_directory(rooted_resource)) 
+      warning("There is both a directory ", sQuote(rooted_resource), " and "
+              "a file ", sQuote(paste0(rooted_resource, '.r')) " in your ",
+              project_name " project. This might be confusing and cause problems.",
+              call. = FALSE, immediate. = TRUE)
+   
     return(TRUE)
   }
 
+  idempotent_exists <- is.idempotent_directory(rooted_resource)
 
-  #idempotent_exists <-
-
-  #file.exists(file.path(root, paste0(resource, '.R'))) || 
+  idempotent_exists
 }
 
