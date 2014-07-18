@@ -44,11 +44,12 @@
 #' @rdname director
 #' @export
 director <- setRefClass("director",
-  fields = list(root = 'character', project_name = 'character'),
+  fields = list(.root = 'character', .project_name = 'character',
+                .resource_cache = 'list', .stack = 'stack'),
   methods = list(
     initialize = initialize,
-    exists     = director_exists
-   #  resource   = resource
+    exists     = director_exists,
+    resource   = resource
   )
 )
 

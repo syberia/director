@@ -27,7 +27,7 @@ director_exists <- function(resource) {
   # with the directory they reside in.
   'Determine whether or not a resource exists in this director structure.'
 
-  rooted_resource <- strip_r_extension(file.path(root, resource))
+  rooted_resource <- strip_r_extension(file.path(.root, resource))
 
   # For a non-idempotent resource to exist, it must both be present as a .r
   # file *and* not be a helper to an idempotent resource.
@@ -43,7 +43,7 @@ director_exists <- function(resource) {
     if (is.idempotent_directory(rooted_resource)) 
       warning("There is both a directory ", sQuote(resource), " and ",
               "a file ", sQuote(paste0(resource, '.r')), " in your ",
-              project_name, " project. This might be confusing and cause problems.",
+              .project_name, " project. This might be confusing and cause problems.",
               call. = FALSE, immediate. = TRUE)
    
     return(TRUE)

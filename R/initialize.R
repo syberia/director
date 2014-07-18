@@ -15,7 +15,7 @@ initialize <- function(root, project_name = root) {
           "and not a directory.")
 
   # Set reference class fields.
-  root         <<- normalizePath(root)
-  project_name <<- project_name
+  .root         <<- normalizePath(root)
+  .project_name <<- project_name
 }
 
