@@ -31,7 +31,7 @@
 #'      R script, we have access to those functions if we had sourced it
 #'      with \code{base::source(script, local = some_environment)} as they
 #'      are now present in \code{some_environment}. A parser is a wrapper
-#'      around loading of syberia resources that allows one to do some further
+#'      around loading of resources that allows one to do some further
 #'      computation with this information. For example, we may define
 #'      a \code{read} and \code{write} function, but parse this information
 #'      into some IO object when fetching the resource. Thus, a resource
@@ -44,7 +44,7 @@
 director <- setRefClass("director",
   fields = list(),
   methods = list(
-    initialize = director:::director__initialize,
+    initialize = director:::director__initialize
   )
 )
 
