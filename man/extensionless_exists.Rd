@@ -23,4 +23,5 @@ extension.
  extensionless_exists('foo.r')
  extensionless_exists('foo')
 }
+}
 

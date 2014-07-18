@@ -45,7 +45,7 @@ stack <- setRefClass('stack', list(elements = 'list'), methods = list(
 #'   # If we have a directory foo containing foo.R, then
 #'   is.idempotent_directory('foo')
 #'   # is TRUE, otherwise it's FALSE.
-#  }
+#' }
 is.idempotent_directory <- function(dir) {
   # TODO: (RK) Case insensitivity in OSes that don't respect it, i.e. Windows?
   # TODO: (RK) File extensions besides .r and .R?
@@ -63,6 +63,7 @@ is.idempotent_directory <- function(dir) {
 #'  extensionless_exists('foo.R')
 #'  extensionless_exists('foo.r')
 #'  extensionless_exists('foo')
+#' }
 extensionless_exists <- function(filename) {
   file.exists(paste0(strip_r_extension(filename), '.r')) ||
   file.exists(paste0(strip_r_extension(filename), '.R')) 

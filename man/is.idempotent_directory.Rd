@@ -22,4 +22,5 @@ with the same name (ignoring extension) as the directory.
   is.idempotent_directory('foo')
   # is TRUE, otherwise it's FALSE.
 }
+}
 

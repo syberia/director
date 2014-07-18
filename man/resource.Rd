@@ -2,11 +2,12 @@
 \alias{resource}
 \title{Fetch a resource relative to a director object.}
 \usage{
-resource(filename, provides = list(), body = TRUE, soft = FALSE, ...)
+resource(name, provides = list(), body = TRUE, soft = FALSE, ...,
+  tracking = FALSE)
 }
 \arguments{
-  \item{resource}{character. The name of the resource (i.e.
-  R script) relative to the root of the director object.}
+  \item{name}{character. The name of the resource (i.e. R
+  script) relative to the root of the director object.}
 
   \item{provides}{list or environment. A list or
   environment of values to provide to the resource. The
@@ -22,6 +23,10 @@ resource(filename, provides = list(), body = TRUE, soft = FALSE, ...)
   \item{...}{additional arguments to pass to the
   \code{base::source} function that gets executed when the
   `value` is accessed.}
+
+  \item{tracking}{logical. Whether or not to perform
+  modification tracking by pushing accessed resources to
+  the director's stack.}
 }
 \value{
 a four-element list with names `current`, `cached`,

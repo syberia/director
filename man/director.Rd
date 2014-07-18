@@ -57,7 +57,7 @@ function, but parse this information into some IO object
 when fetching the resource. Thus, a resource can function
 as inputs to some parser that produces some final resource
 object. Parsers can be defined for full directories or
-specific files.}
+specific files.} }
 }
 \section{Methods}{
 \itemize{

@@ -16,7 +16,7 @@
 #' whether or not the file has been modified since it was last executed by
 #' the director.
 #'
-#' @param resource character. The name of the resource (i.e. R script) relative
+#' @param name character. The name of the resource (i.e. R script) relative
 #'   to the root of the director object.
 #' @param provides list or environment. A list or environment of values to provide
 #'   to the resource. The default is nothing, i.e., \code{list()}.
@@ -26,6 +26,8 @@
 #'   the resource modification time and other details.
 #' @param ... additional arguments to pass to the \code{base::source}
 #'   function that gets executed when the `value` is accessed.
+#' @param tracking logical. Whether or not to perform modification tracking
+#'   by pushing accessed resources to the director's stack.
 #' @return a four-element list with names `current`, `cached`, `value`,
 #'   and `modified`. The former two will both be two-element lists containing
 #'   keys `info` and `body` (unless director has never executed the resource before
@@ -44,7 +46,51 @@
 #'   indicating whether or not the resource has been modified since last
 #'   executed by the director (if this was never the case, `modified` will
 #'   be \code{FALSE}).
-resource <- function(filename, provides = list(), body = TRUE, soft = FALSE, ...) {
-  # TODO: (RK) Implement this method.
+resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
+                     tracking = FALSE) {
+  if (!is.environment(provides)) {
+    provides <- if (length(provides) == 0) new.env() else as.environment(provides)
+    parent.env(provides) <- parent.env(topenv())
+    # Do not allow access to the global environment since resources should be self-contained.
+  }
+
+  resource_info <- if (file.exists(filename)) file.info(filename)
+  if (is.null(resource_info) || resource_info$isdir) {
+    base <- if (resource_info$isdir) filename else dirname(filename)
+    resource_object <- syberia_objects(pattern = basename(filename),
+                                       base = base, fixed = TRUE)
+    filename <- file.path(base, resource_object)
+    if (length(filename) > 1) {
+      stop("Multiple syberia resources found: ",
+           paste0(filename, collapse = ", "), call. = FALSE)
+    } else if (length(filename) == 0) {
+      stop("Syberia resource ", sQuote(filename), " in syberia project ",
+           sQuote(root), " does not exist.", call. = FALSE)
+    } 
+    resource_info <- file.info(filename)
+  }
+
+  resource_cache <- .get_registry_key('resource/resource_cache', .get_registry_dir(root))
+  resource_key <- function(filename, root) # Given a/b/c/d and a/b, extracts c/d
+    substring(tmp <- normalizePath(filename), nchar(normalizePath(root)) + 1, nchar(tmp))
+  resource_key <- resource_key(filename, root)
+  cache_details <- resource_cache[[resource_key]]
+
+  current_details <- list(info = resource_info)
+  if (body) current_details$body <- paste(readLines(filename), collapse = "\n")
+
+  resource_cache[[resource_key]] <- current_details
+  if (identical(soft, FALSE))
+    .set_registry_key('resource/resource_cache', resource_cache, .get_registry_dir(root))
+
+  # TODO: (RK) For large syberia projects, maybe this should dynamically
+  # switch to tracking resources using the file system rather than one big list.
+
+  source_args <- append(list(filename, local = provides), list(...))
+  value <- function() do.call(base::source, source_args)$value
+  modified <- resource_info$mtime > cache_details$info$mtime %||% 0
+
+  list(current = current_details, cached = cache_details,
+       value = value, modified = modified)
 }
 

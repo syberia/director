@@ -16,11 +16,3 @@ Suggests:
     knitr,
     testthatsomemore,
     microbenchmark
-Collate:
-    'utils.R'
-    'exists.R'
-    'initialize.R'
-    'resource.R'
-    'director.R'
-    'director-package.R'
-    'zzz.R'
