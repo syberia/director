@@ -46,7 +46,8 @@
 director <- setRefClass("director",
   fields = list(),
   methods = list(
-    #initialize = director:::director__initialize
+    initialize = initialize
+
   )
 )
 
