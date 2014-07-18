@@ -1,0 +1,38 @@
+\name{director_exists}
+\alias{director_exists}
+\title{Determine whether a resource exists relative to a director object.}
+\usage{
+director_exists(resource)
+}
+\arguments{
+  \item{resource}{character. The name of the resource.}
+}
+\value{
+\code{TRUE} or \code{FALSE} according as it does or does
+not exist.
+}
+\description{
+Determine whether a resource exists relative to a director
+object.
+}
+\examples{
+\dontrun{
+  # Imagine we have a file structure:
+  #   - foo
+  #     - one
+  #       - one.R
+  #       - helper.R
+  #     - two.R
+  #
+  # Then the bellow will return \\code{TRUE}, \\code{FALSE}, and \\code{TRUE},
+  # respectively. Note that the \\code{"helper.R"} file is not considered a
+  # resource by the director as \\code{"one.R"} shares its name with its
+  # parent directory and is considered the accessible resource.
+
+  d <- director('foo')
+  d$exists('one')
+  d$exists('one/helper')
+  d$exists('two')
+}
+}
+

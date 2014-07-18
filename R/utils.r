@@ -31,3 +31,27 @@ stack <- setRefClass('stack', list(elements = 'list'), methods = list(
   },
   pop_all    = function()  { tmp <- elements; elements <<- list(); tmp }
 ))                                                                      
+
+#' Whether or not a directory is an idempotent resource.
+#'
+#' By definition, this means the directory contains a file with the same name
+#' (ignoring extension) as the directory.
+#'
+#' @param dir character. The directory to check.
+#' @return \code{TRUE} or \code{FALSE} according as the directory is idempotent.
+#'   There is no checking to ensure the directory exists.
+#' @examples
+#' \dontrun{
+#'   # If we have a directory foo containing foo.R, then
+#'   is.idempotent_directory('foo')
+#'   # is TRUE, otherwise it's FALSE.
+#  }
+is.idempotent_directory <- function(dir) {
+  # TODO: (RK) Case insensitivity in OSes that don't respect it, i.e. Windows?
+  # TODO: (RK) File extensions besides .r and .R?
+  file.exists(file.path(dir, paste0(basename(dir), '.r'))) ||
+  file.exists(file.path(dir, paste0(basename(dir), '.R')))
+  # Don't use any + sapply because we can skip the latter check if the former
+  # succeeds.
+}
+

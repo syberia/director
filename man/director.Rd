@@ -59,4 +59,8 @@ as inputs to some parser that produces some final resource
 object. Parsers can be defined for full directories or
 specific files.}
 }
+\section{Methods}{
+\itemize{
+\item \code{exists(resource)}: Determine whether or not a resource exists in this director structure.
+}}
 

@@ -17,4 +17,9 @@ Suggests:
     testthatsomemore,
     microbenchmark
 Collate:
+    'utils.R'
     'initialize.R'
+    'exists.R'
+    'director.R'
+    'director-package.R'
+    'zzz.R'

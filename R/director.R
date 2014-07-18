@@ -46,8 +46,9 @@
 director <- setRefClass("director",
   fields = list(root = 'character', project_name = 'character'),
   methods = list(
-    initialize = initialize
-
+    initialize = initialize,
+    exists     = director_exists
+   #  resource   = resource
   )
 )
 
