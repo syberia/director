@@ -5,8 +5,17 @@
 #'    error messages. For example, if a resource is not found, an error message
 #'    to the effect of "no resource foo found in your \code{project_name}
 #'    project" will be displayed.
-initialize <- function(root, project_name = '') {
-  root         <<- root
+initialize <- function(root, project_name = root) {
+  if (!file.exists(root))
+    stop("Cannot create a director for ", sQuote(root), " as that directory ",
+          "does not exist.")
+
+  if (!file.info(root)$isdir)
+    stop("Cannot create a director for ", sQuote(root), " as that is a file ",
+          "and not a directory.")
+
+  # Set reference class fields.
+  root         <<- normalizePath(root)
   project_name <<- project_name
 }
 
