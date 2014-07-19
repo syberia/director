@@ -16,3 +16,4 @@ Suggests:
     knitr,
     testthatsomemore,
     microbenchmark
+Roxygen: list(wrap = FALSE)

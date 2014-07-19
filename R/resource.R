@@ -54,26 +54,17 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     # Do not allow access to the global environment since resources should be self-contained.
   }
 
-  resource_info <- if (file.exists(filename)) file.info(filename)
-  if (is.null(resource_info) || resource_info$isdir) {
-    base <- if (resource_info$isdir) filename else dirname(filename)
-    resource_object <- syberia_objects(pattern = basename(filename),
-                                       base = base, fixed = TRUE)
-    filename <- file.path(base, resource_object)
-    if (length(filename) > 1) {
-      stop("Multiple syberia resources found: ",
-           paste0(filename, collapse = ", "), call. = FALSE)
-    } else if (length(filename) == 0) {
-      stop("Syberia resource ", sQuote(filename), " in syberia project ",
-           sQuote(root), " does not exist.", call. = FALSE)
-    } 
-    resource_info <- file.info(filename)
-  }
+  if (!exists(name)) # Note we are using director$exists
+    stop("Cannot find resource ", sQuote(name), " in ", .project_name,
+         " project ", sQuote(.root), ".")
 
-  resource_cache <- .get_registry_key('resource/resource_cache', .get_registry_dir(root))
-  resource_key <- function(filename, root) # Given a/b/c/d and a/b, extracts c/d
-    substring(tmp <- normalizePath(filename), nchar(normalizePath(root)) + 1, nchar(tmp))
-  resource_key <- resource_key(filename, root)
+  filename <- .filename(name, TRUE, FALSE) # Convert resource to filename.
+  resource_info <- if (file.exists(filename)) file.info(filename)
+
+  # TODO: (RK) Implement registry.
+  resource_cache <- registry$get('resource_cache')
+  # resource_cache <- .get_registry_key('resource/resource_cache', .get_registry_dir(root))
+  resource_key <- resource_name(filename)
   cache_details <- resource_cache[[resource_key]]
 
   current_details <- list(info = resource_info)
@@ -81,10 +72,8 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
 
   resource_cache[[resource_key]] <- current_details
   if (identical(soft, FALSE))
-    .set_registry_key('resource/resource_cache', resource_cache, .get_registry_dir(root))
-
-  # TODO: (RK) For large syberia projects, maybe this should dynamically
-  # switch to tracking resources using the file system rather than one big list.
+    registry$set('resource_cache', resource_cache)
+    #.set_registry_key('resource/resource_cache', resource_cache, .get_registry_dir(root))
 
   source_args <- append(list(filename, local = provides), list(...))
   value <- function() do.call(base::source, source_args)$value

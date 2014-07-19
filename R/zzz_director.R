@@ -3,15 +3,36 @@
 
 #' Convert a resource to a filename.
 #'
-#' @param filename character. The filename to convert to a full path.
+#' @param name character. The resource name to convert to a full path.
 #' @param absolute character. Whether or not to return the absolute path
 #'    (i.e., prepended by the director root). The default is \code{FALSE}.
+#' @param check.exists logical. Whether or not to check if the file exists.
+#'    The default is \code{TRUE}. This should be primarily used if the file
+#'    has already been checked for existence.
 #' @return the full path, relative to the director root if \code{full = FALSE}
 #'    and an absolute path if \code{FULL = TRUE}.
-director_.filename <- function(filename, absolute = FALSE) {
-  if (!exists(filename))
+director_.filename <- function(name, absolute = FALSE, check.exists = TRUE) {
+  filename <- name
+  if (isTRUE(check.exists) && !exists(filename))
     stop("Cannot convert resource ", sQuote(filename), " to full file path, ",
          "as no such resource exists.")
+
+  with_absolute <- function(filename)
+    if (isTRUE(absolute)) file.path(.root, filename) else filename
+
+  filename <- strip_r_extension(filename)
+  if (file.exists(tmp <- file.path(.root, paste0(filename, '.r'))) ||
+      file.exists(tmp <- file.path(.root, paste0(filename, 'R'))))
+    return(with_absolute(tmp))
+  
+  filename <- file.path(filename, dirname(filename))
+  if (file.exists(tmp <- file.path(.root, paste0(filename, '.r'))) ||
+      file.exists(tmp <- file.path(.root, paste0(filename, 'R'))))
+    return(with_absolute(tmp))
+
+  stop("Cannot convert resource ", sQuote(filename), " to full file path, ",
+       "as no such resource exists in ", .project_name, " project ",
+       sQuote(.root), ".")
 }
 
 #' A director is a reference class responsible for a collection of

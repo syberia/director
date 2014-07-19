@@ -97,3 +97,21 @@ strip_root <- function(root, filename) {
   } else filename
 }
 
+#' Convert an idempotent resource name to a non-idempotent resource name.
+#'
+#' @param filename character. The filename to convert.
+#' @return the non-idempotent filename.
+drop_idempotence <- function(filename) {
+  if (basename(dirname(filename)) == basename(filename))
+    dirname(filename)
+  else filename
+}
+
+#' Convert a filename to a resource name.
+#'
+#' @param filename character. The filename.
+#' @return the resource name (i.e., stripped of idempotence and extension).
+resource_name <- function(filename) {
+  drop_idempotence(strip_r_extension(filename))
+}
+
