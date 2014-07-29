@@ -3,16 +3,17 @@
 \alias{director_.filename}
 \title{Convert a resource to a filename.}
 \usage{
-director_.filename(filename, absolute = FALSE, check.exists = TRUE)
+director_.filename(name, absolute = FALSE, check.exists = TRUE)
 }
 \arguments{
-\item{filename}{character. The filename to convert to a full path.}
+\item{name}{character. The resource name to convert to a full path.}
 
 \item{absolute}{character. Whether or not to return the absolute path
 (i.e., prepended by the director root). The default is \code{FALSE}.}
 
 \item{check.exists}{logical. Whether or not to check if the file exists.
-The default is \code{TRUE}.}
+The default is \code{TRUE}. This should be primarily used if the file
+has already been checked for existence.}
 }
 \value{
 the full path, relative to the director root if \code{full = FALSE}
