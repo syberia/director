@@ -1,4 +1,5 @@
 context('director$exists method')
+require(testthatsomemore)
 
 test_that('it correctly determines trivial non-existence', {
   within_file_structure(list(), expect_false(director(tempdir)$exists('foo')))
