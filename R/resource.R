@@ -62,9 +62,8 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   resource_info <- if (file.exists(filename)) file.info(filename)
 
   resource_cache <- .registry$get('resource_cache')
-  # resource_cache <- .get_registry_key('resource/resource_cache', .get_registry_dir(root))
-  resource_key <- resource_name(filename)
-  cache_details <- resource_cache[[resource_key]]
+  resource_key   <- resource_name(filename)
+  cache_details  <- resource_cache[[resource_key]]
 
   current_details <- list(info = resource_info)
   if (body) current_details$body <- paste(readLines(filename), collapse = "\n")

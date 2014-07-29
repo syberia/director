@@ -8,6 +8,11 @@ Having a registry attached to a project is very helpful for maintaining
 state across R sessions without encoding everything in the unreliable
 \code{.RData} file.
 }
+\details{
+To create a registry, simply write \code{r <- registry("some/directory")}.
+You can then use \code{r$set('some/key', some_value)} and \code{r$get('some/key')}
+to set and retrieve values (arbitrary R objects).
+}
 \examples{
 \dontrun{
   r <- registry('some/dir') # Create "some/dir" and make a registry there.

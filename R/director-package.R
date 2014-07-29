@@ -8,4 +8,5 @@
 #'
 #' @docType package
 #' @name director
+#' @import digest
 NULL
