@@ -52,6 +52,9 @@ registry <- setRefClass('registry',
     #' structure in the registry's root.
     #'
     #' @param key character. The path relative to the registry's root.
+    #' @param ... additional keys which will be joined together with
+    #'    code \code{base::file.path}. Thus, if you \code{get('a','b')},
+    #'    you are asking for key \code{'a/b'}.
     #' @param soft logical. Whether or not to error if the registry key
     #'    requested does not exist. If \code{soft = TRUE} and the latter
     #'    condition holds, \code{NULL} will be returned instead. The
@@ -60,7 +63,16 @@ registry <- setRefClass('registry',
     #'    This will be serialized as an RDS file relative to the root of
     #'    the registry. If \code{soft = TRUE}, \code{NULL} may be returned
     #'    if the \code{key} does not point to a valid registry key.
-    get = function(key, soft = TRUE) {
+    #' @examples
+    #' \dontrun{
+    #'   r <- registry('some/dir')
+    #'   r$get('foo') # gets key "foo"
+    #'   r$get('foo', 'bar', 'baz') # get key "foo/bar/baz"
+    #' }
+    get = function(key, ..., soft = TRUE) {
+      if (length(rest <- c(...)) != 0)
+        key <- do.call('file.path', as.list(c(key, rest)))
+
       key <- .sanitize_key(key, read = TRUE, soft = soft)
       if (is.null(key)) NULL else (readRDS(key)) # do not use default invisibility
     },
