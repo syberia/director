@@ -19,7 +19,11 @@
 #' @param name character. The name of the resource (i.e. R script) relative
 #'   to the root of the director object.
 #' @param provides list or environment. A list or environment of values to provide
-#'   to the resource. The default is nothing, i.e., \code{list()}.
+#'   to the resource. The default is nothing, i.e., \code{list()}. Note that
+#'   \code{provides} will be coerced to an environment, and its parent 
+#'   environment will be set to \code{parent.env(topenv())} to prevent
+#'   access to global variables (and encourage modularity and lack of side
+#'   effects. There should always be a way to write your code without them).
 #' @param body logical. Whether or not the fetch the body of the resource
 #'   in the `current` and `cached` output lists.
 #' @param soft logical. Whether or not to modify the cache to reflect

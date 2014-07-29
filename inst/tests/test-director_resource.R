@@ -38,3 +38,4 @@ test_that('it marks a touched resource as modified', {
 
 
 
+
