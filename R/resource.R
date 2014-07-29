@@ -54,15 +54,14 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     # Do not allow access to the global environment since resources should be self-contained.
   }
 
-  if (!exists(name)) # Note we are using director$exists
-    stop("Cannot find resource ", sQuote(name), " in ", .project_name,
-         " project ", sQuote(.root), ".")
+  if (!exists(name)) # Note we are using director$exists not base::exists
+    stop("Cannot find resource ", colourise(sQuote(name), 'red'), " in ",
+         .project_name, " project ", colourise(sQuote(.root), 'blue'), ".")
 
   filename <- .filename(name, TRUE, FALSE) # Convert resource to filename.
   resource_info <- if (file.exists(filename)) file.info(filename)
 
-  # TODO: (RK) Implement registry.
-  resource_cache <- registry$get('resource_cache')
+  resource_cache <- .registry$get('resource_cache')
   # resource_cache <- .get_registry_key('resource/resource_cache', .get_registry_dir(root))
   resource_key <- resource_name(filename)
   cache_details <- resource_cache[[resource_key]]
