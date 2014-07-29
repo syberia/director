@@ -7,8 +7,25 @@
 registry <- setRefClass('registry',
   fields = list(.root = 'character'),
   methods = list(
-
-  )                 
+    #' Initialize a registry. A registry is responsible for maintaining
+    #' an on-disk cache of R objects (configuration, temporary storage,
+    #' associated with a directory).
+    #'
+    #' @param root character. The root of the registry. If it does not exist,
+    #'    it (and any not yet existent parent directories) will be created.
+    #' @param 
+    initialize = function(root = NULL) {
+      if (is.null(root)) return(NULL) # Empty object
+      if (!is.character(root))
+        stop("A registry must be initialized with a character path to a root ",
+             "directory")
+      if (!file.exists(root)) dir.create(root, FALSE, TRUE)
+      
+      if (!file.info(root)$isdir)
+        stop("A registry's root must be a directory, not a file (you provided ",
+             colourise(root, 'red'), ")")
+    }
+  )
 )
 #
 #.get_registry_key <- function(key, registry_dir, soft = TRUE) {
