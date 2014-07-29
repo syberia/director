@@ -155,3 +155,7 @@ registry <- setRefClass('registry',
   )
 )
 
+#' @docType function
+#' @name registry
+#' @export
+NULL

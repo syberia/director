@@ -1,0 +1,56 @@
+<!--
+%\VignetteEngine{knitr}
+%\VignetteIndexEntry{Using registries to maintain state between R sessions}
+-->
+
+
+
+# Using registries to maintain state between R sessions
+
+Frequently, there is a need to maintain state between consecutive R sessions without
+polluting the local project with temporary or configuration-related files. 
+
+`director` aims to solve this problem by providing a `registry`, a simple wrapper
+around reading and writing to a directory that takes cares of checking for non-existent paths.
+
+A registry should be used only internally by a project to store data it needs to maintain
+across R sessions (or amongst different R sessions) and should not be exposed to the user.
+This is because the keys you choose to store values under are purely convention, and you
+do not want to give someone the ability to overwrite them.
+
+
+```r
+r <- registry$new(file.path(dirname(tempfile()), '.registry'))
+# You don't have to use .registry, but making the directory hidden is preferable
+# as it is for internal use only.
+
+r$set('some/key', list('some', 5, 'value'))
+value <- r$get('some/key') # value is now the above list.
+print(value)
+```
+
+```
+## [[1]]
+## [1] "some"
+## 
+## [[2]]
+## [1] 5
+## 
+## [[3]]
+## [1] "value"
+```
+
+You can perform complicated logic with this.
+
+
+```r
+projects <- list(proj1 = list(config_key1 = 'config_value1', config_key2 = 'config_value2'),
+                 proj2 = list(config_key1 = 'settings_value1', config_key2 = 'settings_value2'))
+for (name in names(projects)) r$set(file.path(name, 'config'), projects[[name]])
+print(sapply(names(projects), function(name) r$get(file.path(name, 'config'))$config_key1))
+```
+
+```
+##             proj1             proj2 
+##   "config_value1" "settings_value1"
+```

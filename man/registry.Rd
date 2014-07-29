@@ -4,6 +4,15 @@
 \alias{registry}
 \title{A persistent on-disk cache of R objects associated with a directory.}
 \description{
-A persistent on-disk cache of R objects associated with a directory.
+Having a registry attached to a project is very helpful for maintaining
+state across R sessions without encoding everything in the unreliable
+\code{.RData} file.
+}
+\examples{
+\dontrun{
+  r <- registry('some/dir') # Create "some/dir" and make a registry there.
+  r$set('some/key', value <- list(1,2,3))
+  stopifnot(r$get('some/key'), value)
+}
 }
 
