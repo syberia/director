@@ -58,26 +58,23 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     stop("Cannot find resource ", colourise(sQuote(name), 'red'), " in ",
          .project_name, " project ", colourise(sQuote(.root), 'blue'), ".")
 
-  
-  filename        <- .filename(name, TRUE, FALSE) # Convert resource to filename.
+  filename        <- .filename(name, FALSE, FALSE) # Convert resource to filename.
   resource_info   <- if (file.exists(filename)) file.info(filename)
-  resource_cache  <- .registry$get('resource_cache')
   resource_key    <- resource_name(filename)
-  cache_details   <- resource_cache[[resource_key]]
+  resource_cache_key <- file.path('resource_cache', digest(resource_key))
+  cached_details  <- .registry$get(resource_cache_key)
   current_details <- list(info = resource_info)
 
   if (body) current_details$body <- paste(readLines(filename), collapse = "\n")
 
-  resource_cache[[resource_key]] <- current_details
-  if (identical(soft, FALSE))
-    registry$set('resource_cache', resource_cache)
-    #.set_registry_key('resource/resource_cache', resource_cache, .get_registry_dir(root))
+  if (identical(soft, FALSE)) .registry$set(resource_cache_key, current_details)
 
   source_args <- append(list(filename, local = provides), list(...))
   value <- function() do.call(base::source, source_args)$value
-  modified <- resource_info$mtime > cache_details$info$mtime %||% 0
+  modified <- resource_info$mtime > cached_details$info$mtime %||% 0
+  if (length(modified) == 0) modified <- 0
 
-  list(current = current_details, cached = cache_details,
+  list(current = current_details, cached = cached_details,
        value = value, modified = modified)
 }
 
