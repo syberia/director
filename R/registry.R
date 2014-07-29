@@ -23,7 +23,7 @@ registry <- setRefClass('registry',
              "directory")
 
       if (!file.exists(root))
-        dir.create(root, showWarnings = FALSE, recusrive = TRUE)
+        dir.create(root, showWarnings = FALSE, recursive = TRUE)
       
       if (!file.info(root)$isdir)
         stop("A registry's root must be a directory, not a file (you provided ",
@@ -64,6 +64,8 @@ registry <- setRefClass('registry',
     #' # The directory 'example' was created under the registry's root
     #' # with a filename 'key' that holds the string 'example_value'.
     set = function(key, value) {
+      # TODO: (RK) Warn on overwrite?
+
       key <- .sanitize_key(key, read = FALSE)
       error_handler <- function(e) {
         stop('Failed to save registry key ', sQuote(colourise(key, 'red')), 

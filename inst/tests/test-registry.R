@@ -75,6 +75,21 @@ within_file_structure(list(), {
                        file.path(normalizePath(tempdir), c('file1', 'file2')))
     })
   })
+
+  # Test registry$set and get methods
+
+  test_that('a simple key can be retrieved', {
+    r <- registry(root)
+    r$set('test', value <- list('test', 5))
+    expect_identical(r$get('test'), value)
+  })
+
+  test_that('a directoried key can be retrieved', {
+    r <- registry(root)
+    r$set('another/test', value <- list('test', 5))
+    expect_identical(r$get('another/test'), value)
+  })
+
 })
 
 
