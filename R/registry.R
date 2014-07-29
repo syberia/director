@@ -125,14 +125,17 @@ registry <- setRefClass('registry',
         } else filename
       } else {
         warning_handler <- function(e) {
-          if (grepl("reason 'Not a directory'", e$message))
+          if (!is(e, 'warning') || grepl("reason 'Not a directory'", e$message, fixed = TRUE))
             stop('Cannot create registry key ', sQuote(colourise(key, 'red')),
-                 ' in registry with root ', sQuote(colourise(root, 'blue')),
+                 ' in registry with root ', sQuote(colourise(.root, 'blue')),
                  " because: \n\n", colourise(e$message, 'yellow'), "\n\n")
         }
         if ((dir <- dirname(key)) != '.') { # Not root level, has parent dir
+          if (file.exists(d <- file.path(.root, dir)) && !file.info(d)$isdir)
+            warning_handler(list(message =
+              paste(sQuote(d), 'is a file but must be a directory')))
           tryCatch(warning = warning_handler, dir.create(file.path(.root, dir),
-            showWarnings = FALSE, recursive = TRUE))
+            recursive = TRUE))
         }
         file.path(.root, key)
       }
