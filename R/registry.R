@@ -14,6 +14,8 @@ registry <- setRefClass('registry',
     #' @param root character. The root of the registry. If it does not exist,
     #'    it (and any not yet existent parent directories) will be created.
     #' @param 
+    #' @examples
+    #' registry(dirname(tempfile()))
     initialize = function(root = NULL) {
       if (is.null(root)) return(NULL) # Empty object
       if (!is.character(root))
@@ -24,7 +26,33 @@ registry <- setRefClass('registry',
       if (!file.info(root)$isdir)
         stop("A registry's root must be a directory, not a file (you provided ",
              colourise(root, 'red'), ")")
+      
+      .root <<- root
+    },
+
+    #' Place an object in the registry.
+    #'
+    #' The key used to locate the object will be the directory/file 
+    #' structure in the registry's root. The object is serialized using
+    #' \code{saveRDS}. 
+    #'
+    #' @param key character. The path relative to the registry's root.
+    #' @param value ANY. Some R object to serialize into the registry.
+    #' @examples
+    #' registry(dirname(tempfile))$set('example/key', 'example_value')
+    #' # The directory 'example' was created under the registry's root
+    #' # with a filename 'key' that holds the string 'example_value'.
+    set = function(key, value) {
+      key <- .sanitize_key(key)      
+      error <- function(e) {
+        stop('Failed to save registry key ', sQuote(colourise(red)), 
+             ' in registry with root ', sQuote(colourise(blue)), 
+             ' because: ', e$message)
+      }
+      tryCatch(error = error, saveRDS(value, key))
     }
+
+    
   )
 )
 #
