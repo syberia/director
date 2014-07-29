@@ -76,7 +76,6 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   source_args <- append(list(filename, local = provides), list(...))
   value <- function() do.call(base::source, source_args)$value
   modified <- resource_info$mtime > cached_details$info$mtime %||% 0
-  if (length(modified) == 0) modified <- 0
 
   list(current = current_details, cached = cached_details,
        value = value, modified = modified)
