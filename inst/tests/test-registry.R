@@ -90,6 +90,12 @@ within_file_structure(list(), {
     expect_identical(r$get('another/test'), value)
   })
 
+  test_that('a directoried key can be retrieved using multiple argument syntax', {
+    r <- registry(root)
+    r$set('another/test', value <- list('test', 5))
+    expect_identical(r$get('another', 'test'), value)
+  })
+
   test_that('retrieval of non-existent key yields NULL when soft = TRUE', {
     r <- registry(root)
     expect_null(r$get('non-existent key', soft = TRUE))

@@ -58,14 +58,14 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     stop("Cannot find resource ", colourise(sQuote(name), 'red'), " in ",
          .project_name, " project ", colourise(sQuote(.root), 'blue'), ".")
 
-  filename <- .filename(name, TRUE, FALSE) # Convert resource to filename.
-  resource_info <- if (file.exists(filename)) file.info(filename)
-
-  resource_cache <- .registry$get('resource_cache')
-  resource_key   <- resource_name(filename)
-  cache_details  <- resource_cache[[resource_key]]
-
+  
+  filename        <- .filename(name, TRUE, FALSE) # Convert resource to filename.
+  resource_info   <- if (file.exists(filename)) file.info(filename)
+  resource_cache  <- .registry$get('resource_cache')
+  resource_key    <- resource_name(filename)
+  cache_details   <- resource_cache[[resource_key]]
   current_details <- list(info = resource_info)
+
   if (body) current_details$body <- paste(readLines(filename), collapse = "\n")
 
   resource_cache[[resource_key]] <- current_details
