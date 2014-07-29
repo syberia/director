@@ -112,6 +112,15 @@ test_that('calling $value() results in use of the provided environment', {
   })
 })
 
+test_that('resources do not have access to the top environment', {
+  name <- '*tmp.for.director.tests*'
+  within_file_structure(list(blah.r = paste0('`', name, '`')), { d <- director(tempdir)
+    assign(name, 'test', envir = topenv())
+    r <- d$resource('blah')
+    expect_error(r$value(), "object [^ ]+ not found")
+  })
+})
+
 ### These tests go last because they must use Sys.sleep
 
 test_that('it marks a touched resource as modified', {
