@@ -1,0 +1,4 @@
+*.Rproj
+vignettes/*.html
+vignettes/*.md
+*.zip
