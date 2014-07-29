@@ -31,6 +31,25 @@ registry <- setRefClass('registry',
       
       .root <<- normalizePath(root)
     },
+    
+    #' Retrieve an object from the registry.
+    #'
+    #' The key used to locate the object will be the directory/file 
+    #' structure in the registry's root.
+    #'
+    #' @param key character. The path relative to the registry's root.
+    #' @param soft logical. Whether or not to error if the registry key
+    #'    requested does not exist. If \code{soft = TRUE} and the latter
+    #'    condition holds, \code{NULL} will be returned instead. The
+    #'    default is \code{soft = TRUE}.
+    #' @return an R object stored in the registry under the given \code{key}.
+    #'    This will be serialized as an RDS file relative to the root of
+    #'    the registry. If \code{soft = TRUE}, \code{NULL} may be returned
+    #'    if the \code{key} does not point to a valid registry key.
+    get = function(key, soft = TRUE) {
+      key <- .sanitize_key(key, read = TRUE, soft = soft)
+      if (is.null(key)) NULL else (readRDS(key)) # do not use default invisibility
+    },
 
     #' Place an object in the registry.
     #'
@@ -45,7 +64,7 @@ registry <- setRefClass('registry',
     #' # The directory 'example' was created under the registry's root
     #' # with a filename 'key' that holds the string 'example_value'.
     set = function(key, value) {
-      key <- .sanitize_key(key)      
+      key <- .sanitize_key(key, read = FALSE)
       error_handler <- function(e) {
         stop('Failed to save registry key ', sQuote(colourise(key, 'red')), 
              ' in registry with root ', sQuote(colourise(.root, 'blue')), 
@@ -120,41 +139,4 @@ registry <- setRefClass('registry',
     } # end .sanitize_key method
   )
 )
-#
-#.get_registry_key <- function(key, registry_dir, soft = TRUE) {
-#  filename <- .sanitize_registry_key(key, registry_dir, soft = soft)
-#  if (is.null(filename)) NULL else (readRDS(filename)) # do not use default invisibility
-#}
-#
-#.set_registry_key <- function(key, value, registry_dir) {
-#  filename <- .sanitize_registry_key(key, registry_dir, read = FALSE)
-#  tryCatch(saveRDS(value, filename), error = function(e)
-#           stop('Failed to save Syberia registry key "', key, "' because: ", e$message))
-#  key
-#}
-#
-#.sanitize_registry_key <- function(key, registry_dir, read = TRUE, soft = FALSE) {
-#  if (grepl('..', key, fixed = TRUE))
-#    stop('Syberia registry keys cannot contain two consecutive dots')
-#
-#  if (read) {
-#    if (!file.exists(filename <- file.path(registry_dir, key))) {
-#      if (soft) NULL
-#      else stop('There is no Syberia registry item with key "', key, '"')
-#    } else if (file.info(filename)$isdir)
-#      stop('There is no Syberia registry item with "', key, '", ',
-#           'because this key points to a directory.')
-#    else filename
-#  } else {
-#    if ((dir <- dirname(key)) != '.') {
-#      tryCatch(dir.create(file.path(registry_dir, dir), recursive = TRUE),
-#               warning = handler <- function(e) {
-#                 if (grepl("reason 'Not a directory'", e$message))
-#                   stop('Cannot create Syberia registry key "', key, '"')
-#               })
-#    }
-#    file.path(registry_dir, key)
-#  }
-#}
-#
-#
+
