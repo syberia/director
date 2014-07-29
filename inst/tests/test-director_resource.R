@@ -105,6 +105,13 @@ test_that('different uses of the same filename keep the same cache', {
   })
 })
 
+test_that('calling $value() results in use of the provided environment', {
+  within_file_structure(list(blah.r = 'test'), { d <- director(tempdir)
+    r <- d$resource('blah', provides = list(test = test <- 1))
+    expect_identical(r$value(), test)
+  })
+})
+
 ### These tests go last because they must use Sys.sleep
 
 test_that('it marks a touched resource as modified', {
