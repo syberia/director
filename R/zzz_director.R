@@ -83,7 +83,8 @@ director_.filename <- function(name, absolute = FALSE, check.exists = TRUE) {
 #' @export
 director <- setRefClass("director",
   fields = list(.root = 'character', .project_name = 'character',
-                .resource_cache = 'list', .stack = 'stack'),
+                .resource_cache = 'list', .stack = 'stack',
+                .registry = 'registry'),
   methods = list(
     initialize = initialize,
     exists     = director_exists,

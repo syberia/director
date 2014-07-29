@@ -16,6 +16,7 @@ try_memoize <- function(fn) {
     require(memoise)
     eval.parent(substitute(memoise(fn)))
   }
+  fn
 }
 
 # A reference class that implements a stack data structure.
