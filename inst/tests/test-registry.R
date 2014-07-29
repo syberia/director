@@ -90,6 +90,11 @@ within_file_structure(list(), {
     expect_identical(r$get('another/test'), value)
   })
 
+  test_that('retrieval of non-existent key yields NULL when soft = TRUE', {
+    r <- registry(root)
+    expect_null(r$get('non-existent key', soft = TRUE))
+  })
+
 })
 
 
