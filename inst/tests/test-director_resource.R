@@ -12,6 +12,13 @@ test_that('it can find a simple resource', {
   })
 })
 
+test_that('a resource output has the keys current, cached, value, and modified', {
+  within_file_structure(list('blah.r'), { d <- director(tempdir)
+    expect_true(all(is.element(names(d$resource('blah')),
+                    c('current', 'cached', 'value', 'modified'))))
+  })
+})
+
 # test modified key in resource list
 
 test_that('it marks a new resource as modified', {
@@ -27,6 +34,79 @@ test_that('it marks an old resource as not modified', {
   })
 })
 
+test_that('it returns the correct current resource info',  {
+  within_file_structure(list('blah.r'), { d <- director(tempdir)
+    expect_identical(d$resource('blah')$current$info$mtime,
+                     file.info(file.path(tempdir, 'blah.r'))$mtime)
+  })
+})
+
+test_that('it returns the correct cached resource info',  {
+  within_file_structure(list('blah.r'), { d <- director(tempdir)
+    expect_null(d$resource('blah')$cached$info)
+    expect_identical(d$resource('blah')$cached$info$mtime, 
+      file.info(file.path(tempdir, 'blah.r'))$mtime)
+  })
+})
+
+test_that('it returns the correct current resource body',  {
+  within_file_structure(list(blah.r = bod <- 'test <- 1'), { d <- director(tempdir)
+    expect_identical(d$resource('blah')$current$body, bod)
+  })
+})
+
+test_that('it returns the correct cached resource body',  {
+  within_file_structure(list(blah.r = bod <- 'test <- 1'), { d <- director(tempdir)
+    d$resource('blah') # cache the resource info
+    writeLines('test <- 2', file.path(tempdir, 'blah.r'))
+    expect_identical(d$resource('blah')$cached$body, bod)
+  })
+})
+
+test_that('it returns the correct modified resource body',  {
+  within_file_structure(list(blah.r = 'test <- 1'), { d <- director(tempdir)
+    d$resource('blah') # cache the resource info
+    writeLines(bod2 <- 'test <- 2', file.path(tempdir, 'blah.r'))
+    expect_identical(d$resource('blah')$current$body, bod2)
+  })
+})
+
+test_that('it returns no body if body = FALSE', {
+  within_file_structure(list(blah.r = 'test <- 1'), { d <- director(tempdir)
+    expect_null(d$resource('blah', body = FALSE)$current$body)
+  })
+})
+
+
+test_that('it modifies the cache if soft = FALSE', {
+  within_file_structure(list('blah.r'), { d <- director(tempdir)
+    d$resource('blah') # cache the resource info
+    writeLines('test <- 1', file.path(tempdir, 'blah.r'))
+    d$resource('blah', soft = FALSE)
+    expect_identical(d$resource('blah')$cached$body, 'test <- 1')
+  })
+})
+
+test_that('it does not modify the cache if soft = TRUE', {
+  within_file_structure(list('blah.r'), { d <- director(tempdir)
+    d$resource('blah') # cache the resource info
+    writeLines('test <- 1', file.path(tempdir, 'blah.r'))
+    d$resource('blah', soft = TRUE) # (hopefully?) without caching 
+    expect_identical(d$resource('blah')$cached$body, '')
+  })
+})
+
+test_that('different uses of the same filename keep the same cache', {
+  within_file_structure(list('blah.r', 'blah2.r'), { d <- director(tempdir)
+    d$resource('blah') # cache the resource info
+    expect_false(is.null(d$resource('/blah')$cached))
+    d$resource('blah2.r') # cache the resource info
+    expect_false(is.null(d$resource('blah2')$cached))
+  })
+})
+
+### These tests go last because they must use Sys.sleep
+
 test_that('it marks a touched resource as modified', {
   within_file_structure(list('blah.r'), { d <- director(tempdir)
     r <- d$resource('blah') # cache the resource info
@@ -35,7 +115,4 @@ test_that('it marks a touched resource as modified', {
     expect_true(d$resource('blah')$modified)
   })
 })
-
-
-
 

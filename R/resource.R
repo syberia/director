@@ -8,7 +8,7 @@
 #' easy to provide those inputs by users.
 #' 
 #' This method will return a list containing four keys, `current`, `cached`,
-#' `value`, and `modified` if it finds the given resource, or \code{FALSE}
+#' `value`, and `modified` if it finds the given resource, or error
 #' if no such resource exists. The former two keys, `current` and `cached`,
 #' will contain information relating to the current and previous execution
 #' of this resource, while `value` contains a function that will execute the
@@ -64,7 +64,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
 
   filename        <- .filename(name, FALSE, FALSE) # Convert resource to filename.
   resource_info   <- if (file.exists(filename)) file.info(filename)
-  resource_key    <- resource_name(filename)
+  resource_key    <- strip_root(.root, resource_name(filename))
   resource_cache_key <- file.path('resource_cache', digest(resource_key))
   cached_details  <- .registry$get(resource_cache_key)
   current_details <- list(info = resource_info)

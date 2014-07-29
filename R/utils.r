@@ -94,7 +94,7 @@ strip_root <- function(root, filename) {
   stopifnot(is.character(root) && is.character(filename))
   if (substring(filename, 1, nchar(root)) == root) {
     filename <- substring(filename, nchar(root) + 1, nchar(filename)) 
-    gsub("^\\/", "", filename)
+    gsub("^\\/*", "", filename)
   } else filename
 }
 
