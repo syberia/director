@@ -16,6 +16,7 @@ initialize <- function(root, project_name = root) {
 
   # Set reference class fields.
   .root         <<- normalizePath(root)
+  .registry     <<- registry(file.path(.root, '.registry'))
   .project_name <<- project_name
 }
 

@@ -95,4 +95,8 @@ director <- setRefClass("director",
   )
 )
 
+#' @docType function
+#' @name director
+#' @export
+NULL
 

@@ -4,6 +4,10 @@
 #' state across R sessions without encoding everything in the unreliable
 #' \code{.RData} file.
 #'
+#' To create a registry, simply write \code{r <- registry("some/directory")}.
+#' You can then use \code{r$set('some/key', some_value)} and \code{r$get('some/key')}
+#' to set and retrieve values (arbitrary R objects).
+#'
 #' @docType class
 #' @name registry
 #' @rdname registry
