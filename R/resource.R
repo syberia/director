@@ -32,6 +32,8 @@
 #'   function that gets executed when the `value` is accessed.
 #' @param tracking logical. Whether or not to perform modification tracking
 #'   by pushing accessed resources to the director's stack.
+#' @param check.helpers logical. If \code{TRUE}, the resource's helpers
+#'   (assuming it is an idempotent resource -- that is, 
 #' @return a four-element list with names `current`, `cached`, `value`,
 #'   and `modified`. The former two will both be two-element lists containing
 #'   keys `info` and `body` (unless director has never executed the resource before
@@ -51,7 +53,7 @@
 #'   executed by the director (if this was never the case, `modified` will
 #'   be \code{FALSE}).
 resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
-                     tracking = FALSE) {
+                     tracking = FALSE, check.helpers = TRUE) {
   if (!is.environment(provides)) {
     provides <- if (length(provides) == 0) new.env() else as.environment(provides)
     parent.env(provides) <- parent.env(topenv())
@@ -66,15 +68,24 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   resource_info   <- if (file.exists(filename)) file.info(filename)
   resource_key    <- strip_root(.root, resource_name(filename))
   resource_cache_key <- file.path('resource_cache', digest(resource_key))
-  cached_details  <- .registry$get(resource_cache_key)
+  cached_details  <- .cache[[resource_cache_key]]
   current_details <- list(info = resource_info)
 
   if (body) current_details$body <- paste(readLines(filename), collapse = "\n")
 
-  if (identical(soft, FALSE)) .registry$set(resource_cache_key, current_details)
+  if (identical(soft, FALSE)) .cache[[resource_cache_key]] <<- current_details
 
   source_args <- append(list(filename, local = provides), list(...))
-  value <- function() do.call(base::source, source_args)$value
+  # TODO: (RK) Check if `local` is an environment in case user overwrote.
+  director_obj <- .self
+  value <- function() {
+    # TODO: (RK) Preprocess the resource?
+    # TODO: (RK) Copy env from provides to prevent double writing?
+    value <- do.call(base::source, source_args)$value
+    value <- director_obj$compile(value, source_args$local, resource_key,
+                                  tracking = tracking)
+    value
+  }
   modified <- resource_info$mtime > cached_details$info$mtime %||% 0
 
   list(current = current_details, cached = cached_details,

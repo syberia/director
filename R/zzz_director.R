@@ -84,11 +84,12 @@ director_.filename <- function(name, absolute = FALSE, check.exists = TRUE) {
 director <- setRefClass("director",
   fields = list(.root = 'character', .project_name = 'character',
                 .resource_cache = 'list', .stack = 'stack',
-                .registry = 'registry'),
+                .registry = 'registry', .cache = 'list'),
   methods = list(
     initialize = initialize,
     exists     = director_exists,
     resource   = resource,
+    compile    = compile,
 
     show       = function() { cat("Director monitoring", sQuote(.root), "for", sQuote(.project_name), "project.\n") },
     .filename  = director_.filename

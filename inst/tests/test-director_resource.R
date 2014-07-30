@@ -118,7 +118,7 @@ test_that('resources do not have access to the top environment', {
     assign(name, 'test', envir = topenv())
     r <- d$resource('blah')
     expect_error(r$value(), "object [^ ]+ not found")
-    rm(name, envir = topenv())
+    suppressWarnings(rm(name, envir = topenv()))
   })
 })
 
