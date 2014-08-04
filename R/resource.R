@@ -86,10 +86,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   value <- function() {
     # TODO: (RK) Preprocess the resource?
     # TODO: (RK) Copy env from provides to prevent double writing?
-    value <- do.call(base::source, source_args)$value
-    value <- director_obj$compile(value, source_args$local, resource_key,
-                                  tracking = tracking)
-    value
+    director_obj$compile(source_args, resource_key, tracking = tracking)
   }
 
   modified <-
