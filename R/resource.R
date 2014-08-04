@@ -96,7 +96,6 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     (is.null(resource_info) && !is.null(cached_details)) || # file was deleted
     (resource_info$mtime > cached_details$info$mtime %||% 0) # file was changed
 
-
   resource_dir <- file.path(.root, resource_key)
   tracking_is_on_and_resource_has_helpers <-
     isTRUE(tracking) && isTRUE(check.helpers) &&

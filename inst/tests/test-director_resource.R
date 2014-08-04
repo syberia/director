@@ -136,10 +136,20 @@ test_that('it marks a touched resource as modified', {
 test_that('modification of resource helpers is reported correctly', {
   within_file_structure(list(blah = list('blah.r', 'helper.r')), { d <- director(tempdir)
     r <- d$resource('blah') # cache the resource info
-    expect_false(d$resource('blah')$modified)
     Sys.sleep(1) # Annoying, but no other way because mtime precision is seconds
     writeLines('', file.path(tempdir, 'blah', 'helper.r'))
     expect_true(d$resource('blah')$modified)
+  })
+})
+
+test_that('modified is FALSE if both get modified but one check is made', {
+  within_file_structure(list(blah = list('blah.r', 'helper.r', 'helper2.r')), { d <- director(tempdir)
+    r <- d$resource('blah') # cache the resource info
+    Sys.sleep(1) # Annoying, but no other way because mtime precision is seconds
+    writeLines('', file.path(tempdir, 'blah', 'helper.r'))
+    writeLines('', file.path(tempdir, 'blah', 'helper2.r'))
+    d$resource('blah') # trigger cache hit
+    expect_false(d$resource('blah')$modified)
   })
 })
 
