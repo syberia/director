@@ -33,7 +33,10 @@
 #' @param tracking logical. Whether or not to perform modification tracking
 #'   by pushing accessed resources to the director's stack.
 #' @param check.helpers logical. If \code{TRUE}, the resource's helpers
-#'   (assuming it is an idempotent resource -- that is, 
+#'   (assuming it is an idempotent resource -- that is, a resource whose
+#'   parent directory has the same name as the resource). The default is
+#'   \code{TRUE}. If \code{FALSE}, the \code{name} parameter will not be
+#'   converted into a resource name.
 #' @return a four-element list with names `current`, `cached`, `value`,
 #'   and `modified`. The former two will both be two-element lists containing
 #'   keys `info` and `body` (unless director has never executed the resource before
@@ -65,7 +68,8 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     stop("Cannot find resource ", colourise(sQuote(name), 'red'), " in ",
          .project_name, " project ", colourise(sQuote(.root), 'blue'), ".")
 
-  filename        <- .filename(name, FALSE, FALSE) # Convert resource to filename.
+  if (isTRUE(check.helpers))
+    filename <- .filename(name, FALSE, FALSE) # Convert resource to filename.
   resource_info   <- if (file.exists(filename)) file.info(filename)
   resource_key    <- strip_root(.root, resource_name(filename))
   resource_cache_key <- file.path('resource_cache', digest(resource_key))
@@ -87,9 +91,30 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
                                   tracking = tracking)
     value
   }
-  modified <- resource_info$mtime > cached_details$info$mtime %||% 0
 
-  list(current = current_details, cached = cached_details,
+  modified <-
+    (is.null(resource_info) && !is.null(cached_details)) || # file was deleted
+    (resource_info$mtime > cached_details$info$mtime %||% 0) # file was changed
+
+  tracking_is_on_and_resource_has_helpers <-
+    isTRUE(tracking) && isTRUE(check.helpers) &&
+    !isTRUE(modified) && # No point in checking modifications in helpers otherwise
+    is.idempotent_directory(resource_dir <- file.path(.root, resource_key)) &&
+    
+  if (tracking_is_on_and_resource_has_helpers) {
+    helper_files <- list.files(resource_dir) # TODO: (RK) Recursive helpers?
+    same_file <- which(sapply(helper_files, 
+      function(f) strip_extension(f) == basename(resource_key)))
+    helper_files <- helper_files[-same_file]
+    browser()
+    for (file in helper_files) modified <- modified ||
+        resource(file.path(resource_dir, file), body = FALSE,
+                 tracking = FALSE, check.helpers = FALSE)$modified
+  }
+
+  output <- list(current = current_details, cached = cached_details,
        value = value, modified = modified)
+  if (isTRUE(.track)) .stack$push(output)
+  output
 }
 

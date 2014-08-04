@@ -22,7 +22,7 @@ test_that('it correctly determines existence of an idempotent resource', {
 })
 
 test_that('it correctly determines non-existence of a helper', {
-  within_file_structure(list(foo = list('foo.R', 'helper')), {
+  within_file_structure(list(foo = list('foo.R', 'helper.R')), {
     expect_false(director(tempdir)$exists('foo/helper'))
     expect_false(director(tempdir)$exists('foo/helper.r'))
     expect_false(director(tempdir)$exists('foo/helper.R'))

@@ -21,7 +21,7 @@ try_memoize <- function(fn) {
 
 # A reference class that implements a stack data structure.
 stack <- setRefClass('stack', list(elements = 'list'), methods = list(
-  initialize = function()  { elements <<- list() },
+  clear      = function()  { elements <<- list() },
   empty      = function()  { length(elements) == 0 },
   push       = function(x) { elements[[length(elements) + 1]] <<- x },
   pop        = function()  {
