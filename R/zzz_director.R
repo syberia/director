@@ -9,16 +9,24 @@
 #' @param check.exists logical. Whether or not to check if the file exists.
 #'    The default is \code{TRUE}. This should be primarily used if the file
 #'    has already been checked for existence.
+#' @param helper logical. Whether or not to handle helper files instead of resources.
+#'   The default is \code{FALSE}.
 #' @return the full path, relative to the director root if \code{full = FALSE}
 #'    and an absolute path if \code{FULL = TRUE}.
-director_.filename <- function(name, absolute = FALSE, check.exists = TRUE) {
+director_.filename <- function(name, absolute = FALSE, check.exists = TRUE, helper = FALSE) {
   filename <- name
-  if (isTRUE(check.exists) && !exists(filename))
+  if (isTRUE(check.exists) && !exists(filename, helper = isTRUE(helper)))
     stop("Cannot convert resource ", sQuote(filename), " to full file path, ",
          "as no such resource exists.")
 
   with_absolute <- function(filename)
     if (isTRUE(absolute)) file.path(.root, filename) else filename
+
+  # If `name` is a directory, recursively check if it's an idempotent resource.
+  if (file.exists(rooted_file <- file.path(.root, filename)) &&
+      file.info(rooted_file)$isdir)
+    return(.self$.filename(file.path(filename, basename(rooted_file)),
+                           absolute = absolute, check.exists = check.exists))
 
   filename <- strip_r_extension(filename)
   if (file.exists(tmp <- file.path(.root, paste0(filename, '.r'))) ||

@@ -50,3 +50,4 @@ test_that('it correctly determines existence of a helper', {
     expect_true(director(tempdir)$exists('foo/helper.R', helper = TRUE))
   })
 })
+
