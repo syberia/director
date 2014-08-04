@@ -15,6 +15,7 @@ initialize <- function(root, project_name = root) {
           "and not a directory.")
 
   # Set reference class fields.
+  .track        <<- FALSE # Whether or not we are currently tracking resources.
   .root         <<- normalizePath(root)
   .registry     <<- registry(file.path(.root, '.registry'))
   .project_name <<- project_name

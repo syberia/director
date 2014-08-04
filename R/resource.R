@@ -54,6 +54,7 @@
 #'   be \code{FALSE}).
 resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
                      tracking = FALSE, check.helpers = TRUE) {
+
   if (!is.environment(provides)) {
     provides <- if (length(provides) == 0) new.env() else as.environment(provides)
     parent.env(provides) <- parent.env(topenv())

@@ -7,10 +7,14 @@
 #' @param resource_name character. The name of the resource. This
 #'    is used to fetch the resource handler.
 #' @param tracking logical. Whether or not to perform modification tracking
-#'   by pushing accessed resources to the director's stack.
+#'   by pushing accessed resources to the director's stack. The default is
+#'   \code{TRUE}.
 #' @return the compiled resource.
-compile <- function(value, provides, resource_name) {
+compile <- function(value, provides, resource_name, tracking = TRUE) {
   # TODO: (RK) Compile the resource here.
+  .track <<- TRUE
+  on.exit(.track <<- FALSE)
+
   value
 }
 
