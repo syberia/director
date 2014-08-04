@@ -117,3 +117,11 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   output
 }
 
+#' Representation of a director resource.
+#'
+#' @docType class
+#' @name directorResource
+NULL
+
+
+
