@@ -111,17 +111,14 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
       modified <- modified || helper$modified
   }
 
-  output <- list(current = current_details, cached = cached_details,
-       value = value, modified = modified)
-  if (isTRUE(.track)) .stack$push(output)
+  output <- directorResource(current = current_details, cached = cached_details,
+       value = value, modified = modified, resource_key = resource_key,
+       source_args = source_args, director = .self)
+
+  if (.dependency_nesting_level > 0)
+    .stack$push(list(level = .dependency_nesting_level,
+                     key = resource_key,
+                     modified = modified))
   output
 }
-
-#' Representation of a director resource.
-#'
-#' @docType class
-#' @name directorResource
-NULL
-
-
 

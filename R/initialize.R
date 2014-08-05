@@ -6,6 +6,7 @@
 #'    to the effect of "no resource foo found in your \code{project_name}
 #'    project" will be displayed.
 initialize <- function(root, project_name = root) {
+  if (missing(root)) return()
   if (!file.exists(root))
     stop("Cannot create a director for ", sQuote(root), " as that directory ",
           "does not exist.")
@@ -15,7 +16,7 @@ initialize <- function(root, project_name = root) {
           "and not a directory.")
 
   # Set reference class fields.
-  .track        <<- FALSE # Whether or not we are currently tracking resources.
+  .dependency_nesting_level <<- 0L
   .root         <<- normalizePath(root)
   .registry     <<- registry(file.path(.root, '.registry'))
   .project_name <<- project_name

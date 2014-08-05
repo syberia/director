@@ -24,6 +24,12 @@ stack <- setRefClass('stack', list(elements = 'list'), methods = list(
   clear      = function()  { elements <<- list() },
   empty      = function()  { length(elements) == 0 },
   push       = function(x) { elements[[length(elements) + 1]] <<- x },
+  peek       = function(n = 1)  {
+    if (isTRUE(n)) n <- length(elements)
+    els <- seq(length(elements), length(elements) - n + 1)
+    if (length(els) == 1) elements[[els]]
+    else elements[els]
+  },
   pop        = function()  {
     if (length(elements) == 0) stop("syberiaStructure:::stack is empty")
     tmp <- tail(elements, 1)[[1]]

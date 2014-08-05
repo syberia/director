@@ -93,7 +93,7 @@ director <- setRefClass("director",
   fields = list(.root = 'character', .project_name = 'character',
                 .resource_cache = 'list', .stack = 'stack',
                 .registry = 'registry', .cache = 'list',
-                .track = 'logical'),
+                .dependency_nesting_level = 'integer'),
   methods = list(
     initialize = initialize,
     exists     = director_exists,
