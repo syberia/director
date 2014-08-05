@@ -142,7 +142,7 @@ test_that('modification of resource helpers is reported correctly', {
   })
 })
 
-test_that('modified is FALSE if both get modified but one check is made', {
+test_that('modified is FALSE if both get modified and a followup second check is made', {
   within_file_structure(list(blah = list('blah.r', 'helper.r', 'helper2.r')), { d <- director(tempdir)
     r <- d$resource('blah') # cache the resource info
     Sys.sleep(1) # Annoying, but no other way because mtime precision is seconds
