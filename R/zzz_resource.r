@@ -25,7 +25,7 @@ directorResource <- setRefClass('directorResource',
     
     value = function() {
       compile()
-      .value
+      .value[[1]]
     },
 
     # Compile a resource using a resource handler.
