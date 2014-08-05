@@ -93,9 +93,7 @@ directorResource <- setRefClass('directorResource',
       route <- Find(function(x) substring(resource_key, 1, nchar(x)) == x,
                     names(director$.parsers))
       if (is.null(route)) value
-      else {
-        director$.parsers[[route]](resource_key, value, provides)
-      }
+      else director$.parsers[[route]](resource_key, value, provides)
     },
 
     show = function() {
