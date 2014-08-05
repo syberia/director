@@ -3,10 +3,13 @@
 \alias{director_exists}
 \title{Determine whether a resource exists relative to a director object.}
 \usage{
-director_exists(resource)
+director_exists(resource, helper = FALSE)
 }
 \arguments{
 \item{resource}{character. The name of the resource.}
+
+\item{helper}{logical. Whether or not to check helper existence
+in an idempotent resource. The default is \code{FALSE}.}
 }
 \value{
 \code{TRUE} or \code{FALSE} according as it does or does not

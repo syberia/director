@@ -4,7 +4,7 @@
 \title{Fetch a resource relative to a director object.}
 \usage{
 resource(name, provides = list(), body = TRUE, soft = FALSE, ...,
-  tracking = FALSE)
+  tracking = TRUE, check.helpers = TRUE)
 }
 \arguments{
 \item{name}{character. The name of the resource (i.e. R script) relative
@@ -28,6 +28,12 @@ function that gets executed when the `value` is accessed.}
 
 \item{tracking}{logical. Whether or not to perform modification tracking
 by pushing accessed resources to the director's stack.}
+
+\item{check.helpers}{logical. If \code{TRUE}, the resource's helpers
+(assuming it is an idempotent resource -- that is, a resource whose
+parent directory has the same name as the resource). The default is
+\code{TRUE}. If \code{FALSE}, the \code{name} parameter will not be
+converted into a resource name.}
 }
 \value{
 a four-element list with names `current`, `cached`, `value`,
@@ -59,7 +65,7 @@ easy to provide those inputs by users.
 }
 \details{
 This method will return a list containing four keys, `current`, `cached`,
-`value`, and `modified` if it finds the given resource, or \code{FALSE}
+`value`, and `modified` if it finds the given resource, or error
 if no such resource exists. The former two keys, `current` and `cached`,
 will contain information relating to the current and previous execution
 of this resource, while `value` contains a function that will execute the
