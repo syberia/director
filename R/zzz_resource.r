@@ -81,7 +81,7 @@ directorResource <- setRefClass('directorResource',
     recompile = function(...) { 
       .compiled <<- FALSE
       compile(...)
-    }
+    },
 
     # Parse a resource after it has been sourced.
     # 
@@ -93,7 +93,15 @@ directorResource <- setRefClass('directorResource',
       route <- Find(function(x) substring(resource_key, 1, nchar(x)) == x,
                     names(director$.parsers))
       if (is.null(route)) value
-      else director$.parsers[[route]](resource_key, value, provides)
+      else {
+        fn <- director$.parsers[[route]]
+        env <- new.env(parent = environment(fn))
+        environment(fn)$resource <- resource_key
+        environment(fn)$input    <- provides
+        environment(fn)$output   <- value
+        environment(fn)$director <- director
+        fn()
+      }
     },
 
     show = function() {

@@ -5,8 +5,7 @@
 register_parser <- function(path, parser) {
   stopifnot(is.character(path))
   stopifnot(is.function(parser))
-  stopifnot(length(formals(parser)) == 3 ||
-            is.element('...', names(formals(parser))))
+  stopifnot(length(formals(parser)) == 0) # Use environment to provide info
   
   if (is.element(path, names(.parsers))) {
     stop("Parser already registered for path ", sQuote(path))
