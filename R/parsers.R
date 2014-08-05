@@ -5,9 +5,14 @@
 register_parser <- function(path, parser) {
   stopifnot(is.character(path))
   stopifnot(is.function(parser))
-  stopifnot(length(formals(parser)) == 2 ||
-            is.element('...', names(formals(parsers))))
+  stopifnot(length(formals(parser)) == 3 ||
+            is.element('...', names(formals(parser))))
   
-  .parsers[[length(.parsers) + 1]] <<- parser
+  if (is.element(path, names(.parsers))) {
+    stop("Parser already registered for path ", sQuote(path))
+  }
+
+  .parsers[[path]] <<- parser
+  .parsers <<- .parsers[names(.parsers)[rev(order(sapply(names(.parsers), nchar)))]]
 }
 

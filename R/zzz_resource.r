@@ -25,7 +25,7 @@ directorResource <- setRefClass('directorResource',
     
     value = function() {
       compile()
-      .value[[1]]
+      .value
     },
 
     # Compile a resource using a resource handler.
@@ -57,7 +57,7 @@ directorResource <- setRefClass('directorResource',
       resource_cache_key <- file.path('resource_cache', digest(resource_key))
        
       # TODO: (RK) Better resource provision injection
-      source_args$local$resource <<- function(...) director$resource(...)
+      source_args$local$resource <<- function(...) director$resource(...)$value()
 
       value <- do.call(base::source, source_args)$value
       
@@ -78,6 +78,10 @@ directorResource <- setRefClass('directorResource',
       .value    <<- parse(value, source_args$local)
       .compiled <<- TRUE
     },
+    recompile = function(...) { 
+      .compiled <<- FALSE
+      compile(...)
+    }
 
     # Parse a resource after it has been sourced.
     # 
@@ -86,7 +90,12 @@ directorResource <- setRefClass('directorResource',
     # @param the parsed object.
     parse = function(value, provides) {
       # TODO: (RK) Resource parsers?
-      list(value, provides)
+      route <- Find(function(x) substring(resource_key, 1, nchar(x)) == x,
+                    names(director$.parsers))
+      if (is.null(route)) value
+      else {
+        director$.parsers[[route]](resource_key, value, provides)
+      }
     },
 
     show = function() {

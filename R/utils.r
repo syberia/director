@@ -25,7 +25,7 @@ stack <- setRefClass('stack', list(elements = 'list'), methods = list(
   empty      = function()  { length(elements) == 0 },
   push       = function(x) { elements[[length(elements) + 1]] <<- x },
   peek       = function(n = 1)  {
-    if (isTRUE(n)) n <- length(elements)
+    if (isTRUE(n)) return(elements)
     els <- seq(length(elements), length(elements) - n + 1)
     if (length(els) == 1) elements[[els]]
     else elements[els]
