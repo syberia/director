@@ -5,6 +5,9 @@
 register_parser <- function(path, parser) {
   stopifnot(is.character(path))
   stopifnot(is.function(parser))
-  #stopifnot(length(formals(parser)) == 
+  stopifnot(length(formals(parser)) == 2 ||
+            is.element('...', names(formals(parsers))))
+  
+  .parsers[[length(.parsers) + 1]] <<- parser
 }
 
