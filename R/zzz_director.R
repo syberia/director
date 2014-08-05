@@ -100,6 +100,7 @@ director <- setRefClass("director",
     exists     = director_exists,
     resource   = resource,
     compile    = compile,
+    register_parser = register_parser,
 
     show       = function() { cat("Director monitoring", sQuote(.root), "for", sQuote(.project_name), "project.\n") },
     .filename  = director_.filename
