@@ -10,6 +10,42 @@ test_that("it is able to follow a depth-1 dependency chain", {
   })
 })
 
+test_that("a parser has access to the resource key", {
+  within_file_structure(list(blah = list('one.R')), {
+    d <- director(tempdir)
+    d$register_parser('blah', function() { resource })
+    r <- d$resource('blah/one') 
+    expect_equal(r$value(), 'blah/one')
+  })
+})
+
+test_that("a parser has access to the local sourced variables", {
+  within_file_structure(list(blah = list(one.R = 'foo <- 1; bar <- "a"')), {
+    d <- director(tempdir)
+    d$register_parser('blah', function() { list(foo = input$foo, bar = input$bar) })
+    r <- d$resource('blah/one') 
+    expect_equal(r$value(), list(foo = 1, bar = "a"))
+  })
+})
+
+test_that("a parser has access to the output value", {
+  within_file_structure(list(blah = list(one.R = 'foo <- 1; bar <- "a"')), {
+    d <- director(tempdir)
+    d$register_parser('blah', function() { output })
+    r <- d$resource('blah/one') 
+    expect_equal(r$value(), 'a')
+  })
+})
+
+test_that("a parser has access to the director", {
+  within_file_structure(list(blah = list(one.R = 'foo <- 1; bar <- "a"')), {
+    d <- director(tempdir)
+    d$register_parser('blah', function() { director })
+    r <- d$resource('blah/one') 
+    expect_identical(r$value(), d)
+  })
+})
+
 ### These tests go last because they must use Sys.sleep
 
 test_that("it remembers dependencies", {
