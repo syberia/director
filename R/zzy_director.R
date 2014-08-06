@@ -102,7 +102,12 @@ director <- setRefClass("director",
     compile    = compile,
     register_parser = register_parser,
 
-    show       = function() { cat("Director monitoring", sQuote(.root), "for", .project_name, "project.\n") },
+    show       = function() {
+      cat(sep = '', "Director object",
+          if (isTRUE(nzchar(.root))) paste0(" monitoring ", sQuote(.root),
+            if (isTRUE(nzchar(.project_name))) paste(" for", .project_name, "project")),
+          ".\n")
+    },
     .filename  = director_.filename
   )
 )
