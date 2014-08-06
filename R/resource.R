@@ -115,10 +115,10 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
        value = value, modified = modified, resource_key = resource_key,
        source_args = source_args, director = .self)
 
-  if (.dependency_nesting_level > 0)
+  if (.dependency_nesting_level > 0 && isTRUE(check.helpers))
     .stack$push(list(level = .dependency_nesting_level,
                      key = resource_key,
-                     modified = modified))
+                     resource = output))
   output
 }
 

@@ -52,10 +52,7 @@ directorResource <- setRefClass('directorResource',
       director$.dependency_nesting_level <<- director$.dependency_nesting_level + 1L
       on.exit(director$.dependency_nesting_level <<- director$.dependency_nesting_level - 1L)
       local_nesting_level <- director$.dependency_nesting_level 
-
-      # TODO: (RK) Avoid this awful duplication!!
-      resource_cache_key <- file.path('resource_cache', digest(resource_key))
-       
+ 
       # TODO: (RK) Better resource provision injection
       source_args$local$resource <<- function(...) director$resource(...)$value()
 
@@ -67,12 +64,12 @@ directorResource <- setRefClass('directorResource',
       dependencies <- 
         Filter(function(dependency) dependency$level == local_nesting_level, 
                director$.stack$peek(TRUE))
-      if (any(vapply(dependencies, getElement, logical(1), name = 'modified')))
+      if (any(vapply(dependencies, function(d) d$resource$modified, logical(1))))
         modified <<- TRUE
 
-      .dependencies <<- vapply(dependencies, getElement, character(1), name = 'key')
-      director$.cache[[resource_cache_key]]$dependencies <<- .dependencies 
-      director$.cache[[resource_cache_key]]$modified <<- modified
+      cached$dependencies <<- vapply(dependencies, getElement, character(1), name = 'key')
+      cached$modified     <<- modified
+      update_cache()
 
       while (!director$.stack$empty() && director$.stack$peek()$level == local_nesting_level)
         director$.stack$pop()
@@ -108,6 +105,13 @@ directorResource <- setRefClass('directorResource',
     show = function() {
       cat("Resource", sQuote(resource_key), "under director: \n")
       director$show()
+    },
+
+    update_cache = function() {
+      # TODO: (RK) Avoid this awful duplication!!
+      resource_cache_key <- file.path('resource_cache', digest(resource_key))
+      director$.cache[[resource_cache_key]]$dependencies <<- cached$dependencies
+      director$.cache[[resource_cache_key]]$modified     <<- cached$modified
     }
 
   )
