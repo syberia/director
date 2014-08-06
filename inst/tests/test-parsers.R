@@ -53,7 +53,7 @@ test_that("a parser has access to the director", {
     r <- d$resource('blah/one') 
     expect_identical(r$value(), d)
   })
-})
+}) 
 
 test_that("it can ascertain dependencies for a complicated chain", {
   within_file_structure(list(blah = list('one.R'), foo = list('two.R'),
@@ -100,7 +100,6 @@ test_that("it remembers depth-2 dependencies", {
     d$register_parser('faz', function() { "test" })
     r <- d$resource('blah/one'); r$value()
     r <- d$resource('blah/one'); r$value()
-    browser()
     expect_false(r$modified)
     Sys.sleep(1)
     touch(file.path(tempdir, 'faz', 'three.R'))

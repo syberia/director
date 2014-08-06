@@ -109,7 +109,6 @@ directorResource <- setRefClass('directorResource',
     },
 
     update_cache = function() {
-      # TODO: (RK) Avoid this awful duplication!!
       cache_key <- resource_cache_key(resource_key)
       director$.cache[[cache_key]]$dependencies <<- cached$dependencies
       director$.cache[[cache_key]]$modified     <<- cached$modified
