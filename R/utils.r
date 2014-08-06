@@ -122,6 +122,18 @@ resource_name <- function(filename) {
   drop_idempotence(strip_r_extension(filename))
 }
 
+#' Create a resource cache key from a resource key.
+#'
+#' This is the key under whose director cache the info about the resource
+#' as of previosu execution will be stored.
+#'
+#' @param resource_key character. The resource key.
+#' @return a cache key, currently just \code{"resource_cache/"} followed by
+#'    the \code{resource_key}.
+resource_cache_key <- function(resource_key) {
+ file.path('resource_cache', digest(resource_key))
+}
+
 # Stolen from testthat:::colourise
 .fg_colours <- 
   structure(c("0;30", "0;34", "0;32", "0;36", "0;31", "0;35", "0;33",

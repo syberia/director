@@ -72,13 +72,13 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   filename <- .filename(name, FALSE, FALSE, !isTRUE(check.helpers)) # Convert resource to filename.
   resource_info   <- if (file.exists(filename)) file.info(filename)
   resource_key    <- strip_root(.root, resource_name(filename))
-  resource_cache_key <- file.path('resource_cache', digest(resource_key))
-  cached_details  <- .cache[[resource_cache_key]]
+  cache_key       <- resource_cache_key(resource_key)
+  cached_details  <- .cache[[cache_key]]
   current_details <- list(info = resource_info)
 
   if (body) current_details$body <- paste(readLines(filename), collapse = "\n")
 
-  if (identical(soft, FALSE)) .cache[[resource_cache_key]] <<- current_details
+  if (identical(soft, FALSE)) .cache[[cache_key]] <<- current_details
 
   source_args <- append(list(filename, local = provides), list(...))
   # TODO: (RK) Check if `local` is an environment in case user overwrote.
