@@ -69,7 +69,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     stop("Cannot find resource ", colourise(sQuote(name), 'red'), " in ",
          .project_name, " project ", colourise(sQuote(.root), 'blue'), ".")
 
-  filename <- .filename(name, FALSE, FALSE, isTRUE(check.helpers)) # Convert resource to filename.
+  filename <- .filename(name, FALSE, FALSE, !isTRUE(check.helpers)) # Convert resource to filename.
   resource_info   <- if (file.exists(filename)) file.info(filename)
   resource_key    <- strip_root(.root, resource_name(filename))
   resource_cache_key <- file.path('resource_cache', digest(resource_key))
