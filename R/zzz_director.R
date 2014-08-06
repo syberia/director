@@ -30,12 +30,12 @@ director_.filename <- function(name, absolute = FALSE, check.exists = TRUE, help
 
   filename <- strip_r_extension(filename)
   if (file.exists(tmp <- file.path(.root, paste0(filename, '.r'))) ||
-      file.exists(tmp <- file.path(.root, paste0(filename, 'R'))))
+      file.exists(tmp <- file.path(.root, paste0(filename, '.R'))))
     return(with_absolute(tmp))
   
   filename <- file.path(filename, dirname(filename))
   if (file.exists(tmp <- file.path(.root, paste0(filename, '.r'))) ||
-      file.exists(tmp <- file.path(.root, paste0(filename, 'R'))))
+      file.exists(tmp <- file.path(.root, paste0(filename, '.R'))))
     return(with_absolute(tmp))
 
   stop("Cannot convert resource ", sQuote(filename), " to full file path, ",
