@@ -2,7 +2,7 @@ setClassUnion('listOrNULL', c('list', 'NULL'))
 
 #' Representation of a director resource.
 #'
-#' @docType refClass
+#' @docType class
 #' @name directorResource
 #' @rdname directorResource
 directorResource <- setRefClass('directorResource',

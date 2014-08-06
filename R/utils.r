@@ -20,7 +20,7 @@ try_memoize <- function(fn) {
 }
 
 # A reference class that implements a stack data structure.
-stack <- setRefClass('stack', list(elements = 'list'), methods = list(
+shtack <- setRefClass('stack', list(elements = 'list'), methods = list(
   clear      = function()  { elements <<- list() },
   empty      = function()  { length(elements) == 0 },
   push       = function(x) { elements[[length(elements) + 1]] <<- x },
@@ -31,7 +31,7 @@ stack <- setRefClass('stack', list(elements = 'list'), methods = list(
     else elements[els]
   },
   pop        = function()  {
-    if (length(elements) == 0) stop("syberiaStructure:::stack is empty")
+    if (length(elements) == 0) stop("director:::stack is empty")
     tmp <- tail(elements, 1)[[1]]
     elements[[length(elements)]] <<- NULL
     tmp

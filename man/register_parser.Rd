@@ -3,14 +3,26 @@
 \alias{register_parser}
 \title{Register a resource parser.}
 \usage{
-register_parser(path, parser)
+register_parser(path, parser, soft = FALSE)
 }
 \arguments{
 \item{path}{character. The prefix to look for in the director.}
 
 \item{parser}{directorParser.}
+
+\item{soft}{logical. If \code{TRUE}, \code{register_parser} will faily
+silently instead of erroring if the path already has a registered
+parser. The default is \code{FALSE}.}
 }
 \description{
 Register a resource parser.
+}
+\examples{
+\dontrun{
+  d <- director('some/project')
+  d$register_parser('models', function() { print("I am a ", resource, ", a model!") })
+  r <- d$resource('models/some_model.R')
+  r$value() # Will print: I am a models/some_model, a model!
+}
 }
 
