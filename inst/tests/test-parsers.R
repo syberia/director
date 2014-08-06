@@ -37,6 +37,15 @@ test_that("a parser has access to the output value", {
   })
 })
 
+test_that("a parser has access to the resource body", {
+  within_file_structure(list(blah = list(one.R = bodystring <- 'foo <- 1; bar <- "a"')), {
+    d <- director(tempdir)
+    d$register_parser('blah', function() { resource_body })
+    r <- d$resource('blah/one') 
+    expect_equal(r$value(), bodystring)
+  })
+})
+
 test_that("a parser has access to the director", {
   within_file_structure(list(blah = list(one.R = 'foo <- 1; bar <- "a"')), {
     d <- director(tempdir)
