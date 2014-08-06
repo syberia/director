@@ -61,6 +61,8 @@ directorResource <- setRefClass('directorResource',
 
       value <- do.call(base::source, source_args)$value
       
+      .value <<- parse(value, source_args$local)
+
       # Cache dependencies.
       dependencies <- 
         Filter(function(dependency) dependency$level == local_nesting_level, 
@@ -75,7 +77,6 @@ directorResource <- setRefClass('directorResource',
       while (!director$.stack$empty() && director$.stack$peek()$level == local_nesting_level)
         director$.stack$pop()
 
-      .value    <<- parse(value, source_args$local)
       .compiled <<- TRUE
     },
     recompile = function(...) { 
