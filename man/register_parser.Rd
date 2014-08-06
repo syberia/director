@@ -3,15 +3,15 @@
 \alias{register_parser}
 \title{Register a resource parser.}
 \usage{
-register_parser(path, parser, soft = FALSE)
+register_parser(path, parser, overwrite = FALSE)
 }
 \arguments{
 \item{path}{character. The prefix to look for in the director.}
 
 \item{parser}{directorParser.}
 
-\item{soft}{logical. If \code{TRUE}, \code{register_parser} will faily
-silently instead of erroring if the path already has a registered
+\item{overwrrite}{logical. If \code{TRUE}, \code{register_parser} will overwrite
+the route instead of erroring if the path already has a registered
 parser. The default is \code{FALSE}.}
 }
 \description{
