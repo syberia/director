@@ -99,6 +99,7 @@ directorResource <- setRefClass('directorResource',
         environment(fn)$output   <- value
         environment(fn)$director <- director
         environment(fn)$resource_body <- current$body
+        environment(fn)$modified <- modified
         fn()
       }
     },
