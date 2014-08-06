@@ -118,9 +118,27 @@ directorResource <- setRefClass('directorResource',
     dependencies = function() {
       get_dependencies <- function(key) {
         deps <- director$.cache[[resource_cache_key(key)]]$dependencies %||% character(0)
-        c(deps, sapply(deps, get_dependencies), recursive = TRUE)
+        as.character(c(deps, sapply(deps, get_dependencies), recursive = TRUE))
       }
-      c(cached$dependencies, sapply(cached$dependencies, get_dependencies))
+      c(recursive = TRUE, as.character(cached$dependencies),
+        sapply(cached$dependencies, get_dependencies))
+    },
+
+    # TODO: (RK) Test this method!
+    dependencies_modified = function() {
+      dependency_resources <- lapply(dependencies(), director$resource)
+      # TODO: (RK) Do we need to worry about helpers v.s. non-helpers?
+
+      those_modified <- vapply(dependency_resources,
+        function(r) r$any_dependencies_modified(), logical(1))
+
+      vapply(dependency_resources[those_modified],
+             function(r) r$resource_key, character(1))
+    },
+
+    # TODO: (RK) Test this method!
+    any_dependencies_modified = function() {
+      modified || length(dependencies_modified()) > 0
     }
 
   )
