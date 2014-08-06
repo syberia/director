@@ -14,6 +14,6 @@ a cache key, currently just \code{"resource_cache/"} followed by
 }
 \description{
 This is the key under whose director cache the info about the resource
-as of previosu execution will be stored.
+as of previous execution will be stored.
 }
 

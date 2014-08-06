@@ -125,7 +125,7 @@ resource_name <- function(filename) {
 #' Create a resource cache key from a resource key.
 #'
 #' This is the key under whose director cache the info about the resource
-#' as of previosu execution will be stored.
+#' as of previous execution will be stored.
 #'
 #' @param resource_key character. The resource key.
 #' @return a cache key, currently just \code{"resource_cache/"} followed by
