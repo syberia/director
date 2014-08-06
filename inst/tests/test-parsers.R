@@ -22,7 +22,6 @@ test_that("it remembers dependencies", {
     expect_false(r$modified)
     Sys.sleep(1)
     touch(file.path(tempdir, 'foo', 'two.R'))
-    writeLines('""', file.path(tempdir, 'foo', 'two.R'))
     r <- d$resource('blah/one') # cache the resource info
     r$value()
     expect_true(r$modified)
