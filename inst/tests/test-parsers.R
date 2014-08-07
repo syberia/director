@@ -68,7 +68,6 @@ test_that("it can ascertain dependencies for a complicated chain", {
     d$register_parser('floop', function() { director$resource('beh')$value() })
     r <- d$resource('blah/one')
     expect_equal(r$value(), 'test')
-    browser()
     expected <- sort(c("foo/two", "faz/three", "floop/four", "beh", "gurp/five", "gurp/six"))
     expect_identical(sort(r$dependencies()), expected)
   })

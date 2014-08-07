@@ -102,6 +102,7 @@ directorResource <- setRefClass('directorResource',
         environment(fn)$resource_body <- current$body
         environment(fn)$modified <- modified
         environment(fn)$resource_object <- .self
+        assign("%||%", function(x, y) if (is.null(x)) y else x, envir = environment(fn))
         fn()
       }
     },
