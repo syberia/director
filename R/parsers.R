@@ -2,7 +2,7 @@
 #'
 #' @param path character. The prefix to look for in the director.
 #' @param parser directorParser. 
-#' @param overwrrite logical. If \code{TRUE}, \code{register_parser} will overwrite
+#' @param overwrite logical. If \code{TRUE}, \code{register_parser} will overwrite
 #'   the route instead of erroring if the path already has a registered
 #'   parser. The default is \code{FALSE}.
 #' @examples

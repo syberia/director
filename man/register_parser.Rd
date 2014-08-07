@@ -10,7 +10,7 @@ register_parser(path, parser, overwrite = FALSE)
 
 \item{parser}{directorParser.}
 
-\item{overwrrite}{logical. If \code{TRUE}, \code{register_parser} will overwrite
+\item{overwrite}{logical. If \code{TRUE}, \code{register_parser} will overwrite
 the route instead of erroring if the path already has a registered
 parser. The default is \code{FALSE}.}
 }
