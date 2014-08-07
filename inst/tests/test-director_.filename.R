@@ -1,4 +1,5 @@
 context('director$.filename')
+library(testthatsomemore)
 
 test_that('it correctly completes the name of an extensionless nested file (uppercase .R)', {
   within_file_structure(list(blah = list('test.R')), {

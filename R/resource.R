@@ -69,47 +69,40 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     stop("Cannot find resource ", colourise(sQuote(name), 'red'), " in ",
          .project_name, " project ", colourise(sQuote(.root), 'blue'), ".")
 
-  filename <- .filename(name, FALSE, FALSE, !isTRUE(check.helpers)) # Convert resource to filename.
+  filename        <- .filename(name, FALSE, FALSE, !isTRUE(check.helpers)) # Convert resource to filename.
   resource_info   <- if (file.exists(filename)) file.info(filename)
   resource_key    <- strip_root(.root, resource_name(filename))
   cache_key       <- resource_cache_key(resource_key)
   cached_details  <- .cache[[cache_key]]
   current_details <- list(info = resource_info)
 
-  if (body) current_details$body <-
-    suppressWarnings(paste(readLines(filename), collapse = "\n"))
+  if (isTRUE(body)) current_details$body <-
+    paste(readLines(filename, warn = FALSE), collapse = "\n")
 
   if (identical(soft, FALSE)) .cache[[cache_key]] <<- current_details
 
   source_args <- append(list(filename, local = provides), list(...))
   # TODO: (RK) Check if `local` is an environment in case user overwrote.
-  director_obj <- .self
-  value <- function() {
-    # TODO: (RK) Preprocess the resource?
-    # TODO: (RK) Copy env from provides to prevent double writing?
-    director_obj$compile(source_args, resource_key, tracking = tracking)
-  }
 
   modified <-
     (is.null(resource_info) && !is.null(cached_details)) || # file was deleted
     (resource_info$mtime > cached_details$info$mtime %||% 0) # file was changed
 
   resource_dir <- file.path(.root, resource_key)
-  tracking_is_on_and_resource_has_helpers <-
-    isTRUE(tracking) && isTRUE(check.helpers) &&
-    !isTRUE(modified) && # No point in checking modifications in helpers otherwise
-    is.idempotent_directory(resource_dir)
-    
-  # Touch helper files to see if they got modified.
-  helper_files <- list.files(resource_dir) # TODO: (RK) Recursive helpers?
-  same_file <- which(vapply(helper_files, 
-    function(f) strip_r_extension(f) == basename(resource_key), logical(1)))
-  helper_files <- helper_files[-same_file]
-  for (file in helper_files) {
-    helper <- resource(file.path(resource_key, file), body = FALSE,
-                       tracking = FALSE, check.helpers = FALSE)
-    if (tracking_is_on_and_resource_has_helpers)
-      modified <- modified || helper$modified
+  
+  if (is.idempotent_directory(resource_dir)) {
+    tracking_is_on_and_resource_has_helpers <-
+      isTRUE(tracking) && isTRUE(check.helpers) &&
+      !isTRUE(modified) # No point in checking modifications in helpers otherwise
+      
+    # Touch helper files to see if they got modified.
+    helper_files <- get_helpers(resource_dir)
+    for (file in helper_files) {
+      helper <- resource(file.path(resource_key, file), body = FALSE,
+                         tracking = FALSE, check.helpers = FALSE)
+      if (tracking_is_on_and_resource_has_helpers)
+        modified <- modified || helper$modified
+    }
   }
 
   output <- directorResource(current = current_details, cached = cached_details,
@@ -122,4 +115,5 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
                      resource = output))
   output
 }
+
 

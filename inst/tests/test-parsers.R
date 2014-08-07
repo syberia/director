@@ -113,7 +113,7 @@ test_that("it notices modification of a helper of a dependent resource", {
     d <- director(tempdir)
     d$register_parser('blah', function() { director$resource('foo/two')$value() })
     d$register_parser('foo', function() { "test" })
-    r <- d$resource('blah/one'); r$value()
+    r <- d$resource('blah/one'); r$value(); 
     r <- d$resource('blah/one'); r$value()
     expect_false(r$modified)
     Sys.sleep(1)
