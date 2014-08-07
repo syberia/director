@@ -1,5 +1,17 @@
 `%||%` <- function(x, y) if (is.null(x)) y else x
 
+
+# Dynamically create an accessor method for reference classes.
+accessor_method <- function(attr) {
+  fn <- eval(bquote(
+    function(`*VALUE*` = NULL)
+      if (missing(`*VALUE*`)) .(substitute(attr))
+      else .(substitute(attr)) <<- `*VALUE*`
+  ))
+  environment(fn) <- parent.frame()
+  fn
+}
+
 #' Attempt to memoize a function using the memoise package.
 #' 
 #' This function will load the \code{memoise} package if it is

@@ -1,4 +1,4 @@
-context('director_initialize')
+context('director$initialize')
 require(testthatsomemore)
 
 test_that('it errors when a directory does not exist', {
