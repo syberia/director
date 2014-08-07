@@ -94,12 +94,14 @@ directorResource <- setRefClass('directorResource',
       else {
         fn <- director$.parsers[[route]]
         env <- new.env(parent = environment(fn))
+        environment(fn) <- env # TODO: (RK) Test this!
         environment(fn)$resource <- resource_key
         environment(fn)$input    <- provides
         environment(fn)$output   <- value
         environment(fn)$director <- director
         environment(fn)$resource_body <- current$body
         environment(fn)$modified <- modified
+        environment(fn)$resource_object <- .self
         fn()
       }
     },
