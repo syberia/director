@@ -3,15 +3,44 @@
 
 #' Convert a resource to a filename.
 #'
-#' @param filename character. The filename to convert to a full path.
+#' @param name character. The resource name to convert to a full path.
 #' @param absolute character. Whether or not to return the absolute path
 #'    (i.e., prepended by the director root). The default is \code{FALSE}.
+#' @param check.exists logical. Whether or not to check if the file exists.
+#'    The default is \code{TRUE}. This should be primarily used if the file
+#'    has already been checked for existence.
+#' @param helper logical. Whether or not to handle helper files instead of resources.
+#'   The default is \code{FALSE}.
 #' @return the full path, relative to the director root if \code{full = FALSE}
 #'    and an absolute path if \code{FULL = TRUE}.
-director_.filename <- function(filename, absolute = FALSE) {
-  if (!exists(filename))
+director_.filename <- function(name, absolute = FALSE, check.exists = TRUE, helper = FALSE) {
+  filename <- name
+  if (isTRUE(check.exists) && !exists(filename, helper = isTRUE(helper)))
     stop("Cannot convert resource ", sQuote(filename), " to full file path, ",
          "as no such resource exists.")
+
+  with_absolute <- function(filename)
+    if (isTRUE(absolute)) file.path(.root, filename) else filename
+
+  # If `name` is a directory, recursively check if it's an idempotent resource.
+  if (file.exists(rooted_file <- file.path(.root, filename)) &&
+      file.info(rooted_file)$isdir)
+    return(.self$.filename(file.path(filename, basename(rooted_file)),
+                           absolute = absolute, check.exists = check.exists))
+
+  filename <- strip_r_extension(filename)
+  if (file.exists(tmp <- file.path(.root, paste0(filename, '.r'))) ||
+      file.exists(tmp <- file.path(.root, paste0(filename, '.R'))))
+    return(with_absolute(tmp))
+  
+  filename <- file.path(filename, dirname(filename))
+  if (file.exists(tmp <- file.path(.root, paste0(filename, '.r'))) ||
+      file.exists(tmp <- file.path(.root, paste0(filename, '.R'))))
+    return(with_absolute(tmp))
+
+  stop("Cannot convert resource ", sQuote(filename), " to full file path, ",
+       "as no such resource exists in ", .project_name, " project ",
+       sQuote(.root), ".")
 }
 
 #' A director is a reference class responsible for a collection of
@@ -62,15 +91,29 @@ director_.filename <- function(filename, absolute = FALSE) {
 #' @export
 director <- setRefClass("director",
   fields = list(.root = 'character', .project_name = 'character',
-                .resource_cache = 'list', .stack = 'stack'),
+                .resource_cache = 'list', .stack = 'stack',
+                .registry = 'registry', .cache = 'list',
+                .dependency_nesting_level = 'integer',
+                .parsers = 'list'),
   methods = list(
     initialize = initialize,
     exists     = director_exists,
     resource   = resource,
+    compile    = compile,
+    register_parser = register_parser,
 
-    show       = function() { cat("Director monitoring", sQuote(.root), "for", sQuote(.project_name), "project.\n") },
+    show       = function() {
+      cat(sep = '', "Director object",
+          if (isTRUE(nzchar(.root))) paste0(" monitoring ", sQuote(.root),
+            if (isTRUE(nzchar(.project_name))) paste(" for", .project_name, "project")),
+          ".\n")
+    },
     .filename  = director_.filename
   )
 )
 
+#' @docType function
+#' @name director
+#' @export
+NULL
 

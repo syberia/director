@@ -1,4 +1,5 @@
 context('director_initialize')
+require(testthatsomemore)
 
 test_that('it errors when a directory does not exist', {
   expect_error(director('-non-existent-'), 'directory does not exist')

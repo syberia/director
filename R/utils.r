@@ -16,15 +16,22 @@ try_memoize <- function(fn) {
     require(memoise)
     eval.parent(substitute(memoise(fn)))
   }
+  fn
 }
 
 # A reference class that implements a stack data structure.
-stack <- setRefClass('stack', list(elements = 'list'), methods = list(
-  initialize = function()  { elements <<- list() },
+shtack <- setRefClass('stack', list(elements = 'list'), methods = list(
+  clear      = function()  { elements <<- list() },
   empty      = function()  { length(elements) == 0 },
   push       = function(x) { elements[[length(elements) + 1]] <<- x },
+  peek       = function(n = 1)  {
+    if (isTRUE(n)) return(elements)
+    els <- seq(length(elements), length(elements) - n + 1)
+    if (length(els) == 1) elements[[els]]
+    else elements[els]
+  },
   pop        = function()  {
-    if (length(elements) == 0) stop("syberiaStructure:::stack is empty")
+    if (length(elements) == 0) stop("director:::stack is empty")
     tmp <- tail(elements, 1)[[1]]
     elements[[length(elements)]] <<- NULL
     tmp
@@ -93,7 +100,64 @@ strip_root <- function(root, filename) {
   stopifnot(is.character(root) && is.character(filename))
   if (substring(filename, 1, nchar(root)) == root) {
     filename <- substring(filename, nchar(root) + 1, nchar(filename)) 
-    gsub("^\\/", "", filename)
+    gsub("^\\/*", "", filename)
   } else filename
 }
+
+#' Convert an idempotent resource name to a non-idempotent resource name.
+#'
+#' @param filename character. The filename to convert.
+#' @return the non-idempotent filename.
+drop_idempotence <- function(filename) {
+  if (basename(dirname(filename)) == basename(filename))
+    dirname(filename)
+  else filename
+}
+
+#' Convert a filename to a resource name.
+#'
+#' @param filename character. The filename.
+#' @return the resource name (i.e., stripped of idempotence and extension).
+resource_name <- function(filename) {
+  drop_idempotence(strip_r_extension(filename))
+}
+
+#' Create a resource cache key from a resource key.
+#'
+#' This is the key under whose director cache the info about the resource
+#' as of previous execution will be stored.
+#'
+#' @param resource_key character. The resource key.
+#' @return a cache key, currently just \code{"resource_cache/"} followed by
+#'    the \code{resource_key}.
+resource_cache_key <- function(resource_key) {
+ file.path('resource_cache', digest(resource_key))
+}
+
+# Stolen from testthat:::colourise
+.fg_colours <- 
+  structure(c("0;30", "0;34", "0;32", "0;36", "0;31", "0;35", "0;33",
+  "0;37", "1;30", "1;34", "1;32", "1;36", "1;31", "1;35", "1;33",
+  "1;37"), .Names = c("black", "blue", "green", "cyan", "red",
+  "purple", "brown", "light gray", "dark gray", "light blue", "light green",
+  "light cyan", "light red", "light purple", "yellow", "white"))
+.bg_colours <- 
+  structure(c("40", "41", "42", "43", "44", "45", "46", "47"), .Names = c("black",
+  "red", "green", "brown", "blue", "purple", "cyan", "light gray"
+  ))
+
+colourise <- function (text, fg = "black", bg = NULL) {
+  term <- Sys.getenv()["TERM"]
+  colour_terms <- c("xterm-color", "xterm-256color", "screen",
+      "screen-256color")
+  if (!any(term %in% colour_terms, na.rm = TRUE)) return(text)
+  col_escape <- function(col) paste0("\033[", col, "m")
+  col <- .fg_colours[tolower(fg)]
+  if (!is.null(bg)) col <- paste0(col, .bg_colours[tolower(bg)], sep = ";")
+  init <- col_escape(col)
+  reset <- col_escape("0")
+  paste0(init, text, reset)
+}
+
+
 

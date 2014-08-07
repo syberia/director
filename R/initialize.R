@@ -5,7 +5,8 @@
 #'    error messages. For example, if a resource is not found, an error message
 #'    to the effect of "no resource foo found in your \code{project_name}
 #'    project" will be displayed.
-initialize <- function(root, project_name = root) {
+initialize <- function(root, project_name = '') {
+  if (missing(root)) return()
   if (!file.exists(root))
     stop("Cannot create a director for ", sQuote(root), " as that directory ",
           "does not exist.")
@@ -15,7 +16,9 @@ initialize <- function(root, project_name = root) {
           "and not a directory.")
 
   # Set reference class fields.
+  .dependency_nesting_level <<- 0L
   .root         <<- normalizePath(root)
+  .registry     <<- registry(file.path(.root, '.registry'))
   .project_name <<- project_name
 }
 

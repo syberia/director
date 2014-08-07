@@ -1,6 +1,8 @@
 #' Determine whether a resource exists relative to a director object.
 #'
 #' @param resource character. The name of the resource.
+#' @param helper logical. Whether or not to check helper existence
+#'   in an idempotent resource. The default is \code{FALSE}.
 #' @return \code{TRUE} or \code{FALSE} according as it does or does not
 #'   exist.
 #' @examples 
@@ -22,12 +24,14 @@
 #'   d$exists('one/helper')
 #'   d$exists('two')
 #' }
-director_exists <- function(resource) {
+director_exists <- function(resource, helper = FALSE) {
   # Definition: idempotent resources are those that share their filename
   # with the directory they reside in.
   'Determine whether or not a resource exists in this director structure.'
 
   rooted_resource <- strip_r_extension(file.path(.root, resource))
+
+  if (isTRUE(helper)) return(extensionless_exists(rooted_resource))
 
   # For a non-idempotent resource to exist, it must both be present as a .r
   # file *and* not be a helper to an idempotent resource.
@@ -49,7 +53,14 @@ director_exists <- function(resource) {
     return(TRUE)
   }
 
-  idempotent_exists <- is.idempotent_directory(rooted_resource)
+  # If it is not an idempotent resource, check if either it is an idempotent
+  # directory or it is the idempotent file itself.
+  idempotent_exists <-
+    if (file.exists(rooted_resource) && file.info(rooted_resource)$isdir)
+      is.idempotent_directory(rooted_resource)
+    else if (basename(rooted_resource) == basename(dirname(rooted_resource)))
+      extensionless_exists(rooted_resource)
+    else FALSE
 
   idempotent_exists
 }

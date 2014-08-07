@@ -10,9 +10,13 @@ Authors@R: c(person("Robert", "Krzyzanowski",
     email = "technoguyrob@gmail.com", role = c("aut", "cre")))
 Depends:
     R (>= 3.0.1)
+Imports:
+    digest
 License: MIT
 LazyData: true
+VignetteBuilder: knitr
 Suggests:
     knitr,
     testthatsomemore,
     microbenchmark
+Roxygen: list(wrap = FALSE)

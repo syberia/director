@@ -8,7 +8,7 @@
 #' easy to provide those inputs by users.
 #' 
 #' This method will return a list containing four keys, `current`, `cached`,
-#' `value`, and `modified` if it finds the given resource, or \code{FALSE}
+#' `value`, and `modified` if it finds the given resource, or error
 #' if no such resource exists. The former two keys, `current` and `cached`,
 #' will contain information relating to the current and previous execution
 #' of this resource, while `value` contains a function that will execute the
@@ -19,7 +19,11 @@
 #' @param name character. The name of the resource (i.e. R script) relative
 #'   to the root of the director object.
 #' @param provides list or environment. A list or environment of values to provide
-#'   to the resource. The default is nothing, i.e., \code{list()}.
+#'   to the resource. The default is nothing, i.e., \code{list()}. Note that
+#'   \code{provides} will be coerced to an environment, and its parent 
+#'   environment will be set to \code{parent.env(topenv())} to prevent
+#'   access to global variables (and encourage modularity and lack of side
+#'   effects. There should always be a way to write your code without them).
 #' @param body logical. Whether or not the fetch the body of the resource
 #'   in the `current` and `cached` output lists.
 #' @param soft logical. Whether or not to modify the cache to reflect
@@ -28,6 +32,11 @@
 #'   function that gets executed when the `value` is accessed.
 #' @param tracking logical. Whether or not to perform modification tracking
 #'   by pushing accessed resources to the director's stack.
+#' @param check.helpers logical. If \code{TRUE}, the resource's helpers
+#'   (assuming it is an idempotent resource -- that is, a resource whose
+#'   parent directory has the same name as the resource). The default is
+#'   \code{TRUE}. If \code{FALSE}, the \code{name} parameter will not be
+#'   converted into a resource name.
 #' @return a four-element list with names `current`, `cached`, `value`,
 #'   and `modified`. The former two will both be two-element lists containing
 #'   keys `info` and `body` (unless director has never executed the resource before
@@ -47,50 +56,70 @@
 #'   executed by the director (if this was never the case, `modified` will
 #'   be \code{FALSE}).
 resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
-                     tracking = FALSE) {
+                     tracking = TRUE, check.helpers = TRUE) {
+
   if (!is.environment(provides)) {
     provides <- if (length(provides) == 0) new.env() else as.environment(provides)
     parent.env(provides) <- parent.env(topenv())
     # Do not allow access to the global environment since resources should be self-contained.
   }
 
-  resource_info <- if (file.exists(filename)) file.info(filename)
-  if (is.null(resource_info) || resource_info$isdir) {
-    base <- if (resource_info$isdir) filename else dirname(filename)
-    resource_object <- syberia_objects(pattern = basename(filename),
-                                       base = base, fixed = TRUE)
-    filename <- file.path(base, resource_object)
-    if (length(filename) > 1) {
-      stop("Multiple syberia resources found: ",
-           paste0(filename, collapse = ", "), call. = FALSE)
-    } else if (length(filename) == 0) {
-      stop("Syberia resource ", sQuote(filename), " in syberia project ",
-           sQuote(root), " does not exist.", call. = FALSE)
-    } 
-    resource_info <- file.info(filename)
-  }
+  # Note below we are using director$exists not base::exists
+  if (!exists(name, helper = !isTRUE(check.helpers)))
+    stop("Cannot find resource ", colourise(sQuote(name), 'red'), " in ",
+         .project_name, " project ", colourise(sQuote(.root), 'blue'), ".")
 
-  resource_cache <- .get_registry_key('resource/resource_cache', .get_registry_dir(root))
-  resource_key <- function(filename, root) # Given a/b/c/d and a/b, extracts c/d
-    substring(tmp <- normalizePath(filename), nchar(normalizePath(root)) + 1, nchar(tmp))
-  resource_key <- resource_key(filename, root)
-  cache_details <- resource_cache[[resource_key]]
-
+  filename <- .filename(name, FALSE, FALSE, !isTRUE(check.helpers)) # Convert resource to filename.
+  resource_info   <- if (file.exists(filename)) file.info(filename)
+  resource_key    <- strip_root(.root, resource_name(filename))
+  cache_key       <- resource_cache_key(resource_key)
+  cached_details  <- .cache[[cache_key]]
   current_details <- list(info = resource_info)
-  if (body) current_details$body <- paste(readLines(filename), collapse = "\n")
 
-  resource_cache[[resource_key]] <- current_details
-  if (identical(soft, FALSE))
-    .set_registry_key('resource/resource_cache', resource_cache, .get_registry_dir(root))
+  if (body) current_details$body <-
+    suppressWarnings(paste(readLines(filename), collapse = "\n"))
 
-  # TODO: (RK) For large syberia projects, maybe this should dynamically
-  # switch to tracking resources using the file system rather than one big list.
+  if (identical(soft, FALSE)) .cache[[cache_key]] <<- current_details
 
   source_args <- append(list(filename, local = provides), list(...))
-  value <- function() do.call(base::source, source_args)$value
-  modified <- resource_info$mtime > cache_details$info$mtime %||% 0
+  # TODO: (RK) Check if `local` is an environment in case user overwrote.
+  director_obj <- .self
+  value <- function() {
+    # TODO: (RK) Preprocess the resource?
+    # TODO: (RK) Copy env from provides to prevent double writing?
+    director_obj$compile(source_args, resource_key, tracking = tracking)
+  }
 
-  list(current = current_details, cached = cache_details,
-       value = value, modified = modified)
+  modified <-
+    (is.null(resource_info) && !is.null(cached_details)) || # file was deleted
+    (resource_info$mtime > cached_details$info$mtime %||% 0) # file was changed
+
+  resource_dir <- file.path(.root, resource_key)
+  tracking_is_on_and_resource_has_helpers <-
+    isTRUE(tracking) && isTRUE(check.helpers) &&
+    !isTRUE(modified) && # No point in checking modifications in helpers otherwise
+    is.idempotent_directory(resource_dir)
+    
+  # Touch helper files to see if they got modified.
+  helper_files <- list.files(resource_dir) # TODO: (RK) Recursive helpers?
+  same_file <- which(vapply(helper_files, 
+    function(f) strip_r_extension(f) == basename(resource_key), logical(1)))
+  helper_files <- helper_files[-same_file]
+  for (file in helper_files) {
+    helper <- resource(file.path(resource_key, file), body = FALSE,
+                       tracking = FALSE, check.helpers = FALSE)
+    if (tracking_is_on_and_resource_has_helpers)
+      modified <- modified || helper$modified
+  }
+
+  output <- directorResource(current = current_details, cached = cached_details,
+       value = value, modified = modified, resource_key = resource_key,
+       source_args = source_args, director = .self)
+
+  if (.dependency_nesting_level > 0 && isTRUE(check.helpers))
+    .stack$push(list(level = .dependency_nesting_level,
+                     key = resource_key,
+                     resource = output))
+  output
 }
 
