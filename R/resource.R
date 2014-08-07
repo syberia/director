@@ -76,7 +76,8 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   cached_details  <- .cache[[cache_key]]
   current_details <- list(info = resource_info)
 
-  if (body) current_details$body <- paste(readLines(filename), collapse = "\n")
+  if (body) current_details$body <-
+    suppressWarnings(paste(readLines(filename), collapse = "\n"))
 
   if (identical(soft, FALSE)) .cache[[cache_key]] <<- current_details
 
