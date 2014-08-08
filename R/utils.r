@@ -143,7 +143,7 @@ resource_name <- function(filename) {
 #' @return a cache key, currently just \code{"resource_cache/"} followed by
 #'    the \code{resource_key}.
 resource_cache_key <- function(resource_key) {
- file.path('resource_cache', digest(resource_key))
+ file.path('resource_cache', resource_key)
 }
 
 #' Get all helper files associated with an idempotent resource directory.
