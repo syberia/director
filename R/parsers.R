@@ -15,7 +15,9 @@
 register_parser <- function(path, parser, overwrite = FALSE) {
   stopifnot(is.character(path))
   stopifnot(is.function(parser))
-  stopifnot(length(formals(parser)) == 0) # Use environment to provide info
+  if (length(formals(parser)) != 0) {
+    formals(parser) <- NULL # TODO: (RK) Record required uses?
+  }
   
   if (is.element(path, names(.parsers)) && !isTRUE(overwrite)) {
     stop("Parser already registered for path ", sQuote(path))
