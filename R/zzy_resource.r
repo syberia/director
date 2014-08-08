@@ -131,7 +131,7 @@ directorResource <- setRefClass('directorResource',
 
     # TODO: (RK) Test this method!
     dependencies_modified = function() {
-      dependency_resources <- lapply(dependencies(), director$resource)
+      dependency_resources <- lapply(dependencies(), director$resource, soft = TRUE)
       # TODO: (RK) Do we need to worry about helpers v.s. non-helpers?
 
       those_modified <- vapply(dependency_resources,
