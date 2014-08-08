@@ -75,6 +75,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   cache_key       <- resource_cache_key(resource_key)
   cached_details  <- .cache[[cache_key]]
   current_details <- list(info = resource_info)
+  current_details$dependencies <- cached_details$dependencies
 
   if (isTRUE(body)) current_details$body <-
     paste(readLines(filename, warn = FALSE), collapse = "\n")
