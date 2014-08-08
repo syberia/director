@@ -125,8 +125,8 @@ directorResource <- setRefClass('directorResource',
         deps <- director$.cache[[resource_cache_key(key)]]$dependencies %||% character(0)
         as.character(c(deps, sapply(deps, get_dependencies), recursive = TRUE))
       }
-      c(recursive = TRUE, as.character(cached$dependencies),
-        sapply(cached$dependencies, get_dependencies))
+      unique(c(recursive = TRUE, as.character(cached$dependencies),
+        sapply(cached$dependencies, get_dependencies)))
     },
 
     # TODO: (RK) Test this method!
