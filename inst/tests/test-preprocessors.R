@@ -44,3 +44,12 @@ test_that("it can use a preprocessor to pass information to a parser", {
   })
 })
 
+test_that("the 'source' shortcut works", {
+  within_file_structure(list(blah = list(one.R = '"test"')), {
+    d <- director(tempdir)
+    d$register_preprocessor('blah', function() { source() })
+    r <- d$resource('blah/one')
+    expect_equal(r$value(), 'test')
+  })
+})
+

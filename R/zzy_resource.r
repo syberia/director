@@ -128,6 +128,8 @@ directorResource <- setRefClass('directorResource',
         environment(fn)$modified        <- modified
         environment(fn)$resource_object <- .self
         environment(fn)$source_args     <- source_args
+        environment(fn)$source  <-
+          function() eval.parent(quote(do.call(base::source, source_args)$value))
         environment(fn)$preprocessor_output <-
           preprocessor_output <- new.env(parent = emptyenv())
         assign("%||%", function(x, y) if (is.null(x)) y else x, envir = environment(fn))
