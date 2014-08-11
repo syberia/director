@@ -1,7 +1,7 @@
 #' Register a resource parser.
 #'
 #' @param path character. The prefix to look for in the director.
-#' @param parser directorParser. 
+#' @param parser function. 
 #' @param overwrite logical. If \code{TRUE}, \code{register_parser} will overwrite
 #'   the route instead of erroring if the path already has a registered
 #'   parser. The default is \code{FALSE}.

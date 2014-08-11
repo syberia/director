@@ -94,13 +94,14 @@ director <- setRefClass("director",
                 .resource_cache = 'list', .stack = 'stack',
                 .registry = 'registry', .cache = 'list',
                 .dependency_nesting_level = 'integer',
-                .parsers = 'list'),
+                .parsers = 'list', .preprocessors = 'list'),
   methods = list(
     initialize = initialize,
     exists     = director_exists,
     resource   = resource,
     compile    = compile,
     register_parser = register_parser,
+    register_preprocessor = register_preprocessor,
 
     root       = accessor_method(.root),
     show       = function() {
