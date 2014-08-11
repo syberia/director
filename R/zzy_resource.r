@@ -56,8 +56,7 @@ directorResource <- setRefClass('directorResource',
       # TODO: (RK) Better resource provision injection
       source_args$local$resource <<- function(...) director$resource(...)$value()
 
-      value <- do.call(base::source, source_args)$value
-      
+      value <- evaluate(source_args)
       .value <<- parse(value, source_args$local, list(...))
 
       # Cache dependencies.
@@ -81,6 +80,61 @@ directorResource <- setRefClass('directorResource',
       compile(...)
     },
 
+    # Evaluate a resource's R file.
+    # 
+    # This is a straightforward call to \code{base::source}, although if a 
+    # preprocessor was registered, this will be executed before the file is sourced.
+    #
+    # A preprocessor function has the same available locals as a parser,
+    # although it also has an environment \code{preprocessor_output},
+    # and the \code{source_args} that are meant to be passed to \code{base::source}.
+    #
+    # This is an environment in which the preprocessor
+    # may place computations, which will be available in the parser via
+    # the \code{preprocessor_output} provider. The return value of the
+    # preprocessor will be the final resource vlaue (so a preprocessor must
+    # call \code{base::source} manually).
+    #
+    # Preprocessors are useful for doing things like (1) parsing through a
+    # resource's source code to extract documentation, and (2) injecting
+    # information into the local environment prior to sourcing a resource.
+    #
+    # Note: If \code{base::source} is called in the preprocessor without
+    # \code{local = source_args$local}, the parser will not be able to access
+    # the \code{input} that was generated during sourcing.
+    # 
+    # TODO: (RK) Provide examples.
+    #
+    # @param source_args list. The parameters to pass to \code{base::source}
+    #   when the file is evaluated.
+    # @return a list with \code{value} and \code{preprocessor_output},
+    #   the former the result of the preprocessor application, and the latter
+    #   the environment that is made available to the parser later on.
+    evaluate = function(source_args) {
+      route <- Find(function(x) substring(resource_key, 1, nchar(x)) == x,
+        names(director$.preprocessors))
+
+      if (is.null(route)) {
+        list(value = do.call(base::source, source_args)$value,
+             preprocessor_output = emptyenv())
+      }
+      else {
+        fn <- director$.preprocessors[[route]]
+        env <- new.env(parent = environment(fn))
+        environment(fn) <- env # TODO: (RK) Test this!
+        environment(fn)$resource        <- resource_key
+        environment(fn)$director        <- director
+        environment(fn)$resource_body   <- current$body
+        environment(fn)$modified        <- modified
+        environment(fn)$resource_object <- .self
+        environment(fn)$source_args     <- source_args
+        environment(fn)$preprocessor_output <-
+          preprocessor_output <- new.env(parent = emptyenv())
+        assign("%||%", function(x, y) if (is.null(x)) y else x, envir = environment(fn))
+        list(value = fn(), preprocessor_output = preprocessor_output)
+      }
+    },
+
     # Parse a resource after it has been sourced.
     # 
     # @param value ANY. The return value of the resource file.
@@ -90,19 +144,20 @@ directorResource <- setRefClass('directorResource',
       # TODO: (RK) Resource parsers?
       route <- Find(function(x) substring(resource_key, 1, nchar(x)) == x,
                     names(director$.parsers))
-      if (is.null(route)) value
+      if (is.null(route)) value$value
       else {
         fn <- director$.parsers[[route]]
         env <- new.env(parent = environment(fn))
         environment(fn) <- env # TODO: (RK) Test this!
-        environment(fn)$resource <- resource_key
-        environment(fn)$input    <- provides
-        environment(fn)$output   <- value
-        environment(fn)$director <- director
-        environment(fn)$resource_body <- current$body
-        environment(fn)$modified <- modified
-        environment(fn)$resource_object <- .self
-        environment(fn)$args     <- args
+        environment(fn)$resource            <- resource_key
+        environment(fn)$input               <- provides
+        environment(fn)$output              <- value$value
+        environment(fn)$preprocessor_output <- value$preprocessor_output
+        environment(fn)$director            <- director
+        environment(fn)$resource_body       <- current$body
+        environment(fn)$modified            <- modified
+        environment(fn)$resource_object     <- .self
+        environment(fn)$args                <- args
         
         assign("%||%", function(x, y) if (is.null(x)) y else x, envir = environment(fn))
         fn()
