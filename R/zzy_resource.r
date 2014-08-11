@@ -23,8 +23,8 @@ directorResource <- setRefClass('directorResource',
       .compiled    <<- FALSE
     },
     
-    value = function() {
-      compile()
+    value = function(...) {
+      compile(...)
       .value
     },
 
@@ -33,7 +33,7 @@ directorResource <- setRefClass('directorResource',
     # @param tracking logical. Whether or not to perform modification tracking
     #   by pushing accessed resources to the director's stack. The default is
     #   \code{TRUE}.
-    compile = function(tracking = TRUE) {
+    compile = function(..., tracking = TRUE) {
       if (isTRUE(.compiled)) return(TRUE) 
 
       if (!is.element('local', names(source_args)))
@@ -58,7 +58,7 @@ directorResource <- setRefClass('directorResource',
 
       value <- do.call(base::source, source_args)$value
       
-      .value <<- parse(value, source_args$local)
+      .value <<- parse(value, source_args$local, list(...))
 
       # Cache dependencies.
       dependencies <- 
@@ -86,7 +86,7 @@ directorResource <- setRefClass('directorResource',
     # @param value ANY. The return value of the resource file.
     # @param provides environment. The local environment it was sourced in.
     # @param the parsed object.
-    parse = function(value, provides) {
+    parse = function(value, provides, args = list()) {
       # TODO: (RK) Resource parsers?
       route <- Find(function(x) substring(resource_key, 1, nchar(x)) == x,
                     names(director$.parsers))
@@ -102,6 +102,8 @@ directorResource <- setRefClass('directorResource',
         environment(fn)$resource_body <- current$body
         environment(fn)$modified <- modified
         environment(fn)$resource_object <- .self
+        environment(fn)$args     <- args
+        
         assign("%||%", function(x, y) if (is.null(x)) y else x, envir = environment(fn))
         fn()
       }
@@ -123,13 +125,13 @@ directorResource <- setRefClass('directorResource',
         deps <- director$.cache[[resource_cache_key(key)]]$dependencies %||% character(0)
         as.character(c(deps, sapply(deps, get_dependencies), recursive = TRUE))
       }
-      c(recursive = TRUE, as.character(cached$dependencies),
-        sapply(cached$dependencies, get_dependencies))
+      unique(c(recursive = TRUE, as.character(cached$dependencies),
+        sapply(cached$dependencies, get_dependencies)))
     },
 
     # TODO: (RK) Test this method!
     dependencies_modified = function() {
-      dependency_resources <- lapply(dependencies(), director$resource)
+      dependency_resources <- lapply(dependencies(), director$resource, soft = TRUE)
       # TODO: (RK) Do we need to worry about helpers v.s. non-helpers?
 
       those_modified <- vapply(dependency_resources,

@@ -102,6 +102,7 @@ director <- setRefClass("director",
     compile    = compile,
     register_parser = register_parser,
 
+    root       = accessor_method(.root),
     show       = function() {
       cat(sep = '', "Director object",
           if (isTRUE(nzchar(.root))) paste0(" monitoring ", sQuote(.root),
