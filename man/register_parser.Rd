@@ -8,7 +8,7 @@ register_parser(path, parser, overwrite = FALSE)
 \arguments{
 \item{path}{character. The prefix to look for in the director.}
 
-\item{parser}{directorParser.}
+\item{parser}{function.}
 
 \item{overwrite}{logical. If \code{TRUE}, \code{register_parser} will overwrite
 the route instead of erroring if the path already has a registered
