@@ -23,8 +23,9 @@ directorResource <- setRefClass('directorResource',
       .compiled    <<- FALSE
     },
     
-    value = function(...) {
-      compile(...)
+    value = function(..., recompile. = FALSE) {
+      if (isTRUE(recompile.)) recompile(...)
+      else compile(...)
       .value
     },
 

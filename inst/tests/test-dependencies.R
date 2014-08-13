@@ -1,4 +1,5 @@
 context('resource dependencies')
+library(testthatsomemore)
 
 test_that('it correctly identifies a resource run-time dependency for a simple example', {
   within_file_structure(list(bar.R = 'resource("foo")', 'foo.R'), { d <- director(tempdir)
