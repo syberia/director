@@ -95,14 +95,15 @@ director_find <- function(search, method = 'wildcard', base = '', by_mtime = TRU
     pattern <- strip_r_extension(search) # Strip file extension
     if (identical(method, 'wildcard')) {
       pattern <- gsub('([]./\\*+()])', '\\\\\\1', pattern)
-      pattern <- gsub('([^\\])', '\\1.*', pattern) # turn this into ctrl+p
+      pattern <- gsub('([^\\$^])', '.*\\1', pattern) # turn this into ctrl+p
+      pattern <- gsub('^.*', '^', pattern, fixed = TRUE)
     }
     fixed <- identical(method, 'partial')
     suppressWarnings({ # ignore.case = T with fixed = T gives harmless warning 
       all_files <- grep(pattern, all_files, fixed = fixed,
                         value = TRUE, ignore.case = TRUE)
       idempotent_objects <- idempotent_objects[
-        grep(pattern, names(idempotent_objects),
+        grep(pattern, idempotent_objects,
              fixed = fixed, FALSE, ignore.case = TRUE)]
     })
   }
