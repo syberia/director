@@ -19,14 +19,16 @@
 #'     \code{director$exists}.}
 #' }
 #'
-#' @param search character. The resources to search for.
+#' @param search character. The resources to search for. The default is
+#'    \code{''}, which will list all resources within the \code{base}.
 #' @param method character. The search method. The available options
 #'    are \code{"wildcard"}, code{"substring"}, or \code{"exact"}. See the function
 #'    description for the full explanation of these methods. The defailt is
 #'    \code{"wildcard"}.
 #' @param base character. A prefix under which to look for. For example,
 #'    if \code{base = "subdir"}, then only resources under the \code{"subdir"}
-#'    directory (relative to the director root) will be returned.
+#'    directory (relative to the director root) will be returned. The default is
+#'    \code{''}, which will list all resources within the director root.
 #' @param by_mtime logical. Whether or not to sort results by modification time.
 #'    The default is \code{TRUE}, so that the first result is the most recently
 #'    modified resource.
@@ -51,7 +53,7 @@
 #'   d$find('none', method = 'exact')
 #'   d$exists('two')
 #' }
-director_find <- function(search, method = 'wildcard', base = '', by_mtime = TRUE) {
+director_find <- function(search = '', method = 'wildcard', base = '', by_mtime = TRUE) {
   # Definition: idempotent resources are those that share their filename
   # with the directory they reside in.
   'Look for resources by wildcard, partial, or exact matches.'

@@ -3,10 +3,12 @@
 \alias{director_find}
 \title{Find resources within a director project.}
 \usage{
-director_find(search, method = "wildcard", base = "", by_mtime = TRUE)
+director_find(search = "", method = "wildcard", base = "",
+  by_mtime = TRUE)
 }
 \arguments{
-\item{search}{character. The resources to search for.}
+\item{search}{character. The resources to search for. The default is
+\code{''}, which will list all resources within the \code{base}.}
 
 \item{method}{character. The search method. The available options
 are \code{"wildcard"}, code{"substring"}, or \code{"exact"}. See the function
@@ -15,7 +17,8 @@ description for the full explanation of these methods. The defailt is
 
 \item{base}{character. A prefix under which to look for. For example,
 if \code{base = "subdir"}, then only resources under the \code{"subdir"}
-directory (relative to the director root) will be returned.}
+directory (relative to the director root) will be returned. The default is
+\code{''}, which will list all resources within the director root.}
 
 \item{by_mtime}{logical. Whether or not to sort results by modification time.
 The default is \code{TRUE}, so that the first result is the most recently
