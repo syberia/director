@@ -31,6 +31,7 @@
 #'    The default is \code{TRUE}, so that the first result is the most recently
 #'    modified resource.
 #' @return a character vector of matched resources.
+#' @examples
 #' \dontrun{
 #'   # Imagine we have a file structure:
 #'   #   - foo
@@ -39,7 +40,7 @@
 #'   #       - helper.R
 #'   #     - two.R
 #'   #
-#'   # Then the bellow will return \code{'foo/one'}, \code{'two'}, and \code''},
+#'   # Then the bellow will return \code{'foo/one'}, \code{'two'}, and \code{''},
 #'   # respectively. Note that the \code{"helper.R"} file is not considered a
 #'   # resource by the director as \code{"one.R"} shares its name with its
 #'   # parent directory and is considered the accessible resource.
