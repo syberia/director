@@ -153,5 +153,3 @@ test_that('modified is FALSE if both get modified and a followup second check is
   })
 })
 
-# TODO: (RK) Test the ... parameter of $value() / $compile() / $parse() 
-
