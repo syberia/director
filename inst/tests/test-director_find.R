@@ -8,3 +8,4 @@ test_that('it correctly finds no files in an empty directory', {
   })
 })
 
+
