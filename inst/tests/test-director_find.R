@@ -41,3 +41,10 @@ test_that('it correctly finds a nested file using wildcard search', {
                      info = 'The find method should have found the nested resource /uno/dos/tres/quatro.')
   })
 })
+
+test_that('it correctly does not find a nested file using wildcard search', {
+  within_file_structure(list(uno = list(dos = list(tres = list('quatro.R')))), { d <- director(tempdir)
+    expect_equal(0, length(d$find('ooeuaoo', method = 'wildcard')),
+                 info = 'The find method should not have found the nested resource /uno/dos/tres/quatro.')
+  })
+})
