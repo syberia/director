@@ -1,1 +1,3 @@
 - Optional existence check on resources (pure preprocessor)
+- Support virtual resources (so parsers and preprocessors dont need actual files present)
+- Finish README.
