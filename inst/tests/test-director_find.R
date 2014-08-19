@@ -48,3 +48,18 @@ test_that('it correctly does not find a nested file using wildcard search', {
                  info = 'The find method should not have found the nested resource /uno/dos/tres/quatro.')
   })
 })
+
+test_that('it correctly uses a base to look for an exact match', {
+  within_file_structure(list(uno = list('dos.R')), { d <- director(tempdir)
+    expect_identical('/uno/dos', d$find('dos', base = '/uno', method = 'exact'),
+      info = 'Since we are looking for dos with base uno, it should be found.')
+  })
+})
+
+test_that('it correctly uses a base to look for a partial match', {
+  within_file_structure(list(uno = list(dos = list('tres.R'))), { d <- director(tempdir)
+    expect_identical('/uno/dos/tres', d$find('os/t', base = '/uno', method = 'partial'),
+      info = 'Since we are looking for "os/t" with base uno, it should find /uno/dos/tres.')
+  })
+})
+
