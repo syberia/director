@@ -23,7 +23,7 @@
 #'    \code{''}, which will list all resources within the \code{base}.
 #' @param method character. The search method. The available options
 #'    are \code{"wildcard"}, code{"substring"}, or \code{"exact"}. See the function
-#'    description for the full explanation of these methods. The defailt is
+#'    description for the full explanation of these methods. The default is
 #'    \code{"wildcard"}.
 #' @param base character. A prefix under which to look for. For example,
 #'    if \code{base = "subdir"}, then only resources under the \code{"subdir"}
@@ -93,7 +93,7 @@ director_find <- function(search = '', method = 'wildcard', base = '', by_mtime 
   # this separation is necessary to prevent things like looking for "2.1.2"
   # catching "model/2.1.1/2.1.1", which would be wrong.
   if (identical(method, 'exact')) {
-    return(Find(function(x) x == search, all_files) %||% character(0))
+    return(file.path(base, Find(function(x) x == search, all_files) %||% character(0)))
   } else if (!identical(search, '')) {
     pattern <- strip_r_extension(search) # Strip file extension
     if (identical(method, 'wildcard')) {
