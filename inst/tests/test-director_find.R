@@ -12,3 +12,9 @@ test_that('it correctly finds a simple file in the root', {
     expect_identical('/hello', d$find('hello'), info = 'The find method should have found the file "hello".')
   })
 })
+
+test_that('it correctly finds a simple file and not the other in the root', {
+  within_file_structure(list('hello.R', 'boo.R'), { d <- director(tempdir)
+    expect_identical('/hello', d$find('ell'), info = 'The find method should have found just the file "hello".')
+  })
+})
