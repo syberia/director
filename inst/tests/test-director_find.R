@@ -18,3 +18,11 @@ test_that('it correctly finds a simple file and not the other in the root', {
     expect_identical('/hello', d$find('ell'), info = 'The find method should have found just the file "hello".')
   })
 })
+
+test_that('it correctly finds a simple nested file', {
+  within_file_structure(list(uno = list('dos.R')), { d <- director(tempdir)
+    expect_identical('/uno/dos', d$find('o/do'),
+                     info = 'The find method should have found the nested resource /uno/dos.')
+  })
+})
+
