@@ -58,5 +58,7 @@ Throughout, a "resource" refers to an R script
 
 \describe{
 \item{\code{exists(resource, helper = FALSE)}}{Determine whether or not a resource exists in this director structure.}
+
+\item{\code{find(search = "", method = "wildcard", base = "", by_mtime = TRUE)}}{Look for resources by wildcard, partial, or exact matches.}
 }}
 

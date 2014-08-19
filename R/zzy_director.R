@@ -102,6 +102,7 @@ director <- setRefClass("director",
     compile    = compile,
     register_parser = register_parser,
     register_preprocessor = register_preprocessor,
+    find       = director_find,
 
     root       = accessor_method(.root),
     show       = function() {
