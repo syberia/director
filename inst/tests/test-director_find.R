@@ -26,3 +26,9 @@ test_that('it correctly finds a simple nested file', {
   })
 })
 
+test_that('it correctly finds a nested file using wildcard search', {
+  within_file_structure(list(uno = list(dos = list(tres = list('quatro.R')))), { d <- director(tempdir)
+    expect_identical('/uno/dos/tres/quatro', d$find('ooeuao'),
+                     info = 'The find method should have found the nested resource /uno/dos/tres/quatro.')
+  })
+})
