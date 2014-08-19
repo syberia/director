@@ -63,3 +63,10 @@ test_that('it correctly uses a base to look for a partial match', {
   })
 })
 
+test_that('it correctly uses a base to look for a wildcard match', {
+  within_file_structure(list(uno = list(dos = list('tres.R'))), { d <- director(tempdir)
+    expect_identical('/uno/dos/tres', d$find('ots', base = '/uno', method = 'wildcard'),
+      info = 'Since we are looking for "os/t" with base uno, it should find /uno/dos/tres.')
+  })
+})
+
