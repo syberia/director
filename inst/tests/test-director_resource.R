@@ -169,3 +169,12 @@ test_that('a sourced resource can access helpers', {
   })
 })
 
+test_that('a sourced resource can access existence checks', {
+  within_file_structure(list(blah.R = 'resource_exists("blah")',
+                             foo.R = 'resource_exists("baz")'), {
+    d <- director(tempdir)
+    expect_true(d$resource('blah')$value())
+    expect_false(d$resource('foo')$value())
+  })
+})
+
