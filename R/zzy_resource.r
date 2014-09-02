@@ -59,6 +59,8 @@ directorResource <- setRefClass('directorResource',
  
       # TODO: (RK) Better resource provision injection
       source_args$local$resource <<- function(...) director$resource(...)$value()
+      source_args$local$helper   <<-
+        function(...) director$resource(..., check.helpers = FALSE)$value(parse. = FALSE)
 
       value <- evaluate(source_args)
       if (isTRUE(parse.)) .value <<- parse(value, source_args$local, list(...))

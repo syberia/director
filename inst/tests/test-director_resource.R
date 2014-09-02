@@ -161,3 +161,11 @@ test_that('it can skip parsing', {
     expect_identical(d$resource('blah')$value(parse. = FALSE), 'hello')
   })
 })
+
+test_that('a sourced resource can access helpers', {
+  within_file_structure(list(blah = list(blah.R = 'helper("blah/foo")', foo.R = '1')), {
+    d <- director(tempdir)
+    expect_identical(d$resource('blah')$value(), 1)
+  })
+})
+
