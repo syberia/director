@@ -1,4 +1,5 @@
 context('director$resource')
+library(testthatsomemore)
 
 test_that('asking for a non-existent resource returns an error', {
   within_file_structure(, { d <- director(tempdir)
@@ -153,3 +154,10 @@ test_that('modified is FALSE if both get modified and a followup second check is
   })
 })
 
+test_that('it can skip parsing', {
+  within_file_structure(list(blah.R = '"hello"'), { d <- director(tempdir)
+    d$register_parser('blah', function() "world")
+    r <- d$resource('blah') # cache the resource info
+    expect_identical(d$resource('blah')$value(parse. = FALSE), 'hello')
+  })
+})

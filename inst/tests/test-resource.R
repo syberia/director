@@ -1,4 +1,5 @@
 context('resource refClass')
+library(testthatsomemore)
 # TODO: (RK) Test the ... parameter of $value() / $compile() / $parse() 
 
 test_that('calling $value() twice keeps a cache', {

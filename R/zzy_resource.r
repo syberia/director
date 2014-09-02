@@ -31,10 +31,13 @@ directorResource <- setRefClass('directorResource',
 
     # Compile a resource using a resource handler.
     #
+    # @param parse. logical. Whether or not to apply parsers. Note that
+    #   it is impossible to not apply preprocessors, since it is
+    #   the preprocessor's responsibility to source the file of the resource.
     # @param tracking logical. Whether or not to perform modification tracking
     #   by pushing accessed resources to the director's stack. The default is
     #   \code{TRUE}.
-    compile = function(..., tracking = TRUE) {
+    compile = function(..., parse. = TRUE, tracking = TRUE) {
       if (isTRUE(.compiled)) return(TRUE) 
 
       if (!is.element('local', names(source_args)))
@@ -58,7 +61,8 @@ directorResource <- setRefClass('directorResource',
       source_args$local$resource <<- function(...) director$resource(...)$value()
 
       value <- evaluate(source_args)
-      .value <<- parse(value, source_args$local, list(...))
+      if (isTRUE(parse.)) .value <<- parse(value, source_args$local, list(...))
+      else .value <<- value$value
 
       # Cache dependencies.
       dependencies <- 

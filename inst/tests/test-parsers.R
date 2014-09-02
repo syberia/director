@@ -1,4 +1,5 @@
 context('resource parsers')
+library(testthatsomemore)
 
 test_that("it is able to follow a depth-1 dependency chain", {
   within_file_structure(list(blah = list('one.R'), foo = list('two.R')), {
