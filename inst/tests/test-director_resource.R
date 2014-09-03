@@ -178,3 +178,11 @@ test_that('a sourced resource can access existence checks', {
   })
 })
 
+test_that('a sourced resource can pass args', {
+  within_file_structure(list(blah.R = ''), {
+    d <- director(tempdir)
+    d$register_parser('blah', function(args) args$test)
+    expect_identical(d$resource('blah')$value(test = 1), 1)
+  })
+})
+
