@@ -123,6 +123,6 @@ director_find <- function(search = '', method = 'wildcard', base = '', by_mtime 
     all_files <- all_files[order(descending_by_modification_time)]
   }
 
-  file.path(base, all_files) # TODO: (RK) Handle base better here
+  gsub('//', '/', fixed = TRUE, file.path(base, all_files)) # TODO: (RK) Handle base better here
 }
 
