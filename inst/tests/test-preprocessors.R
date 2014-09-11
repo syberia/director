@@ -53,3 +53,16 @@ test_that("the 'source' shortcut works", {
   })
 })
 
+test_that("it can tell if a preprocessor exists for a resource", {
+  within_file_structure(list(), { d <- director(tempdir)
+    d$register_preprocessor('test', function() {} )
+    expect_true(d$has_preprocessor('test'))
+  })
+})
+
+test_that("it can tell if a preprocessor doesn't exists for a resource", {
+  within_file_structure(list(), { d <- director(tempdir)
+    expect_false(d$has_preprocessor('test'))
+  })
+})
+

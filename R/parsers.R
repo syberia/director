@@ -14,6 +14,7 @@
 #' }
 register_parser <- function(path, parser, overwrite = FALSE) {
   stopifnot(is.character(path))
+  parser <- if (missing(parser)) function() { } else parser
   stopifnot(is.function(parser))
   if (length(formals(parser)) != 0) {
     formals(parser) <- NULL # TODO: (RK) Record required uses?
