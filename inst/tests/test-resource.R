@@ -27,3 +27,8 @@ test_that('it can process an virtual resource', {
   })
 })
 
+test_that('it errors on a non-existent resource', {
+  within_file_structure(list(), { d <- director(tempdir)
+    expect_error(d$resource('blah')$value(), 'Cannot find')
+  })
+})

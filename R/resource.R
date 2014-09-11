@@ -68,7 +68,6 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   if (!exists(name, helper = !isTRUE(check.helpers))) {
     # TODO: (RK) Should assuming virtual resource be the right behavior here?
 
-
     if (!has_preprocessor(name)) { # No preprocessor exists
       stop("Cannot find resource ", colourise(sQuote(name), 'red'), " in ",
            .project_name, " project ", colourise(sQuote(.root), 'blue'), ".")
