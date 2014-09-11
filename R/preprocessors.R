@@ -32,6 +32,7 @@ register_preprocessor <- function(path, preprocessor, overwrite = FALSE) {
 #'
 #' @param resource_path character. The resource name.
 has_preprocessor <- function(resource_path) {
-
+  !is.null(Find(function(x) substring(resource_path, 1, nchar(x)) == x,
+    names(.self$.preprocessors)))
 }
 
