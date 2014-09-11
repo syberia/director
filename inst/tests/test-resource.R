@@ -20,7 +20,7 @@ test_that('calling $value(recompile. = TRUE) results in recompilation', {
   })
 })
 
-test_that('it can process an virtual resource', {
+test_that('it can process a virtual resource', {
   within_file_structure(list(), { d <- director(tempdir)
     d$register_preprocessor('blah', function() { 'virtual resource' })
     expect_identical(d$resource('blah!')$value(), 'virtual resource')
