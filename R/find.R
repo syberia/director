@@ -69,7 +69,7 @@ director_find <- function(search = '', method = 'wildcard', base = '', by_mtime 
          "'exact'.")
 
   abs_dirname <- function(x) if ((tmp <- dirname(x)) == '.') base else tmp
-  all_files <- list.files(file.path(root(), base), recursive = TRUE)
+  all_files <- list.files(file.path(root(), base), pattern = '\\.[rR]$', recursive = TRUE)
 
   # Idempotent objects are those whose filename is the same as the
   # name of the directory they reside in. This is helpful for, e.g.,
