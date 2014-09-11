@@ -124,3 +124,9 @@ test_that("it notices modification of a helper of a dependent resource", {
   })
 })
 
+test_that("supports missing parsers", {
+  within_file_structure(list(), { d <- director(tempdir)
+    assert(d$register_parser('test'))
+  })
+})
+

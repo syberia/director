@@ -12,7 +12,7 @@ directorResource <- setRefClass('directorResource',
                 .dependencies = 'character', .compiled = 'logical',
                 .value = 'ANY'),
   methods = list(
-    initialize = function(current, cached, value, modified, resource_key,
+    initialize = function(current, cached, modified, resource_key,
                           source_args, director) {
       current      <<- current
       cached       <<- cached
@@ -41,11 +41,13 @@ directorResource <- setRefClass('directorResource',
       if (isTRUE(.compiled)) return(TRUE) 
 
       if (!is.element('local', names(source_args)))
-        stop("To compile ", sQuote(source_args[[1]]), " you must include ",
-             dQuote('local'), " in the list of arguments to pass to base::source")
+        stop("To compile ", sQuote(source_args[[1]] %||% 'this resource'),
+             " you must include ", dQuote('local'),
+             " in the list of arguments to pass to base::source")
       else if (!is.environment(source_args$local))
-        stop("To compile ", sQuote(source_args[[1]]), " you must include an ",
-             "environment in the ", dQuote('local'), " parameter to base::source.")
+        stop("To compile ", sQuote(source_args[[1]] %||% 'this resource'),
+             " you must include an ", "environment in the ", dQuote('local'),
+             " parameter to base::source.")
 
       # We will be tracking what dependencies (other resources) are loaded
       # during the compilation of this resource. We have a dependency nesting

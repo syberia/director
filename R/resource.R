@@ -65,9 +65,21 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   }
 
   # Note below we are using director$exists not base::exists
-  if (!exists(name, helper = !isTRUE(check.helpers)))
-    stop("Cannot find resource ", colourise(sQuote(name), 'red'), " in ",
-         .project_name, " project ", colourise(sQuote(.root), 'blue'), ".")
+  if (!exists(name, helper = !isTRUE(check.helpers))) {
+    # TODO: (RK) Should assuming virtual resource be the right behavior here?
+
+    route <- Find(function(x) substring(name, 1, nchar(x)) == x,
+      names(.self$.preprocessors))
+    if (is.null(route)) { # No preprocessor exists
+      stop("Cannot find resource ", colourise(sQuote(name), 'red'), " in ",
+           .project_name, " project ", colourise(sQuote(.root), 'blue'), ".")
+    }
+
+    # If this resource does not exist, let the preprocessor handle it instead.
+    return(directorResource(current = NULL, cached = NULL,
+      modified = TRUE, resource_key = name,
+      source_args = list(local = new.env()), director = .self))
+  }
 
   filename        <- .filename(name, FALSE, FALSE, !isTRUE(check.helpers)) # Convert resource to filename.
   resource_info   <- if (file.exists(filename)) file.info(filename)
@@ -107,7 +119,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   }
 
   output <- directorResource(current = current_details, cached = cached_details,
-       value = value, modified = modified, resource_key = resource_key,
+       modified = modified, resource_key = resource_key,
        source_args = source_args, director = .self)
 
   if (.dependency_nesting_level > 0 && isTRUE(check.helpers))
