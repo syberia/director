@@ -19,8 +19,10 @@ director_.filename <- function(name, absolute = FALSE, check.exists = TRUE, help
     stop("Cannot convert resource ", sQuote(filename), " to full file path, ",
          "as no such resource exists.")
 
-  with_absolute <- function(filename)
+  with_absolute <- function(filename) {
+    filename <- gsub('//', '/', filename, fixed = TRUE)
     if (isTRUE(absolute)) file.path(.root, filename) else filename
+  }
 
   # If `name` is a directory, recursively check if it's an idempotent resource.
   if (file.exists(rooted_file <- file.path(.root, filename)) &&
@@ -94,7 +96,7 @@ director <- setRefClass("director",
                 .resource_cache = 'list', .stack = 'stack',
                 .registry = 'registry', .cache = 'list',
                 .dependency_nesting_level = 'integer',
-                .parsers = 'list', .preprocessors = 'list'),
+                .parsers = 'list', .preprocessors = 'list', .cached_resources = 'character'),
   methods = list(
     initialize = initialize,
     exists     = director_exists,

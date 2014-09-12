@@ -164,6 +164,19 @@ get_helpers <- function(path) {
   helper_files <- helper_files[-same_file]
 }
 
+#' Whether or not any substring of a string is any of a set of strings.
+#'
+#' @param string character.
+#' @param set_of_strings character.
+#' @return logical
+#' @examples
+#' stopifnot(any_is_substring_of('test', c('blah', 'te', 'woo'))) # TRUE
+#' stopifnot(!any_is_substring_of('test', c('blah', 'woo'))) # FALSE
+any_is_substring_of <- function(string, set_of_strings) {
+  any(vapply(set_of_strings,
+             function(x) substring(string, 1, nchar(x)) == x, logical(1)))
+}
+
 # Stolen from testthat:::colourise
 .fg_colours <- 
   structure(c("0;30", "0;34", "0;32", "0;36", "0;31", "0;35", "0;33",
