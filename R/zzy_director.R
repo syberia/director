@@ -32,8 +32,8 @@ director_.filename <- function(name, absolute = FALSE, check.exists = TRUE, help
                            absolute = absolute, check.exists = check.exists))
 
   filename <- strip_r_extension(filename)
-  if (file.exists(tmp <- file.path(.root, tmp <- paste0(filename, '.r'))) ||
-      file.exists(tmp <- file.path(.root, tmp <- paste0(filename, '.R'))))
+  if (file.exists(tmp <- file.path(.root, paste0(filename, '.r'))) ||
+      file.exists(tmp <- file.path(.root, paste0(filename, '.R'))))
     return(with_absolute(tmp))
   
   filename <- file.path(filename, dirname(filename))
