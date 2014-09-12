@@ -158,7 +158,7 @@ resource_cache_key <- function(resource_key) {
 #'   get_helpers("model")
 #' }
 get_helpers <- function(path) {
-  helper_files <- list.files(path) # TODO: (RK) Recursive helpers?
+  helper_files <- list.files(path, pattern = '\\.[rR]$') # TODO: (RK) Recursive helpers?
   same_file <- which(vapply(helper_files, 
     function(f) strip_r_extension(f) == basename(path), logical(1)))
   helper_files <- helper_files[-same_file]
