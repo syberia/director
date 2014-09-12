@@ -121,3 +121,8 @@ director <- setRefClass("director",
 #' @export
 NULL
 
+#' Whether or not an object is a director.
+#' @param x ANY.
+#' @export
+is.director <- function(x) is(x, 'director')
+
