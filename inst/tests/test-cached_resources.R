@@ -1,4 +1,5 @@
 context('cached resources')
+library(testthatsomemore)
 
 test_that('it can cache a NULL resource correctly', {
   within_file_structure(list(foo.R = 'cat("only once")'), { d <- director(tempdir)  
