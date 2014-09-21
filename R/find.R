@@ -116,9 +116,9 @@ director_find <- function(search = '', method = 'wildcard', base = '', by_mtime 
   # to not use the whole path of the latter.
   all_files <- unname(c(all_files, idempotent_objects))
 
-  if (identical(by_mtime, TRUE)) {
+  if (identical(by_mtime, TRUE) && length(all_files) > 0) {
     descending_by_modification_time <-
-      -vapply(file.path(base, all_files),
+      -vapply(file.path(base, .filename(file.path(base, all_files))),
               function(f) file.info(f)$mtime, numeric(1))
     all_files <- all_files[order(descending_by_modification_time)]
   }
