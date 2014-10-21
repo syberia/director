@@ -60,7 +60,11 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
 
   if (!is.environment(provides)) {
     provides <- if (length(provides) == 0) new.env() else as.environment(provides)
-    parent.env(provides) <- parent.env(topenv())
+    if (base::exists('..director_inject', envir = parent.env(provides), inherits = FALSE)) {
+      # TODO: (RK) Calling parent.env here twice since we're doing environment injection
+      # in resource$compile - is there a better way?
+      parent.env(parent.env(provides)) <- parent.env(topenv())
+    } else parent.env(provides) <- parent.env(topenv())
     # Do not allow access to the global environment since resources should be self-contained.
   }
 
