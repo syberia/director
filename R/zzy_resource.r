@@ -61,6 +61,7 @@ directorResource <- setRefClass('directorResource',
       local_nesting_level <- director$.dependency_nesting_level 
  
       # TODO: (RK) Better resource provision injection
+      source_args$local$root <<- function(x, ...) director$root()
       source_args$local$resource <<- function(x, ...) director$resource(x)$value(...)
       source_args$local$resource_exists <<- function(...) director$exists(...)
       source_args$local$helper   <<-
