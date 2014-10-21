@@ -61,11 +61,16 @@ directorResource <- setRefClass('directorResource',
       local_nesting_level <- director$.dependency_nesting_level 
  
       # TODO: (RK) Better resource provision injection
-      source_args$local$root <<- function(x, ...) director$root()
-      source_args$local$resource <<- function(x, ...) director$resource(x)$value(...)
-      source_args$local$resource_exists <<- function(...) director$exists(...)
-      source_args$local$helper   <<-
-        function(...) director$resource(..., check.helpers = FALSE)$value(parse. = FALSE)
+      if (!base::exists('..director_inject', envir = parent.env(source_args$local), inherits = FALSE)) {
+        injects <- new.env(parent = parent.env(source_args$local))
+        injects$..director_inject <- TRUE
+        injects$root <- function(x, ...) director$root()
+        injects$resource <- function(x, ...) director$resource(x)$value(...)
+        injects$resource_exists <- function(...) director$exists(...)
+        injects$helper   <-
+          function(...) director$resource(..., check.helpers = FALSE)$value(parse. = FALSE)
+        parent.env(source_args$local) <<- injects
+      }
 
       value <- evaluate(source_args)
       if (isTRUE(parse.)) .value <<- parse(value, source_args$local, list(...))
