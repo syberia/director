@@ -18,7 +18,7 @@ logical
 Whether or not any substring of a string is any of a set of strings.
 }
 \examples{
-stopifnot(any_is_substring_of('test', c('blah', 'te', 'woo'))) # TRUE
-stopifnot(!any_is_substring_of('test', c('blah', 'woo'))) # FALSE
+stopifnot(director:::any_is_substring_of('test', c('blah', 'te', 'woo'))) # TRUE
+stopifnot(!director:::any_is_substring_of('test', c('blah', 'woo'))) # FALSE
 }
 

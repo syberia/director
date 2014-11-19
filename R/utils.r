@@ -170,8 +170,8 @@ get_helpers <- function(path) {
 #' @param set_of_strings character.
 #' @return logical
 #' @examples
-#' stopifnot(any_is_substring_of('test', c('blah', 'te', 'woo'))) # TRUE
-#' stopifnot(!any_is_substring_of('test', c('blah', 'woo'))) # FALSE
+#' stopifnot(director:::any_is_substring_of('test', c('blah', 'te', 'woo'))) # TRUE
+#' stopifnot(!director:::any_is_substring_of('test', c('blah', 'woo'))) # FALSE
 any_is_substring_of <- function(string, set_of_strings) {
   any(vapply(set_of_strings,
              function(x) substring(string, 1, nchar(x)) == x, logical(1)))
