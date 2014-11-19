@@ -5,7 +5,8 @@ Director is an R package for easily managing R scripts in a directory and treati
 To install, run the following in the R console.
 
 ```r
-if (!require(devtools)) install.packages('devtools'); library(devtools); install_github('robertzk/director'); library(director)
+if (!require(devtools)) install.packages('devtools')
+devtools::install_github('robertzk/director'); library(director)
 ```
 
 Creating a director
