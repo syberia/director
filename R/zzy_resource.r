@@ -159,6 +159,7 @@ directorResource <- setRefClass('directorResource',
     # 
     # @param value ANY. The return value of the resource file.
     # @param provides environment. The local environment it was sourced in.
+    # @param args list. Any additional arguments passed when calling \code{value()}.
     # @param the parsed object.
     parse = function(value, provides, args = list()) {
       # TODO: (RK) Resource parsers?
