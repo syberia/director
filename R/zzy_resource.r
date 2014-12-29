@@ -72,7 +72,7 @@ directorResource <- setRefClass('directorResource',
         parent.env(source_args$local) <<- injects
       }
 
-      value <- evaluate(source_args)
+      value <- evaluate(source_args, list(...))
       if (isTRUE(parse.)) .value <<- parse(value, source_args$local, list(...))
       else .value <<- value$value
       cache_value_if_necessary()
@@ -125,10 +125,11 @@ directorResource <- setRefClass('directorResource',
     #
     # @param source_args list. The parameters to pass to \code{base::source}
     #   when the file is evaluated.
+    # @param args list. Any additional arguments passed when calling \code{value()}.
     # @return a list with \code{value} and \code{preprocessor_output},
     #   the former the result of the preprocessor application, and the latter
     #   the environment that is made available to the parser later on.
-    evaluate = function(source_args) {
+    evaluate = function(source_args, args = list()) {
       route <- Find(function(x) substring(resource_key, 1, nchar(x)) == x,
         names(director$.preprocessors))
 
@@ -146,6 +147,7 @@ directorResource <- setRefClass('directorResource',
         environment(fn)$modified        <- modified
         environment(fn)$resource_object <- .self
         environment(fn)$source_args     <- source_args
+        environment(fn)$args            <- args
         environment(fn)$source  <-
           function() eval.parent(quote(do.call(base::source, source_args)$value))
         environment(fn)$preprocessor_output <-
