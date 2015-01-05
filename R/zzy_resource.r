@@ -66,6 +66,7 @@ directorResource <- setRefClass('directorResource',
         injects$..director_inject <- TRUE
         injects$root <- function(x, ...) director$root()
         injects$resource <- function(x, ...) director$resource(x)$value(...)
+        injects$resource_name <- resource_key
         injects$resource_exists <- function(...) director$exists(...)
         injects$helper   <-
           function(...) director$resource(..., check.helpers = FALSE)$value(parse. = FALSE)
