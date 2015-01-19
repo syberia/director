@@ -65,7 +65,7 @@ directorResource <- setRefClass('directorResource',
       # TODO: (RK) Better resource provision injection
       if (!base::exists('..director_inject', envir = parent.env(source_args$local), inherits = FALSE)) {
         injects <- new.env(parent = parent.env(source_args$local))
-        scoping_environment <- environment(injects$helper) <- local({
+        scoping_environment <- local({
           e <- new.env(parent = defining_environment)
           e$director <- director
           e
@@ -78,7 +78,7 @@ directorResource <- setRefClass('directorResource',
         injects$resource_exists <- function(...) director$exists(...)
         injects$helper   <-
           function(...) director$resource(..., check.helpers = FALSE)$value(parse. = FALSE)
-        parent.env(injects$helper) <- scoping_environment
+        environment(injects$helper) <- scoping_environment
         parent.env(source_args$local) <<- injects
       }
 

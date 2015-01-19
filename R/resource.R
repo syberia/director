@@ -87,7 +87,8 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     # If this resource does not exist, let the preprocessor handle it instead.
     return(directorResource(current = NULL, cached = NULL,
       modified = TRUE, resource_key = name,
-      source_args = list(local = new.env(parent = parent.frame())), director = .self))
+      source_args = list(local = new.env(parent = parent.frame())), director = .self,
+      defining_environment = parent.frame()))
   }
 
   filename        <- .filename(name, FALSE, FALSE, !isTRUE(check.helpers)) # Convert resource to filename.
@@ -123,7 +124,8 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     helper_files <- get_helpers(resource_dir)
     for (file in helper_files) {
       helper <- resource(file.path(resource_key, file), body = FALSE,
-                         tracking = FALSE, check.helpers = FALSE)
+                         tracking = FALSE, check.helpers = FALSE,
+                         defining_environment = parent.frame())
       if (tracking_is_on_and_resource_has_helpers)
         modified <- modified || helper$modified
     }
