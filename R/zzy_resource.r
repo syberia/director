@@ -9,17 +9,19 @@ directorResource <- setRefClass('directorResource',
   fields = list(current = 'listOrNULL', cached = 'listOrNULL',
                 modified = 'logical', resource_key = 'character',
                 source_args = 'list', director = 'director',
+                defining_environment = 'environment',
                 .dependencies = 'character', .compiled = 'logical',
                 .value = 'ANY'),
   methods = list(
     initialize = function(current, cached, modified, resource_key,
-                          source_args, director) {
+                          source_args, director, defining_environment) {
       current      <<- current
       cached       <<- cached
       modified     <<- modified
       resource_key <<- resource_key
       source_args  <<- source_args
       director     <<- director
+      defining_environment <<- defining_environment
       .compiled    <<- FALSE
     },
     
@@ -135,8 +137,9 @@ directorResource <- setRefClass('directorResource',
         names(director$.preprocessors))
 
       if (is.null(route)) {
-        list(value = do.call(base::source, source_args)$value,
-             preprocessor_output = emptyenv())
+        fn <- function(source_args) { do.call(base::source, source_args)$value }
+        environment(fn) <- defining_environment
+        list(value = fn(source_args), preprocessor_output = emptyenv())
       }
       else {
         fn <- director$.preprocessors[[route]]
