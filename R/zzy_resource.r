@@ -68,10 +68,12 @@ directorResource <- setRefClass('directorResource',
         injects$..director_inject <- TRUE
         injects$root <- function(x, ...) director$root()
         injects$resource <- function(x, ...) director$resource(x)$value(...)
+        environment(injects$resource) <- defining_environment
         injects$resource_name <- resource_key
         injects$resource_exists <- function(...) director$exists(...)
         injects$helper   <-
           function(...) director$resource(..., check.helpers = FALSE)$value(parse. = FALSE)
+        environment(injects$helper) <- defining_environment
         parent.env(source_args$local) <<- injects
       }
 
