@@ -59,12 +59,19 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
                      tracking = TRUE, check.helpers = TRUE) {
 
   if (!is.environment(provides)) {
-    provides <- if (length(provides) == 0) new.env() else as.environment(provides)
+    provides <-
+      if (length(provides) == 0) new.env(parent = parent.frame())
+      else {
+        env <- as.environment(provides)
+        parent.env(env) <- parent.frame()
+        env
+      }
+
     if (base::exists('..director_inject', envir = parent.env(provides), inherits = FALSE)) {
       # TODO: (RK) Calling parent.env here twice since we're doing environment injection
       # in resource$compile - is there a better way?
       parent.env(parent.env(provides)) <- parent.env(topenv())
-    } else parent.env(provides) <- parent.env(topenv())
+    } else parent.env(provides) <- parent.env(topenv(provides))
     # Do not allow access to the global environment since resources should be self-contained.
   }
 
@@ -80,7 +87,8 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     # If this resource does not exist, let the preprocessor handle it instead.
     return(directorResource(current = NULL, cached = NULL,
       modified = TRUE, resource_key = name,
-      source_args = list(local = new.env()), director = .self))
+      source_args = list(local = new.env(parent = parent.frame())), director = .self,
+      defining_environment = parent.frame()))
   }
 
   filename        <- .filename(name, FALSE, FALSE, !isTRUE(check.helpers)) # Convert resource to filename.
@@ -116,15 +124,18 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     helper_files <- get_helpers(resource_dir)
     for (file in helper_files) {
       helper <- resource(file.path(resource_key, file), body = FALSE,
-                         tracking = FALSE, check.helpers = FALSE)
+                         tracking = FALSE, check.helpers = FALSE,
+                         defining_environment = parent.frame())
       if (tracking_is_on_and_resource_has_helpers)
         modified <- modified || helper$modified
     }
   }
 
+  # TODO: (RK) Finer control over defining environment.
   output <- directorResource(current = current_details, cached = cached_details,
        modified = modified, resource_key = resource_key,
-       source_args = source_args, director = .self)
+       source_args = source_args, director = .self,
+       defining_environment = parent.frame()) 
 
   if (.dependency_nesting_level > 0 && isTRUE(check.helpers))
     .stack$push(list(level = .dependency_nesting_level,

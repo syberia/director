@@ -9,17 +9,19 @@ directorResource <- setRefClass('directorResource',
   fields = list(current = 'listOrNULL', cached = 'listOrNULL',
                 modified = 'logical', resource_key = 'character',
                 source_args = 'list', director = 'director',
+                defining_environment = 'environment',
                 .dependencies = 'character', .compiled = 'logical',
                 .value = 'ANY'),
   methods = list(
     initialize = function(current, cached, modified, resource_key,
-                          source_args, director) {
+                          source_args, director, defining_environment) {
       current      <<- current
       cached       <<- cached
       modified     <<- modified
       resource_key <<- resource_key
       source_args  <<- source_args
       director     <<- director
+      defining_environment <<- defining_environment
       .compiled    <<- FALSE
     },
     
@@ -63,13 +65,20 @@ directorResource <- setRefClass('directorResource',
       # TODO: (RK) Better resource provision injection
       if (!base::exists('..director_inject', envir = parent.env(source_args$local), inherits = FALSE)) {
         injects <- new.env(parent = parent.env(source_args$local))
+        scoping_environment <- local({
+          e <- new.env(parent = defining_environment)
+          e$director <- director
+          e
+        })
         injects$..director_inject <- TRUE
         injects$root <- function(x, ...) director$root()
         injects$resource <- function(x, ...) director$resource(x)$value(...)
+        environment(injects$resource) <- scoping_environment
         injects$resource_name <- resource_key
         injects$resource_exists <- function(...) director$exists(...)
         injects$helper   <-
           function(...) director$resource(..., check.helpers = FALSE)$value(parse. = FALSE)
+        environment(injects$helper) <- scoping_environment
         parent.env(source_args$local) <<- injects
       }
 
@@ -135,8 +144,9 @@ directorResource <- setRefClass('directorResource',
         names(director$.preprocessors))
 
       if (is.null(route)) {
-        list(value = do.call(base::source, source_args)$value,
-             preprocessor_output = emptyenv())
+        fn <- function(source_args) { do.call(base::source, source_args)$value }
+        environment(fn) <- defining_environment
+        list(value = fn(source_args), preprocessor_output = emptyenv())
       }
       else {
         fn <- director$.preprocessors[[route]]
