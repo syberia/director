@@ -44,7 +44,7 @@ shtack <- setRefClass('stack', list(elements = 'list'), methods = list(
   },
   pop        = function()  {
     if (length(elements) == 0) stop("director:::stack is empty")
-    tmp <- tail(elements, 1)[[1]]
+    tmp <- elements[[length(elements)]]
     elements[[length(elements)]] <<- NULL
     tmp
   },
