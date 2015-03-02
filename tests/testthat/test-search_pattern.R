@@ -21,3 +21,12 @@ test_that("it errors if a non-character pattern is provided", {
     expect_error(search_pattern(pattern, "wildcard"), "pattern must be")
   })
 })
+
+test_that("it produces an object of type search_pattern", {
+  expect_is(search_pattern("blub", "exact"), "search_pattern")
+})
+
+test_that("it combines multiple patterns into one", {
+  expect_is(search_pattern(c("fish", "goes", "blub"), "exact"), "search_pattern")
+})
+
