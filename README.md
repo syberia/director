@@ -49,11 +49,11 @@ For example, we could implement CSV reading and writing as:
 ```r
 # ./adapters/csv.R
 read <- function(key) {
-  read.csv(file.path("/some/path", key, ".csv"))
+  read.csv(file.path("/some/path", paste0(key, ".csv")))
 }
 
 write <- function(value, key) {
-  write.csv(value, file.path("/some/path", key, ".csv"))
+  write.csv(value, file.path("/some/path", paste0(key, ".csv")))
 }
 ```
 
@@ -78,13 +78,36 @@ object that will know how to read and write in the same format given a key.
 # what to do with files in the adapters directory (and eventually more).
 library(director)
 d <- director(".")
+
+# We'll explain this later.
 d$register_parser("/adapters", function(input) {
   structure(list(read = input$read, write = input$write), class = 'adapter')
 })
-adapter  <- d$resource("adapters/file")$value()
+
+adapter  <- d$resource("adapters/file")$value() # we will explain $value() later
 resource <- d$resource("our_script.R")$value()
-resource(adapter) # Will run our script and save the data.
+resource(adapter) # This will run our script and save the data.
 ```
+
+Our scripts no longer depend on CSV reading. If we moved all our CSV
+files to RDS files, we would only have to modify what adapter
+gets passed to each script.
+
+Now imagine we have hundreds of such scripts. We can put them in
+`scripts` and use director to find all scripts.
+
+```r
+scripts <- d$find(base = "scripts") # Find all .R files in the scripts directory
+# [1] "scripts/script1" "scripts/script2" ...
+
+lapply(scripts, function(script) {
+  script <- d$resource(script)$value()
+  script(adapter)
+})
+```
+
+The above executes all scripts in the `scripts` directory using an adapter of 
+our choice. 
 
 
 # Installation
