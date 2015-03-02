@@ -6,9 +6,8 @@ search_pattern <- function(pattern, method) {
 
   if (!is.character(method)) { msg(method) }
   if (!is.character(pattern)) { msg(pattern) }
-  method <- tolower(method)
 
-  search_pattern_(pattern, method)
+  search_pattern_(pattern, tolower(method))
 }
 
 search_pattern_ <- function(pattern, method) {
