@@ -1,3 +1,4 @@
 library(testthat)
 library(testthatsomemore)
-test_package('director')
+library("director")
+test_check("director")
