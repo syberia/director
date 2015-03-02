@@ -11,7 +11,81 @@ and not within a package.
 
 Director aims to partially solve the problem of project structure in R
 by re-defining R scripts as "resources" and allowing the developer to focus
-only on the critical components.
+only on what is important: this makes code more modular and re-usable.
+
+# Example
+
+Suppose we wish to be able to read data in, perform some munging, and
+save it back to its source. One way to do this is as follows.
+
+```r
+data <- read.csv('/some/file')
+# Do some munging
+write.csv(data, '/some/file')
+```
+
+This works, but there are some problems with it. We have tied
+the data-set to a specific source: a CSV file. What if we had hundreds
+of such scripts and wanted to migrate them to read and write from a database
+or an [S3 location](http://aws.amazon.com/s3)? We would have to update
+`read.csv` in every file. The same applies if we want to add `stringsAsFactors = FALSE`
+to each `read.csv` call.
+
+An alternative approach is to create a directory `adapters` that takes the
+following convention: any file in that directory must be of the following form.
+
+```r
+read <- function(key) {
+  # Implement this.
+}
+
+write <- function(value, key) {
+  # Implement this.
+}
+```
+
+For example, we could implement CSV reading and writing as:
+
+```r
+# ./adapters/csv.R
+read <- function(key) {
+  read.csv(file.path("/some/path", key, ".csv"))
+}
+
+write <- function(value, key) {
+  write.csv(value, file.path("/some/path", key, ".csv"))
+}
+```
+
+Our original file could now become
+
+```r
+# ./our_script.R
+function(adapter) {
+  data <- adapter$read("file1")
+  # Munge the data.
+  adapter$write(data, "file1")
+}
+```
+
+But what is `adapter`? We now use director to create a special `adapter`
+object that will know how to read and write in the same format given a key. 
+
+```r
+# ./run.R
+
+# Initialize a "director" object. It is responsible for determining
+# what to do with files in the adapters directory (and eventually more).
+library(director)
+d <- director(".")
+d$register_parser("/adapters", function(input) {
+  structure(list(read = input$read, write = input$write), class = 'adapter')
+})
+adapter  <- d$resource("adapters/file")$value()
+resource <- d$resource("our_script.R")$value()
+resource(adapter) # Will run our script and save the data.
+```
+
 
 # Installation
 
