@@ -42,5 +42,10 @@ describe("search_pattern S3 class", {
 
 describe("applying patterns", {
   # TODO: (RK) Fill in these tests.
+
+#  apply_pattern.idempotence("",c("a/a", "bc/b", "dummy/foo/bin/bin", "dao/die/die", "dao/die/dee", "do
+# o/die/dee/dum", "doo/die/dee/dee", "dao/die/dee/daw"))
+# [1] "a"               "dummy/foo/bin"   "dao/die"         "doo/die/dee"     "bc/b"
+# [6] "dao/die/dee/daw"
 })
 
