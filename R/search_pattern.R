@@ -1,6 +1,6 @@
 search_pattern <- function(pattern, method) {
-  if (!(is.character(method) && length(method) == 1) && 
-        is.element(tolower(method), c("wildcard", "partial", "exact"))) {
+  if (!(is.character(method) && length(method) == 1 && 
+        is.element(tolower(method), c("wildcard", "partial", "exact")))) {
     stop("Search method must be one of 'wildcard', 'partial', or ",
          "'exact'.")
   }
