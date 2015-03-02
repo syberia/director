@@ -9,7 +9,7 @@ director_find(search = "", method = "wildcard", base = "",
 }
 \arguments{
 \item{search}{character. The resources to search for. The default is
-\code{''}, which will list all resources within the \code{base}.}
+\code{""}, which will list all resources within the \code{base}.}
 
 \item{method}{character. The search method. The available options
 are \code{"wildcard"}, code{"substring"}, or \code{"exact"}. See the function
@@ -19,19 +19,21 @@ description for the full explanation of these methods. The default is
 \item{base}{character. A prefix under which to look for. For example,
 if \code{base = "subdir"}, then only resources under the \code{"subdir"}
 directory (relative to the director root) will be returned. The default is
-\code{''}, which will list all resources within the director root.}
+\code{""}, which will list all resources within the director root.}
 
-\item{by_mtime}{logical. Whether or not to sort results by modification time.
-The default is \code{TRUE}, so that the first result is the most recently
-modified resource.}
+\item{by_mtime}{logical. Whether or not to sort results by modification time
+in descending order. The default is \code{TRUE}, so that the first result
+is the most recently modified resource.}
 }
 \value{
 a character vector of matched resources.
 }
 \description{
-The available search methods are:
+Find resources within a director project.
 }
-\details{
+\note{
+The available search methods are:
+
 \itemize{
   \item{wildcard}{Similar to Sublime or vim's ctrl + P, this method
     of search will look for consecutive appearances of characters.
@@ -44,9 +46,8 @@ The available search methods are:
     \code{"dir/some_resource"}, then looking for \code{"dir/some"} will
     return a match.}
   \item{exact}{The exact name of the resource. In this mode, either a
-    single string (the resource name itself) or an empty character will
-    be returned. Note this is functionally identical to
-    \code{director$exists}.}
+    single string (the resource name itself) or \code{character(0)} will
+    be returned.}
 }
 }
 \examples{
@@ -58,16 +59,16 @@ The available search methods are:
   #       - helper.R
   #     - two.R
   #
-  # Then the bellow will return \\code{'foo/one'}, \\code{'two'}, and \\code{''},
+  # Then the bellow will return \\code{"foo/one"}, \\code{"two"}, and \\code{""},
   # respectively. Note that the \\code{"helper.R"} file is not considered a
   # resource by the director as \\code{"one.R"} shares its name with its
   # parent directory and is considered the accessible resource.
 
   d <- director('foo')
-  d$find('fone', method = 'wildcard')
-  d$find('wo',   method = 'partial')
-  d$find('none', method = 'exact')
-  d$exists('two')
+  d$find('fone', method = 'wildcard') # "foo/one"
+  # Under the hood, this looks for the regex .*f.*o.*n.*e.*
+  d$find('wo',   method = 'partial')  # "two"
+  d$find('none', method = 'exact')    # ""
 }
 }
 

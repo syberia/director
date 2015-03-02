@@ -64,15 +64,12 @@ director_find <- function(search = "", method = "wildcard", base = "", by_mtime 
          length(base))
   }
 
-  if (!(is.character(method) && length(method) == 1) && 
-        is.element(method, c("wildcard", "partial", "exact"))) {
-    stop("In director$find, the method parameter must be 'wildcard', 'partial', or ",
-         "'exact'.")
-  }
+  #search_pattern(search, method, file.path(root(), base))
 
   .find(director = .self, search = search, method = method,
         base = base, by_mtime = by_mtime)
 }
+
 
 .find <- function(director, search, method, base, by_mtime) {
   abs_dirname <- function(x) if ((tmp <- dirname(x)) == ".") base else tmp
