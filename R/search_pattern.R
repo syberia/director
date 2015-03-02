@@ -72,7 +72,10 @@ apply_pattern <- function(pattern, strings) {
   if (is.atomic_search_pattern(pattern)) {
     class(pattern) <- c(pattern$method, class(pattern))
     UseMethod("apply_pattern", object = pattern)
-  }
+  } else if (is.search_pattern_join(pattern)) {
+    operand <- if (pattern$type == "and") { intersect } else { union }
+    Reduce(operand, lapply(pattern[1:2], apply_pattern, strings))
+  } else { stop("Invalid pattern") }
 }
 
 apply_pattern.exact <- function(pattern, strings) {
@@ -88,7 +91,7 @@ apply_pattern.wildcard <- function(pattern, strings) {
 }
 
 apply_pattern.partial <- function(pattern, strings) {
-  grep(pattern, strings, fixed = TRUE, value = TRUE)
+  grep(pattern$pattern, strings, fixed = TRUE, value = TRUE)
 }
 
 
