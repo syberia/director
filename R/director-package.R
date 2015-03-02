@@ -1,4 +1,4 @@
-#' Director package responsible for managing and tracking changes in a file structure.
+#' Managing and Tracking Files in R Projects.
 #'
 #' The director package is responsible for managing and loading resources in
 #' some fixed directory structure. It has support for tracking changes between

@@ -27,7 +27,7 @@
 director_exists <- function(resource, helper = FALSE) {
   # Definition: idempotent resources are those that share their filename
   # with the directory they reside in.
-  'Determine whether or not a resource exists in this director structure.'
+  "Determine whether or not a resource exists in this director structure."
 
   rooted_resource <- strip_r_extension(file.path(.root, resource))
 
