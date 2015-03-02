@@ -47,6 +47,9 @@ as.search_pattern <- function(x) {
 }
 
 is.search_pattern <- function(x) { is(x, "search_pattern") }
+is.atomic_search_pattern <- function(x) {
+  is.search_pattern(x) && !is.search_pattern_join(x)
+}
 is.search_pattern_join <- function(x) { is(x, "search_pattern_join") }
 
 `|.search_pattern` <- function(e1, e2) {
@@ -60,4 +63,32 @@ is.search_pattern_join <- function(x) { is(x, "search_pattern_join") }
 
   search_pattern_join(e1, e2, type = "and")
 }
+
+#' Apply a pattern filter to a character vector.
+#' 
+#' @param pattern search_pattern.
+#' @param strings character. The strings to filter down.
+apply_pattern <- function(pattern, strings) {
+  if (is.atomic_search_pattern(pattern)) {
+    class(pattern) <- c(pattern$method, class(pattern))
+    UseMethod("apply_pattern", object = pattern)
+  }
+}
+
+apply_pattern.exact <- function(pattern, strings) {
+  if (any(pattern$pattern == strings)) { pattern$pattern }
+  else { character(0) }
+}
+
+apply_pattern.wildcard <- function(pattern, strings) {
+  pattern <- gsub("([]./\\*+()])", "\\\\\\1", pattern$pattern)
+  pattern <- gsub("([^\\$^])", ".*\\1", pattern) # turn this into ctrl+p
+  pattern <- gsub("^.*", "^", pattern, fixed = TRUE)
+  grep(pattern, strings, value = TRUE)
+}
+
+apply_pattern.partial <- function(pattern, strings) {
+  grep(pattern, strings, fixed = TRUE, value = TRUE)
+}
+
 
