@@ -64,7 +64,7 @@ director_find <- function(search = "", method = "wildcard", base = "", by_mtime 
          "instead I got a ", sQuote(class(base)[1]))
   }
 
-  if (length(base) > 0) {
+  if (length(base) > 1) {
     all <- vector('list', length(base))
     for (i in seq_along(all)) {
       all[[i]] <- Recall(search = search, method = method,
@@ -73,8 +73,8 @@ director_find <- function(search = "", method = "wildcard", base = "", by_mtime 
     }
     Reduce(union, all)
   } else {
-    all_files <- list.files(file.path(root(), base),
-                            pattern = "\\.[rR]$", recursive = TRUE)
+    #all_files <- list.files(file.path(root(), base),
+    #                        pattern = "\\.[rR]$", recursive = TRUE)
     .find(director = .self, search = search, method = method,
           base = base, by_mtime = by_mtime)
   }
