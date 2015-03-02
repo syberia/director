@@ -29,10 +29,8 @@ search_pattern_ <- function(pattern, method) {
 }
 
 `verify_search_pattern_method!` <- function(method) {
-  if (!is.element(tolower(method), c("wildcard", "partial", "exact"))) {
-    stop("Search method must be one of 'wildcard', 'partial', or ",
-         "'exact'.")
-  }
+  ok <- exists(paste0("apply_pattern.", method), envir = getNamespace("director"))
+  if (!ok) { stop("Invalid search pattern.") }
 }
 
 search_pattern_join <- function(pattern1, pattern2, type) {
@@ -92,6 +90,14 @@ apply_pattern.wildcard <- function(pattern, strings) {
 
 apply_pattern.partial <- function(pattern, strings) {
   grep(pattern$pattern, strings, fixed = TRUE, value = TRUE)
+}
+
+apply_pattern.idempotence <- function(pattern, strings) {
+  safe_get <- function(x, i) { if (i <= 0) { i } else { x[[i]] } }
+  strings <-
+    Filter(function(x) { identical(safe_get(x, length(x)), safe_get(x, length(x) - 1)) },
+           strsplit(strings, .Platform$file.sep))
+  vapply(strings, paste, character(1), collapse = .Platform$file.sep)
 }
 
 
