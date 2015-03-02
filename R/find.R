@@ -58,16 +58,26 @@ director_find <- function(search = "", method = "wildcard", base = "", by_mtime 
   # with the directory they reside in.
   "Look for resources by wildcard, partial, or exact matches."
 
-  if (!(is.character(base) && length(base) == 1)) {
-    stop("In director$find, the base parameter must be a character of ",
-         "length 1. Instead you gave a ", sQuote(class(base)[1]), " of length ",
-         length(base))
+  stopifnot(isTRUE(by_mtime) || identical(by_mtime, FALSE))
+  if (!is.character(base)) {
+    stop("In director$find, the base parameter must be a character; ",
+         "instead I got a ", sQuote(class(base)[1]))
   }
 
-  #search_pattern(search, method, file.path(root(), base))
-
-  .find(director = .self, search = search, method = method,
-        base = base, by_mtime = by_mtime)
+  if (length(base) > 0) {
+    all <- vector('list', length(base))
+    for (i in seq_along(all)) {
+      all[[i]] <- Recall(search = search, method = method,
+                         base = base[i], by_mtime = FALSE)
+      # TODO: (RK) Re-sort by modification time.
+    }
+    Reduce(union, all)
+  } else {
+    all_files <- list.files(file.path(root(), base),
+                            pattern = "\\.[rR]$", recursive = TRUE)
+    .find(director = .self, search = search, method = method,
+          base = base, by_mtime = by_mtime)
+  }
 }
 
 

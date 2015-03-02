@@ -94,10 +94,22 @@ apply_pattern.partial <- function(pattern, strings) {
 
 apply_pattern.idempotence <- function(pattern, strings) {
   safe_get <- function(x, i) { if (i <= 0) { i } else { x[[i]] } }
-  strings <-
+  sep <- .Platform$file.sep
+  idempotent <-
     Filter(function(x) { identical(safe_get(x, length(x)), safe_get(x, length(x) - 1)) },
-           strsplit(strings, .Platform$file.sep))
-  vapply(strings, paste, character(1), collapse = .Platform$file.sep)
+           strsplit(strings, sep))
+  idempotent_prefixes <- vapply(lapply(idempotent, utils::head, -1),
+    paste, character(1), collapse = sep)
+  is_prefix_of <- function(x, y) {
+    vapply(y, function(z) {
+      any(vapply(x, function(w) { identical(substring(z, 1, nchar(w)), w) },
+                 logical(1)))
+    }, logical(1))
+  }
+  idempotent <- vapply(idempotent, paste, character(1), collapse = sep)
+  non_idempotent <- strings[is_prefix_of(paste0(idempotent_prefixes, sep), strings)]
+  non_idempotent <- setdiff(non_idempotent, idempotent)
+  c(idempotent_prefixes, setdiff(strings, c(idempotent, non_idempotent)))
 }
 
 

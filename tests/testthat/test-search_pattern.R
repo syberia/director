@@ -40,3 +40,7 @@ describe("search_pattern S3 class", {
   })
 })
 
+describe("applying patterns", {
+  # TODO: (RK) Fill in these tests.
+})
+
