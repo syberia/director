@@ -74,7 +74,8 @@ registry <- setRefClass('registry',
         key <- do.call('file.path', as.list(c(key, rest)))
 
       key <- .sanitize_key(key, read = TRUE, soft = soft)
-      if (is.null(key)) NULL else (readRDS(key)) # do not use default invisibility
+      if (is.null(key) || !file.exists(key)) NULL
+      else readRDS(key) # do not use default invisibility
     },
 
     #' Place an object in the registry.
