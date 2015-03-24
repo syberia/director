@@ -138,4 +138,3 @@ apply_pattern.idempotence <- function(pattern, strings) {
   return(strings)
 }
 
-
