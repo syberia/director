@@ -41,8 +41,14 @@ describe("search_pattern S3 class", {
 })
 
 describe("applying patterns", {
-  # TODO: (RK) Fill in these tests.
-
+  test_that("it applies idempotence correctly on a complex example", {
+    collection <-
+      c("a/a", "bc/b", "dummy/foo/bin/bin", "dao/die/die", "dao/die/dee",
+        "doo/die/dee/dum", "doo/die/dee/dee", "dao/die/dee/daw")
+    output <- apply_pattern(search_pattern("", "idempotence"), collection)
+    expect_identical(sort(output),
+      sort(c("a", "dummy/foo/bin", "dao/die", "doo/die/dee", "bc/b", "dao/die/dee/daw")))
+  })
 #  apply_pattern.idempotence("",c("a/a", "bc/b", "dummy/foo/bin/bin", "dao/die/die", "dao/die/dee", "do
 # o/die/dee/dum", "doo/die/dee/dee", "dao/die/dee/daw"))
 # [1] "a"               "dummy/foo/bin"   "dao/die"         "doo/die/dee"     "bc/b"
