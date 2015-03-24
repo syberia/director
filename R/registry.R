@@ -94,6 +94,7 @@ registry <- setRefClass('registry',
       # TODO: (RK) Warn on overwrite?
 
       key <- .sanitize_key(key, read = FALSE)
+      dir.create(dirname(key), FALSE, TRUE)
       error_handler <- function(e) {
         stop('Failed to save registry key ', sQuote(colourise(key, 'red')), 
              ' in registry with root ', sQuote(colourise(.root, 'blue')), 
