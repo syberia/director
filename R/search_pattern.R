@@ -1,3 +1,40 @@
+#' Define a search pattern for use with the find method on a director.
+#'
+#' A search pattern is one of the following:
+#'
+#'   \itemize{
+#'     \item{exact}{ match. The strings must match exactly this value.}
+#'     \item{partial}{ match. The strings which contain this string as
+#'        a substring will be matched.}
+#'     \item{wildcard}{ match. Fuzzy matching like in the ctrl+p plugin
+#'        for vim. If the pattern is "abc", it will be translated to the
+#'        regular expression ".*a.*b.*c.*", that is, any characters followed
+#'        by an 'a' followed by any characters followed by a 'b' followed by
+#'        any characters followed by a 'c' followed by any characters (e.g.,
+#'        "fabulous cake").}
+#'   }
+#' 
+#' @param pattern character. The pattern to search for.
+#' @param method character. The search pattern method, one of "exact",
+#'    "partial", or "wildcard".
+#' @note Patterns can be combined using the \code{|} and \code{&} operators.
+#' @examples
+#' \dontrun{
+#'   d$find(search_pattern("this/file", "exact"))
+#'   # If d is a director object, the above will find exactly the resource
+#'   # "this/file".
+#' 
+#'   d$find(search_pattern("this", "partial")
+#'   # The above will find any resource containing "this" as a substring.
+#'
+#'   d$find(search_pattern("this", "wildcard")
+#'   # The above will find any resource containing the consecutive letters
+#'   # "this" separated by arbitrary strings.
+#'
+#'   d$find(search_pattern("foobar", "partial") | search_pattern("root", "exact"))
+#'   # The above will find any resource with the substring "foobar" or having
+#'   # exactly the name "root".
+#' }
 search_pattern <- function(pattern, method) {
   msg <- function(x) {
     stop("Search ", deparse(substitute(x)) ," must be of type character; ",
