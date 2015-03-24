@@ -129,25 +129,13 @@ apply_pattern.partial <- function(pattern, strings) {
 }
 
 apply_pattern.idempotence <- function(pattern, strings) {
-  safe_get <- function(x, i) { if (i <= 0) { i } else { x[[i]] } }
-  sep <- .Platform$file.sep
-  idempotent <-
-    Filter(function(x) { identical(safe_get(x, length(x)), safe_get(x, length(x) - 1)) },
-           strsplit(strings, sep))
-  idempotent_prefixes <- vapply(lapply(idempotent, utils::head, -1),
-    paste, character(1), collapse = sep)
-  is_atomic_prefix_of <- function(x, y) {
-    vapply(y, function(z) {
-      any(vapply(x, function(w) {
-        identical(substring(z, 1, nchar(w)), w) &&
-        !grepl(sep, substring(z, nchar(w) + 1, nchar(z)), fixed = TRUE)
-      }, logical(1)))
-    }, logical(1))
-  }
-  idempotent <- vapply(idempotent, paste, character(1), collapse = sep)
-  non_idempotent <- strings[is_atomic_prefix_of(paste0(idempotent_prefixes, sep), strings)]
-  non_idempotent <- setdiff(non_idempotent, idempotent)
-  c(idempotent_prefixes, setdiff(strings, c(idempotent, non_idempotent)))
+  # TODO: (RK) Consider the string "."
+  idempotent <- vapply(strings, function(x) basename(x) == basename(dirname(x)), logical(1))
+  idem_dirs  <- dirname(strings[idempotent])
+  helpers <- vapply(strings, function(x) dirname(x) %in% idem_dirs, logical(1))
+  strings[idempotent] <- idem_dirs
+  strings <- strings[!helpers | idempotent]
+  return(strings)
 }
 
 
