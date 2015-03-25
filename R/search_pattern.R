@@ -108,7 +108,7 @@ apply_pattern <- function(pattern, strings) {
     UseMethod("apply_pattern", object = pattern)
   } else if (is.search_pattern_join(pattern)) {
     operand <- if (pattern$type == "and") { intersect } else { union }
-    Reduce(operand, lapply(pattern[1:2], apply_pattern, strings))
+    operand(Recall(pattern[[1]], strings), Recall(pattern[[2]], strings))
   } else { stop("Invalid pattern") }
 }
 
