@@ -8,5 +8,5 @@
 #'
 #' @docType package
 #' @name director
-#' @import digest
+#' @import digest crayon
 NULL
