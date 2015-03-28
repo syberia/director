@@ -34,7 +34,7 @@ Find resources within a director project.
 \note{
 The available search methods are:
 
-\itemize{
+\describe{
   \item{wildcard}{Similar to Sublime or vim's ctrl + P, this method
     of search will look for consecutive appearances of characters.
     For example, if we have a resource \code{"some_resource"}, then
