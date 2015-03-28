@@ -58,6 +58,14 @@ describe("applying patterns", {
     )
   })
 
+  test_that("it correctly applies a partial search pattern", {
+    pattern <- search_pattern("crumb", "partial")
+    expect_equal(
+      apply_pattern(pattern, c("ooo breadcrumbs", "docrumbella", "crumm", ".c.r.u.m.b.!")),
+      c("ooo breadcrumbs", "docrumbella")
+    )
+  })
+
   test_that("it applies idempotence correctly on a complex example", {
     collection <-
       c("a/a", "bc/b", "dummy/foo/bin/bin", "dao/die/die", "dao/die/dee",
