@@ -112,9 +112,10 @@ test_that("it remembers depth-2 dependencies", {
 test_that("it notices modification of a helper of a dependent resource", {
   within_file_structure(list(blah = list('one.R'), foo = list(two = list('two.R', 'helper.R'))), {
     d <- director(tempdir)
+    browser()
     d$register_parser('blah', function() { director$resource('foo/two')$value() })
     d$register_parser('foo', function() { "test" })
-    r <- d$resource('blah/one'); r$value(); 
+    r <- d$resource('blah/one'); r$value()
     r <- d$resource('blah/one'); r$value()
     expect_false(r$modified)
     Sys.sleep(1)

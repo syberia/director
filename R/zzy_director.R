@@ -20,9 +20,9 @@ director_.filename <- function(name, absolute = FALSE, check.exists = TRUE, help
 
   return({
     file <-
-      if (isTRUE(file.info(file.path(root(), name))$isdir))
-        file.path(name, paste0(name, '.R'))
-      else paste0(name, '.R')
+      if (isTRUE(file.info(file.path(root(), name))$isdir)) {
+        file.path(name, paste0(basename(name), '.R'))
+      } else paste0(name, '.R')
     if (absolute) file.path(root(), file) else file
   })
 

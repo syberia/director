@@ -58,6 +58,8 @@
 resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
                      tracking = TRUE, check.helpers = TRUE) {
 
+  name <- strip_r_extension(name)
+
   if (!is.environment(provides)) {
     provides <-
       if (length(provides) == 0) new.env(parent = parent.frame())

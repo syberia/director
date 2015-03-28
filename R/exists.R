@@ -29,13 +29,13 @@ director_exists <- function(resource, helper = FALSE) {
   # with the directory they reside in.
   "Determine whether or not a resource exists in this director structure."
 
-  rooted_resource <- strip_r_extension(resource)
-  if (basename(dirname(rooted_resource)) == basename(rooted_resource))
-    rooted_resource <- dirname(rooted_resource)
+  resource <- strip_r_extension(resource)
+  if (basename(dirname(resource)) == basename(resource))
+    resource <- dirname(resource)
 
   return(
-    if (isTRUE(helper)) extensionless_exists(file.path(.root, rooted_resource))
-    else length(.self$find(rooted_resource, method = "exact", by_mtime = FALSE)) == 1
+    if (isTRUE(helper)) extensionless_exists(file.path(.root, resource))
+    else length(.self$find(resource, method = "exact", by_mtime = FALSE)) == 1
   )
 
   # For a non-idempotent resource to exist, it must both be present as a .r

@@ -19,6 +19,13 @@ test_that('it correctly completes the absolute name of an extensionless nested f
   })
 })
 
+test_that("it correctly converts an idempotent resource with helpers to a filename", {
+  within_file_structure(list(foo = list(two = list('two.R', 'helper.R'))), {
+    d <- director(tempdir)
+    expect_equal(d$.filename("foo/two"), "foo/two/two.R")
+  })
+})
+
 # Uncomment this test if we realize we need to allow case-sensitive extensions.
 # https://github.com/robertzk/director/issues/17
 
