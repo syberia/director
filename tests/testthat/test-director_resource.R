@@ -100,8 +100,8 @@ test_that('it does not modify the cache if soft = TRUE', {
 test_that('different uses of the same filename keep the same cache', {
   within_file_structure(list('blah.r', 'blah2.r'), { d <- director(tempdir)
     d$resource('blah') # cache the resource info
-    expect_false(is.null(d$resource('/blah')$cached))
-    d$resource('blah2.r') # cache the resource info
+    expect_false(is.null(d$resource('blah')$cached))
+    d$resource('blah2') # cache the resource info
     expect_false(is.null(d$resource('blah2')$cached))
   })
 })
