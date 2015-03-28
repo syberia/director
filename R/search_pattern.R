@@ -200,30 +200,14 @@ apply_pattern.regex <- function(pattern, strings) {
 
 apply_pattern.idempotence <- function(pattern, strings) {
   # TODO: (RK) Consider the string "."
-
-  ## Since R is a language that does not have good support for mixins
-  ## and hierarchical structure, we will borrow ideas from the node.js,
-  ## who has a similar problem. If a file becomes too complex, we should
-  ## be able to split it up into multiple pieces -- but only "export" a
-  ## single thing. You can do this by turning moving your "file.R" to
-  ## the directory "file" (note that the name must match) and placing
-  ## your old file in "file/file.R". Any additional files in the "file"
-  ## directory, like "file/helper_function.R" or "file/constants.R"
-  ## will not be detectable to the director object. This allows us to
-  ## follow the important developer principles of Don't Repeat Yourself
-  ## and maintaining modularity without polluting what our direcotr sees.
+  ## For an overview of idempotence, see the documentation on the director
+  ## exists method.
   ##
   ## The idempotent pattern finds the helpers in a set of filenames and
   ## strips them. For example, `c("foo.R", "bar/bar.R", "bar/baz.R")` would
   ## be reduced to just `c("foo.R", "bar/bar.R")` (note that this pattern
   ## is not just a filter and has side effects).
-  ##
-  ## Idempotence only applies to files in the same directory. If you have
-  ## files "foo/bar/bar.R", "foo/bar/baz.R", and "foo/bar/bux/bux.R", then
-  ## "foo/bar/bux" is considered another director resource. This allows
-  ## for hierarchical resource structures that can still maintain their
-  ## respective helpers (although it may take a little bit of getting used to).
-
+  ## 
   ## Grab the indices of those files whose base name is the same as their
   ## enclosing directory name (for example, "foo/bar/bar.R").
   idempotent <- vapply(strings, function(x) basename(x) == basename(dirname(x)), logical(1))

@@ -94,6 +94,7 @@ director <- setRefClass("director",
     find       = director_find,
 
     root       = accessor_method(.root),
+    absolute   = function(x) { file.path(root(), x) },
     show       = function() {
       cat(sep = '', "Director object",
           if (isTRUE(nzchar(.root))) paste0(" monitoring ", sQuote(.root),

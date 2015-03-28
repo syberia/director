@@ -1,6 +1,5 @@
 `%||%` <- function(x, y) if (is.null(x)) y else x
 
-
 # Dynamically create an accessor method for reference classes.
 accessor_method <- function(attr) {
   fn <- eval(bquote(
