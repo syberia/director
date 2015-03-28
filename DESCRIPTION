@@ -11,7 +11,8 @@ Authors@R: c(person("Robert", "Krzyzanowski",
 Depends:
     R (>= 3.0.1)
 Imports:
-    digest
+    digest,
+    crayon
 License: MIT
 LazyData: true
 VignetteBuilder: knitr

@@ -41,7 +41,7 @@ registry <- setRefClass('registry',
       
       if (!file.info(root)$isdir)
         stop("A registry's root must be a directory, not a file (you provided ",
-             colourise(root, 'red'), ")")
+             crayon::red(root), ")")
       
       .root <<- normalizePath(root)
     },
@@ -94,9 +94,9 @@ registry <- setRefClass('registry',
 
       key <- .sanitize_key(key, read = FALSE)
       error_handler <- function(e) {
-        stop('Failed to save registry key ', sQuote(colourise(key, 'red')), 
-             ' in registry with root ', sQuote(colourise(.root, 'blue')), 
-             " because: \n\n", colourise(e$message, 'yellow'), "\n\n")
+        stop('Failed to save registry key ', sQuote(crayon::red(key)), 
+             ' in registry with root ', sQuote(crayon::blue(.root)), 
+             " because: \n\n", crayon::yellow(e$message), "\n\n")
       }
       tryCatch(error = error_handler, saveRDS(value, key))
     },
@@ -137,26 +137,26 @@ registry <- setRefClass('registry',
       # Prevent security shenanigans.
       if (grepl('..', key, fixed = TRUE))
         stop('Registry keys cannot contain two consecutive dots (the ',
-             'key ', sQuote(colourise(key, 'red')), ' was given in ',
-             'registry with root ', sQuote(colourise(.root, 'blue')))
+             'key ', sQuote(crayon::red(key)), ' was given in ',
+             'registry with root ', sQuote(crayon::blue(.root)))
 
       if (isTRUE(read)) {
         if (!file.exists(filename <- file.path(.root, key))) {
           if (soft) NULL
           else stop('There is no registry item with key ',
-                    sQuote(colourise(key, 'red')), ' in registry with root ',
-                    sQuote(colourise(.root, 'blue')))
+                    sQuote(crayon::red(key)), ' in registry with root ',
+                    sQuote(crayon::blue(.root)))
         } else if (file.info(filename)$isdir) {
-          stop('There is no registry item with key ', sQuote(colourise(key, 'red')),
-               ' in registry with root ', sQuote(colourise(.root, 'blue')),
+          stop('There is no registry item with key ', sQuote(crayon::red(key)),
+               ' in registry with root ', sQuote(crayon::blue(.root)),
                ' because this key points to a directory.')
         } else filename
       } else {
         warning_handler <- function(e) {
           if (!is(e, 'warning') || grepl("reason 'Not a directory'", e$message, fixed = TRUE))
-            stop('Cannot create registry key ', sQuote(colourise(key, 'red')),
-                 ' in registry with root ', sQuote(colourise(.root, 'blue')),
-                 " because: \n\n", colourise(e$message, 'yellow'), "\n\n")
+            stop('Cannot create registry key ', sQuote(crayon::red(key)),
+                 ' in registry with root ', sQuote(crayon::blue(.root)),
+                 " because: \n\n", crayon::yellow(e$message), "\n\n")
         }
         if ((dir <- dirname(key)) != '.') { # Not root level, has parent dir
           if (file.exists(d <- file.path(.root, dir)) && !file.info(d)$isdir)

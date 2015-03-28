@@ -82,8 +82,8 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     # TODO: (RK) Should assuming virtual resource be the right behavior here?
 
     if (!has_preprocessor(name)) { # No preprocessor exists
-      stop("Cannot find resource ", colourise(sQuote(name), 'red'), " in ",
-           .project_name, " project ", colourise(sQuote(.root), 'blue'), ".")
+      stop("Cannot find resource ", crayon::red(sQuote(name)), " in ",
+           .project_name, " project ", crayon::blue(sQuote(.root)), ".")
     }
 
     # If this resource does not exist, let the preprocessor handle it instead.
