@@ -92,9 +92,8 @@ find_ <- function(director, pattern, method, base, by_mtime) {
 
 sort_by_mtime <- function(files, by_mtime, director) {
   if (isTRUE(by_mtime)) {
-    browser()
     descending_by_modification_time <- -vapply(files,
-      function(f) file.info(director$.filename(f))$mtime, numeric(1))
+      function(f) file.info(director$.filename(f, absolute = TRUE))$mtime, numeric(1))
     files[order(descending_by_modification_time)]
   } else {
     files
