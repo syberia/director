@@ -46,27 +46,58 @@ search_pattern <- function(pattern, method) {
   if (!is.character(method)) { msg(method) }
   if (!is.character(pattern)) { msg(pattern) }
 
+  ## A search pattern is a method for filtering a set of strings that is highly
+  ## composable. For example, if we have `c("foobar", "barbaz" "bazbux")`,
+  ## we can use the pattern `search_pattern("bar", "partial")` to select the
+  ## first two, since they have the substring "bar".
+  ##
+  ## We can apply `and` and `or` operations to search patterns to mix and match
+  ## them. For example,
+  ##   `search_pattern("bar", "partial") & search_pattern("baz", "wildcard")`
+  ## will match strings that contain the substring "bar", as well as the
+  ## characters "b", "a", and "z" separated by arbitrary strings (e.g.,
+  ## "BAzaR"). 
   search_pattern_(pattern, tolower(method))
 }
 
 search_pattern_ <- function(pattern, method) {
+  ## We use a recursive solution: either the pattern or the method can be
+  ## a "search pattern join" (the `&` and `|` operation described above).
+  ## In this case, we just return the join.
   if (is.search_pattern_join(pattern)) { pattern }
   else if (is.search_pattern_join(method)) { method }
   else if (length(pattern) > 1) {
+    ## If there is more than one pattern specified, we treat this as an OR
+    ## condition: either pattern 1, or pattern 2, etc.
     Reduce(function(x, y) {
       search_pattern_(x, method) | search_pattern_(y, method)
     }, pattern)
   } else if (length(method) > 1) {
+    ## If there is more than one method specified, this is also an OR condition.
+    ## This situation is rare, since we don't often want to say "match this
+    ## as a wildcard or as a regex".
     Reduce(function(x, y) {
       search_pattern_(pattern, x) | search_pattern_(pattern, y)
     }, method)
   } else {
     `verify_search_pattern_method!`(method)
+    ## We use an S3 class to track information about the pattern (the string
+    ## to match and the method).
     as.search_pattern(list(pattern = pattern, method = method))
   }
 }
 
 `verify_search_pattern_method!` <- function(method) {
+  ## `getNamespace` is a base R function that allows us to grab the namespace
+  ## of the director package. To understand the difference between a package
+  ## environment and package namespace, see Suraj Gupta's wonderful guide
+  ## on [how R searches and finds stuff](http://blog.obeautifulcode.com/R/How-R-Searches-And-Finds-Stuff/).
+  ## 
+  ## Instead of hardcoding all the pattern methods we support like "exact"
+  ## and "wildcard", we look into this package's namespace and see if there
+  ## is an "apply_pattern.exact" or "apply_pattern.wildcard" function. If
+  ## someone wants to implement a new pattern method, they only need to
+  ## define an "apply_pattern.new_method" function below, which is cleaner.
   ok <- exists(paste0("apply_pattern.", method), envir = getNamespace("director"))
   if (!ok) { stop("Invalid search pattern.") }
 }
