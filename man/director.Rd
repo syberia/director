@@ -4,7 +4,7 @@
 \name{director}
 \alias{director}
 \alias{director-package}
-\title{Managing and Tracking Files in R Projects.}
+\title{Management and Tracking of Files in R Projects.}
 \description{
 The director package is responsible for managing and loading resources in
 some fixed directory structure. It has support for tracking changes between
