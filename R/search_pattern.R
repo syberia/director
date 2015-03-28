@@ -2,7 +2,7 @@
 #'
 #' A search pattern is one of the following:
 #'
-#'   \itemize{
+#'   \describe{
 #'     \item{exact}{ match. The strings must match exactly this value.}
 #'     \item{partial}{ match. The strings which contain this string as
 #'        a substring will be matched.}
@@ -12,6 +12,8 @@
 #'        by an 'a' followed by any characters followed by a 'b' followed by
 #'        any characters followed by a 'c' followed by any characters (e.g.,
 #'        "fabulous cake").}
+#'      \item{regex}{ match. Apply a regular expression filter to the
+#'        set of strings.}
 #'   }
 #' 
 #' @param pattern character. The pattern to search for.
@@ -126,6 +128,10 @@ apply_pattern.wildcard <- function(pattern, strings) {
 
 apply_pattern.partial <- function(pattern, strings) {
   grep(pattern$pattern, strings, fixed = TRUE, value = TRUE)
+}
+
+apply_pattern.regex <- function(pattern, strings) {
+  grep(pattern$pattern, strings, value = TRUE)
 }
 
 apply_pattern.idempotence <- function(pattern, strings) {

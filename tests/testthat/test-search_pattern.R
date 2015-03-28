@@ -41,6 +41,11 @@ describe("search_pattern S3 class", {
 })
 
 describe("applying patterns", {
+  test_that("it correctly applies a regex search pattern", {
+    pattern <- search_pattern("[a-z]oo", "regex")
+    expect_equal(apply_pattern(pattern, c("foo", "boo", "gaa", "arooga")), c("foo", "boo", "arooga"))
+  })
+
   test_that("it applies idempotence correctly on a complex example", {
     collection <-
       c("a/a", "bc/b", "dummy/foo/bin/bin", "dao/die/die", "dao/die/dee",
