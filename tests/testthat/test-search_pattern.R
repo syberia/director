@@ -50,6 +50,14 @@ describe("applying patterns", {
     expect_equal(apply_pattern(search_pattern("foo", "exact"), c("foo", "bar")), "foo")
   })
 
+  test_that("it correctly applies a wildcard search pattern", {
+    pattern <- search_pattern("crumb", "wildcard")
+    expect_equal(
+      apply_pattern(pattern, c("ooo breadcruumbs", "doc Rumbella", "crumm", ".c.r.u.m.b.!")),
+      c("ooo breadcruumbs", "doc Rumbella", ".c.r.u.m.b.!")
+    )
+  })
+
   test_that("it applies idempotence correctly on a complex example", {
     collection <-
       c("a/a", "bc/b", "dummy/foo/bin/bin", "dao/die/die", "dao/die/dee",

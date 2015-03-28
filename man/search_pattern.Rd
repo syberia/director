@@ -25,7 +25,9 @@ A search pattern is one of the following:
        regular expression ".*a.*b.*c.*", that is, any characters followed
        by an 'a' followed by any characters followed by a 'b' followed by
        any characters followed by a 'c' followed by any characters (e.g.,
-       "fabulous cake").}
+       "fabulous cake"). Note that wildcard match is case insensitive.}
+     \item{regex}{ match. Apply a regular expression filter to the
+       set of strings.}
   }
 }
 \note{

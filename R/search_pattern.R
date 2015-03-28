@@ -11,7 +11,7 @@
 #'        regular expression ".*a.*b.*c.*", that is, any characters followed
 #'        by an 'a' followed by any characters followed by a 'b' followed by
 #'        any characters followed by a 'c' followed by any characters (e.g.,
-#'        "fabulous cake").}
+#'        "fabulous cake"). Note that wildcard match is case insensitive.}
 #'      \item{regex}{ match. Apply a regular expression filter to the
 #'        set of strings.}
 #'   }
@@ -123,7 +123,7 @@ apply_pattern.wildcard <- function(pattern, strings) {
   pattern <- gsub("([]./\\*+()])", "\\\\\\1", pattern$pattern)
   pattern <- gsub("([^\\$^])", ".*\\1", pattern) # turn this into ctrl+p
   pattern <- gsub("^.*", "^", pattern, fixed = TRUE)
-  grep(pattern, strings, value = TRUE)
+  grep(pattern, strings, value = TRUE, ignore.case = TRUE)
 }
 
 apply_pattern.partial <- function(pattern, strings) {
