@@ -46,6 +46,10 @@ describe("applying patterns", {
     expect_equal(apply_pattern(pattern, c("foo", "boo", "gaa", "arooga")), c("foo", "boo", "arooga"))
   })
 
+  test_that("it correctly applies an exact search pattern", {
+    expect_equal(apply_pattern(search_pattern("foo", "exact"), c("foo", "bar")), "foo")
+  })
+
   test_that("it applies idempotence correctly on a complex example", {
     collection <-
       c("a/a", "bc/b", "dummy/foo/bin/bin", "dao/die/die", "dao/die/dee",
