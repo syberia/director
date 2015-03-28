@@ -94,7 +94,6 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   }
 
   filename        <- .filename(name, absolute = TRUE, check.exists = FALSE, helper = !isTRUE(check.helpers)) # Convert resource to filename.
-  print(filename)
   resource_info   <- if (file.exists(filename)) file.info(filename)
   resource_key    <- strip_root(.root, resource_name(filename))
   cache_key       <- resource_cache_key(resource_key)

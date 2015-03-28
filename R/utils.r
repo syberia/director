@@ -93,6 +93,9 @@ extensionless_exists <- function(filename) {
 #'
 #' @note This function assumes at least one file ending in .r or .R exists.
 #' @param name character. The filename sans extension.
+#' @param base character. A base path to be prefixed to \code{name} when
+#'   checking if the suffixed versions exist. The final returned string will
+#'   not include this base.
 #' @return \code{name} suffixed by ".r" or ".R" according to which exists.
 #'   (Many Unix-based systems are extension case-sensitive).
 #' @examples
@@ -103,12 +106,13 @@ extensionless_exists <- function(filename) {
 #'  # Assume we have a file \code{"bar.r"}.
 #'  stopifnot(complete_extension("bar") == "bar.R")
 #' }
-complete_extension <- function(filename) {
-  lower_r <- paste0(filename, ".r")
-  if (file.exists(lower_r)) {
-   lower_r 
+complete_extension <- function(name, base = NULL) {
+  upper_r <- paste0(name, ".R")
+  filepath <- if (missing(base)) upper_r else file.path(base, upper_r)
+  if (file.exists(filepath)) {
+   upper_r 
   } else {
-    paste0(filename, ".R")
+    paste0(name, ".r")
   }
 }
 

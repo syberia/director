@@ -20,9 +20,9 @@ director_.filename <- function(name, absolute = FALSE, check.exists = TRUE, help
   }
 
   if (isTRUE(file.info(file.path(root(), name))$isdir)) {
-    file <- complete_extension(file.path(name, basename(name)))
+    file <- complete_extension(file.path(name, basename(name)), root())
   } else {
-    file <- complete_extension(name)
+    file <- complete_extension(name, root())
   }
 
   if (absolute) {
