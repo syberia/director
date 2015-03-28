@@ -24,21 +24,21 @@ test_that('it correctly finds a simple file and not the other in the root with t
 test_that('it correctly finds a simple nested file with the partial method', {
   within_file_structure(list(uno = list('dos.R')), { d <- director(tempdir)
     expect_identical('uno/dos', d$find('o/do', method = 'partial'),
-                     info = 'The find method should have found the nested resource /uno/dos.')
+                     info = 'The find method should have found the nested resource uno/dos.')
   })
 })
 
 test_that('it correctly finds a nested file using wildcard search', {
   within_file_structure(list(uno = list(dos = list(tres = list('quatro.R')))), { d <- director(tempdir)
     expect_identical('uno/dos/tres/quatro', d$find('ooeuao', method = 'wildcard'),
-                     info = 'The find method should have found the nested resource /uno/dos/tres/quatro.')
+                     info = 'The find method should have found the nested resource uno/dos/tres/quatro.')
   })
 })
 
 test_that('it correctly does not find a nested file using wildcard search', {
   within_file_structure(list(uno = list(dos = list(tres = list('quatro.R')))), { d <- director(tempdir)
     expect_equal(0, length(d$find('ooeuaoo', method = 'wildcard')),
-                 info = 'The find method should not have found the nested resource /uno/dos/tres/quatro.')
+                 info = 'The find method should not have found the nested resource uno/dos/tres/quatro.')
   })
 })
 
@@ -52,14 +52,21 @@ test_that('it correctly uses a base to look for an exact match', {
 test_that('it correctly uses a base to look for a partial match', {
   within_file_structure(list(uno = list(dos = list('tres.R'))), { d <- director(tempdir)
     expect_identical('uno/dos/tres', d$find('os/t', base = 'uno', method = 'partial'),
-      info = 'Since we are looking for "os/t" with base uno, it should find /uno/dos/tres.')
+      info = 'Since we are looking for "os/t" with base uno, it should find uno/dos/tres.')
   })
 })
 
 test_that('it correctly uses a base to look for a wildcard match', {
   within_file_structure(list(uno = list(dos = list('tres.R'))), { d <- director(tempdir)
     expect_identical('uno/dos/tres', d$find('ots', base = 'uno', method = 'wildcard'),
-      info = 'Since we are looking for "os/t" with base uno, it should find /uno/dos/tres.')
+      info = 'Since we are looking for "os/t" with base uno, it should find uno/dos/tres.')
+  })
+})
+
+test_that('it can find idempotent resources', {
+  within_file_structure(list(uno = list('uno.R')), { d <- director(tempdir)
+    expect_identical('uno', d$find('uno'),
+      info = 'Since we are looking for the idempotent resource "uno", it should find "uno".')
   })
 })
 

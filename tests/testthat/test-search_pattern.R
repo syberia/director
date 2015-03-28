@@ -74,5 +74,9 @@ describe("applying patterns", {
     expect_identical(sort(output),
       sort(c("a", "dummy/foo/bin", "dao/die", "doo/die/dee", "bc/b", "dao/die/dee/daw")))
   })
+
+  test_that("it can determine one idempotent resource", {
+    expect_identical(apply_pattern(search_pattern("", "idempotence"), "foo/foo"), "foo")
+  })
 })
 

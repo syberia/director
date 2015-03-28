@@ -15,6 +15,7 @@ test_that('it correctly determines existence of a non-idempotent resource', {
 
 test_that('it correctly determines existence of an idempotent resource', {
   within_file_structure(list(foo = list('foo.R')), {
+    browser()
     expect_true(director(tempdir)$exists('foo'))
     expect_true(director(tempdir)$exists('foo.r'))
     expect_true(director(tempdir)$exists('foo.R'))

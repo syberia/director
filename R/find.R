@@ -84,7 +84,7 @@ find_ <- function(director, pattern, method, base, by_mtime) {
   if (!is.search_pattern(pattern)) {
     pattern <- search_pattern(pattern, method)
   }
-  pattern <- pattern & search_pattern("", "idempotence")
+  all_files <- apply_pattern(search_pattern("", "idempotence"), all_files)
   resources <- apply_pattern(pattern, all_files)
   if (nzchar(base)) { resources <- file.path(base, resources) }
   sort_by_mtime(resources, by_mtime, director)
@@ -92,6 +92,7 @@ find_ <- function(director, pattern, method, base, by_mtime) {
 
 sort_by_mtime <- function(files, by_mtime, director) {
   if (isTRUE(by_mtime)) {
+    browser()
     descending_by_modification_time <- -vapply(files,
       function(f) file.info(director$.filename(f))$mtime, numeric(1))
     files[order(descending_by_modification_time)]

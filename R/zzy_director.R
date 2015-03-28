@@ -14,10 +14,17 @@
 #' @return the full path, relative to the director root if \code{full = FALSE}
 #'    and an absolute path if \code{FULL = TRUE}.
 director_.filename <- function(name, absolute = FALSE, check.exists = TRUE, helper = FALSE) {
-  filename <- name
-  if (isTRUE(check.exists) && !exists(filename, helper = isTRUE(helper)))
-    stop("Cannot convert resource ", sQuote(filename), " to full file path, ",
+  if (isTRUE(check.exists) && !exists(name, helper = isTRUE(helper)))
+    stop("Cannot convert resource ", sQuote(name), " to full file path, ",
          "as no such resource exists.")
+
+  return({
+    file <-
+      if (isTRUE(file.info(file.path(root(), name))$isdir))
+        file.path(name, paste0(name, '.R'))
+      else paste0(name, '.R')
+    if (absolute) file.path(root(), file) else file
+  })
 
   with_absolute <- function(filename) {
     filename <- gsub('//', '/', filename, fixed = TRUE)
