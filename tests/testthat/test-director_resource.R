@@ -8,7 +8,7 @@ test_that('asking for a non-existent resource returns an error', {
 })
 
 test_that('it can find a simple resource', {
-  within_file_structure(list('blah.r'), { d <- director(tempdir)
+  within_file_structure(list('blah.R'), { d <- director(tempdir)
     assert(d$resource('blah'))
   })
 })
