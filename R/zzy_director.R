@@ -14,43 +14,22 @@
 #' @return the full path, relative to the director root if \code{full = FALSE}
 #'    and an absolute path if \code{FULL = TRUE}.
 director_.filename <- function(name, absolute = FALSE, check.exists = TRUE, helper = FALSE) {
-  if (isTRUE(check.exists) && !exists(name, helper = isTRUE(helper)))
+  if (isTRUE(check.exists) && !exists(name, helper = isTRUE(helper))) {
     stop("Cannot convert resource ", sQuote(name), " to full file path, ",
          "as no such resource exists.")
-
-  return({
-    file <-
-      if (isTRUE(file.info(file.path(root(), name))$isdir)) {
-        file.path(name, paste0(basename(name), '.R'))
-      } else paste0(name, '.R')
-    if (absolute) file.path(root(), file) else file
-  })
-
-  with_absolute <- function(filename) {
-    filename <- gsub('//', '/', filename, fixed = TRUE)
-    if (isTRUE(absolute)) file.path(.root, filename)
-    else filename
   }
 
-  # If `name` is a directory, recursively check if it's an idempotent resource.
-  if (file.exists(rooted_file <- file.path(.root, filename)) &&
-      file.info(rooted_file)$isdir)
-    return(.self$.filename(file.path(filename, basename(rooted_file)),
-                           absolute = absolute, check.exists = check.exists))
+  if (isTRUE(file.info(file.path(root(), name))$isdir)) {
+    file <- file.path(name, paste0(basename(name), '.R'))
+  } else {
+    file <- paste0(name, '.R')
+  }
 
-  filename <- strip_r_extension(filename)
-  if (file.exists(tmp <- file.path(.root, paste0(filename, '.r'))) ||
-      file.exists(tmp <- file.path(.root, paste0(filename, '.R'))))
-    return(with_absolute(tmp))
-  
-  filename <- file.path(filename, dirname(filename))
-  if (file.exists(tmp <- file.path(.root, paste0(filename, '.r'))) ||
-      file.exists(tmp <- file.path(.root, paste0(filename, '.R'))))
-    return(with_absolute(tmp))
-
-  stop("Cannot convert resource ", sQuote(filename), " to full file path, ",
-       "as no such resource exists in ", .project_name, " project ",
-       sQuote(.root), ".")
+  if (absolute) {
+    file.path(root(), file)
+  } else {
+    file
+  }
 }
 
 #' A director is a reference class responsible for a collection of

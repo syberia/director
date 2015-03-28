@@ -30,43 +30,15 @@ director_exists <- function(resource, helper = FALSE) {
   "Determine whether or not a resource exists in this director structure."
 
   resource <- strip_r_extension(resource)
-  if (basename(dirname(resource)) == basename(resource))
+
+  if (basename(dirname(resource)) == basename(resource)) {
     resource <- dirname(resource)
-
-  return(
-    if (isTRUE(helper)) extensionless_exists(file.path(.root, resource))
-    else length(.self$find(resource, method = "exact", by_mtime = FALSE)) == 1
-  )
-
-  # For a non-idempotent resource to exist, it must both be present as a .r
-  # file *and* not be a helper to an idempotent resource.
-  # TODO: (RK) Support nested idempotent resources?
-  non_idempotent_exists <-
-    extensionless_exists(rooted_resource) &&
-    !is.idempotent_directory(dirname(rooted_resource))
-
-  # Non-idempotence is preferred to idempotence when looking for resources.
-  if (non_idempotent_exists) {
-    # But we should still warn the user that there is a (now invisible to the
-    # director) idempotent version of the resource.
-    if (is.idempotent_directory(rooted_resource)) 
-      warning("There is both a directory ", sQuote(resource), " and ",
-              "a file ", sQuote(paste0(resource, '.r')), " in your ",
-              .project_name, " project. This might be confusing and cause problems.",
-              call. = FALSE, immediate. = TRUE)
-   
-    return(TRUE)
   }
 
-  # If it is not an idempotent resource, check if either it is an idempotent
-  # directory or it is the idempotent file itself.
-  idempotent_exists <-
-    if (file.exists(rooted_resource) && file.info(rooted_resource)$isdir)
-      is.idempotent_directory(rooted_resource)
-    else if (basename(rooted_resource) == basename(dirname(rooted_resource)))
-      extensionless_exists(rooted_resource)
-    else FALSE
-
-  idempotent_exists
+  if (isTRUE(helper))  {
+    extensionless_exists(file.path(.root, resource))
+  } else {
+    length(.self$find(resource, method = "exact", by_mtime = FALSE)) == 1
+  }
 }
 
