@@ -54,8 +54,7 @@
 #'   d$find('none', method = 'exact')    # ""
 #' }
 director_find <- function(pattern = "", method = "wildcard", base = "", by_mtime = TRUE) {
-  # Definition: idempotent resources are those that share their filename
-  # with the directory they reside in.
+  ## [A reference class docstring](http://stackoverflow.com/a/5931576/2540303)
   "Look for resources by wildcard, partial, or exact matches."
 
   stopifnot(isTRUE(by_mtime) || identical(by_mtime, FALSE))

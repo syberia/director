@@ -89,6 +89,29 @@ extensionless_exists <- function(filename) {
   # former succeeds.
 }
 
+#' Complete the extension of a file (.r or .R).
+#'
+#' @note This function assumes at least one file ending in .r or .R exists.
+#' @param name character. The filename sans extension.
+#' @return \code{name} suffixed by ".r" or ".R" according to which exists.
+#'   (Many Unix-based systems are extension case-sensitive).
+#' @examples
+#' \dontrun{
+#'  # Assume we have a file \code{"foo.R"}.
+#'  stopifnot(complete_extension("foo") == "foo.R")
+#'
+#'  # Assume we have a file \code{"bar.r"}.
+#'  stopifnot(complete_extension("bar") == "bar.R")
+#' }
+complete_extension <- function(filename) {
+  lower_r <- paste0(filename, ".r")
+  if (file.exists(lower_r)) {
+   lower_r 
+  } else {
+    paste0(filename, ".R")
+  }
+}
+
 #' Strip R extension.
 #'
 #' @param filename character. The filename to strip.
