@@ -26,10 +26,10 @@
 #'   # If d is a director object, the above will find exactly the resource
 #'   # "this/file".
 #' 
-#'   d$find(search_pattern("this", "partial")
+#'   d$find(search_pattern("this", "partial"))
 #'   # The above will find any resource containing "this" as a substring.
 #'
-#'   d$find(search_pattern("this", "wildcard")
+#'   d$find(search_pattern("this", "wildcard"))
 #'   # The above will find any resource containing the consecutive letters
 #'   # "this" separated by arbitrary strings.
 #'
@@ -104,21 +104,29 @@ search_pattern_ <- function(pattern, method) {
 
 search_pattern_join <- function(pattern1, pattern2, type) {
   stopifnot(identical(type, "and") || identical(type, "or"))
+  ## An S3 object that tracks an `&` or `|` condition on patterns.
   as.search_pattern(structure(list(pattern1, pattern2, type = type),
                               class = c("search_pattern_join")))
 }
 
 as.search_pattern <- function(x) {
+  ## Remember that when changing classes, the class should be prepended
+  ## rather than appended, since R's S3 mechanism looks left-to-right for
+  ## S3 methods.
   class(x) <- c(class(x), "search_pattern")
   x
 }
 
 is.search_pattern <- function(x) { is(x, "search_pattern") }
 is.atomic_search_pattern <- function(x) {
+  ## An atomic search pattern is one that has not been joined using
+  ## the `&` or `|` operators.
   is.search_pattern(x) && !is.search_pattern_join(x)
 }
 is.search_pattern_join <- function(x) { is(x, "search_pattern_join") }
 
+## This funky looking notation says "implement the `|` operator for the
+## "search_pattern" S3 class.
 `|.search_pattern` <- function(e1, e2) {
   stopifnot(is(e2, "search_pattern"))
 
@@ -137,31 +145,56 @@ is.search_pattern_join <- function(x) { is(x, "search_pattern_join") }
 #' @param strings character. The strings to filter down.
 apply_pattern <- function(pattern, strings) {
   if (is.atomic_search_pattern(pattern)) {
-    class(pattern) <- c(pattern$method, class(pattern))
+    ## First we apply the pattern's method as an S3 class. For example,
+    ## a wildcard pattern would get the "wildcard" class.
+    class(pattern) <- c(pattern$method, class(pattern)) 
+
+    ## R's `UseMethod` function *dispatches* an S3 generic. This means
+    ## that we will call `apply_pattern.wildcard` on the `pattern`
+    ## object without having to figure out that is the appropriate method.
     UseMethod("apply_pattern", object = pattern)
   } else if (is.search_pattern_join(pattern)) {
     operand <- if (pattern$type == "and") { intersect } else { union }
+    ## `Recall` is an R shortcut for "recursively call this function", i.e.,
+    ## `apply_pattern(...)`.
     operand(Recall(pattern[[1]], strings), Recall(pattern[[2]], strings))
   } else { stop("Invalid pattern") }
 }
 
 apply_pattern.exact <- function(pattern, strings) {
+  ## An exact match is just a single string that matches on the nose.
   if (any(pattern$pattern == strings)) { pattern$pattern }
   else { character(0) }
 }
 
 apply_pattern.wildcard <- function(pattern, strings) {
+  ## First, replace all regex special characters with the correct backslashed
+  ## version. I wish I could say I knew how many backslashes are necessary
+  ## but it was trial and error. ;)
   pattern <- gsub("([]./\\*+()])", "\\\\\\1", pattern$pattern)
+
+  ## The only regex special characters we allow in wildcards are `^` and `$`
+  ## to mark beginning and ends of strings. The rest gets replaced with a
+  ## `.*` prefix. For example, "^abc" would be come "^.*a.*b.*c".
   pattern <- gsub("([^\\$^])", ".*\\1", pattern) # turn this into ctrl+p
+    
+  ## But of course "^.*a" is just "a"! So we turn that special sequence into
+  ## just "^".
   pattern <- gsub("^.*", "^", pattern, fixed = TRUE)
+
+  ## By default, wildcards matching is case insensitive, since it will be used
+  ## to filter on file names, and we rarely have file collisions based on case
+  ## (and when you do you should think of a better file name instead!).
   grep(pattern, strings, value = TRUE, ignore.case = TRUE)
 }
 
 apply_pattern.partial <- function(pattern, strings) {
+  ## Just a plain substring match.
   grep(pattern$pattern, strings, fixed = TRUE, value = TRUE)
 }
 
 apply_pattern.regex <- function(pattern, strings) {
+  ## Just a plain regex match.
   grep(pattern$pattern, strings, value = TRUE)
 }
 

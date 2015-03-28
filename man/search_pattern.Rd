@@ -39,10 +39,10 @@ Patterns can be combined using the \code{|} and \code{&} operators.
   # If d is a director object, the above will find exactly the resource
   # "this/file".
 
-  d$find(search_pattern("this", "partial")
+  d$find(search_pattern("this", "partial"))
   # The above will find any resource containing "this" as a substring.
 
-  d$find(search_pattern("this", "wildcard")
+  d$find(search_pattern("this", "wildcard"))
   # The above will find any resource containing the consecutive letters
   # "this" separated by arbitrary strings.
 
