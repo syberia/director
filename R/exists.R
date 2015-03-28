@@ -30,6 +30,8 @@ director_exists <- function(resource, helper = FALSE) {
   "Determine whether or not a resource exists in this director structure."
 
   rooted_resource <- strip_r_extension(resource)
+  if (basename(dirname(rooted_resource)) == basename(rooted_resource))
+    rooted_resource <- dirname(rooted_resource)
 
   return(
     if (isTRUE(helper)) extensionless_exists(file.path(.root, rooted_resource))
