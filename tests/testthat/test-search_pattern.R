@@ -74,9 +74,5 @@ describe("applying patterns", {
     expect_identical(sort(output),
       sort(c("a", "dummy/foo/bin", "dao/die", "doo/die/dee", "bc/b", "dao/die/dee/daw")))
   })
-#  apply_pattern.idempotence("",c("a/a", "bc/b", "dummy/foo/bin/bin", "dao/die/die", "dao/die/dee", "do
-# o/die/dee/dum", "doo/die/dee/dee", "dao/die/dee/daw"))
-# [1] "a"               "dummy/foo/bin"   "dao/die"         "doo/die/dee"     "bc/b"
-# [6] "dao/die/dee/daw"
 })
 
