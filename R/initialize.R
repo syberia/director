@@ -14,18 +14,32 @@
 #'                                   # the ending "in project 'my project'".
 #' }
 initialize <- function(root, project_name = '') {
-  if (missing(root)) return()
-  if (!file.exists(root))
-    stop("Cannot create a director for ", sQuote(root), " as that directory ",
-          "does not exist.")
+  # Reference class objects are sometimes initialized on package install, but
+  # no arguments are passed! We let it through to avoid installation problems.
+  if (missing(root)) return() 
 
-  if (!file.info(root)$isdir)
-    stop("Cannot create a director for ", sQuote(root), " as that is a file ",
+  enforce_type(project_name, "character", "director$new")
+
+  if (length(project_name)) {
+    stop("Project name for ", crayon::blue("director$new"), " call must ",
+         "be a scalar character, but has length ",
+         crayon::red(length(project_name)), ".")
+  }
+
+  if (!file.exists(root)) {
+    stop("Cannot create a director for ", crayon::red(root), " as that directory ",
+          "does not exist.")
+  }
+
+  if (!file.info(root)$isdir) {
+    stop("Cannot create a director for ", crayon::red(root), " as that is a file ",
           "and not a directory.")
+  }
 
   # Set reference class fields.
   .dependency_nesting_level <<- 0L
   .root         <<- normalizePath(root)
+  # TODO: (RK) Customize location of the registry: https://github.com/robertzk/director/issues/20
   .registry     <<- registry(file.path(.root, '.registry'))
   .project_name <<- project_name
 }
