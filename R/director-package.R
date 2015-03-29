@@ -8,5 +8,5 @@
 #'
 #' @docType package
 #' @name director
-#' @import digest crayon
+#' @import digest crayon R6 methods
 NULL

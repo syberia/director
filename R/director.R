@@ -51,7 +51,7 @@ NULL
 #' }
 #'
 #' @rdname director
-director_ <- R6Class("director",
+director_ <- R6::R6Class("director",
   private = list(
     .root           = NULL, # character
     .project_name   = NULL, # character

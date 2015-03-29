@@ -13,7 +13,7 @@
   ..$ initialize:function (director, name, provided_environment = new.env(), defining_environment = parent.frame(), 
     helper = FALSE, tracking = TRUE, soft = FALSE)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 32 24 62 1 24 1 32 62
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x107013a70> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x104c79a38> 
  $ private   :List of 18
   ..$ current             : NULL
   ..$ cached              : NULL
@@ -29,22 +29,22 @@
   ..$ value               : NULL
   ..$ initialize_virtual  :function (name, defining_environment)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 80 21 97 1 21 1 80 97
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x107013a70> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x104c79a38> 
   ..$ initialize_real     :function (provided_environment, helper, tracking, soft)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 171 20 177 1 20 1 171 177
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x107013a70> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x104c79a38> 
   ..$ set_filename!       :function (helper)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 99 20 102 1 20 1 99 102
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x107013a70> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x104c79a38> 
   ..$ set_details         :function ()  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 104 19 124 1 19 1 104 124
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x107013a70> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x104c79a38> 
   ..$ set_modified!       :function (helper, tracking)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 126 20 157 1 20 1 126 157
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x107013a70> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x104c79a38> 
   ..$ mark_as_dependency! :function ()  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 159 26 169 1 26 1 159 169
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x107013a70> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x104c79a38> 
  $ active    : NULL
  $ inherit   : NULL
  $ parent_env:<environment: namespace:director> 

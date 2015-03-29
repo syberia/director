@@ -9,10 +9,12 @@ Version: 0.3.0
 Authors@R: c(person("Robert", "Krzyzanowski",
     email = "technoguyrob@gmail.com", role = c("aut", "cre")))
 Depends:
-    R (>= 3.0.1)
+    R (>= 3.0.1),
+    methods
 Imports:
     digest,
-    crayon
+    crayon,
+    R6
 License: MIT
 LazyData: true
 VignetteBuilder: knitr

@@ -46,7 +46,7 @@ setClassUnion('listOrNULL', c('list', 'NULL'))
 #'      is the \emph{directory name}, not the filename.}
 #' }
 #' @name directorResource
-directorResource_ <- R6Class("directorResource",
+directorResource_ <- R6::R6Class("directorResource",
   private = list(
     #=== Members ===
     current = NULL, # list or NULL

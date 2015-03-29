@@ -19,7 +19,7 @@
 #'   r$set('some/key', value <- list(1,2,3))
 #'   stopifnot(r$get('some/key'), value)
 #' }
-registry <- setRefClass('registry',
+registry <- methods::setRefClass('registry',
   fields = list(.root = 'character'),
   methods = list(
     #' Initialize a registry. A registry is responsible for maintaining
