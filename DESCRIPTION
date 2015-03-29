@@ -39,4 +39,5 @@ Collate:
     'registry.R'
     'resource.R'
     'search_pattern.R'
+    'utils.r'
     'zzz.r'

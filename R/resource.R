@@ -26,8 +26,7 @@ setClassUnion('listOrNULL', c('list', 'NULL'))
 #'      However, once an R script becomes too long (over 100 lines of
 #'      code is a good heuristic), it should be broken up into helper
 #'      files that are glued together in the master script. To facilitate
-#'      this kind of modularity and
-#'      \link[=http://en.wikipedia.org/wiki/Don%27t_repeat_yourself]{Don't Repeat Yourself}
+#'      this kind of modularity and "Don't Repeat Yourself"
 #'      strategy, director provides the concept of an idempotent resource.
 #'      
 #'      If an R script shares its name with its parent directory (for example,
