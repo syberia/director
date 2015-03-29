@@ -17,6 +17,7 @@ describe("erroring on invalid inputs", {
     expect_error(d$register_parser("", FALSE), "parameter must be")
     assert(d$register_parser("foo", function() { }))
   })
+
 })
 
 test_that("it is able to follow a depth-1 dependency chain", {
