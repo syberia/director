@@ -142,4 +142,105 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE,
   output
 }
 
+resource2 <- function(name, provides = list(), defining_environment = parent.frame(),
+                     body = TRUE, soft = FALSE, tracking = TRUE, helper = FALSE) {
 
+  ## This does not hurt unless someone names their file "foo.R.R",
+  ## and it would be inconvenient to the user if we did not strip the extension.
+  name <- tools::file_path_sans_ext(name)
+
+  provides <- sanitize_provides_environment(provides, defining_environment)
+
+  ## We use director$exists to determine whether `name` corresponds to a
+  ## resource. If `helper` is `TRUE`, we look through helper .R files as well.
+  if (!exists(name, helper = isTRUE(helper))) {
+    virtual_resource(name, defining_environment)
+  } else {
+    filename        <- .self$filename(name, absolute = TRUE, check.exists = FALSE, helper = isTRUE(helper)) # Convert resource to filename.
+    resource_info   <- if (file.exists(filename)) file.info(filename)
+    resource_key    <- strip_root(.root, resource_name(filename))
+    cache_key       <- resource_cache_key(resource_key)
+    cached_details  <- .cache[[cache_key]]
+    current_details <- list(info = resource_info)
+    current_details$dependencies <- cached_details$dependencies
+    if (is.element('value', names(cached_details)))
+      current_details['value'] <- cached_details['value'] # (avoid NULL problems)
+
+    if (isTRUE(body)) current_details$body <-
+      paste(readLines(filename, warn = FALSE), collapse = "\n")
+
+    if (identical(soft, FALSE)) .cache[[cache_key]] <<- current_details
+
+    source_args <- list(filename, local = provides)
+    # TODO: (RK) Check if `local` is an environment in case user overwrote.
+
+    modified <-
+      (is.null(resource_info) && !is.null(cached_details)) || # file was deleted
+      (resource_info$mtime > cached_details$info$mtime %||% 0) # file was changed
+
+    resource_dir <- file.path(.root, resource_key)
+    
+    if (is.idempotent_directory(resource_dir)) {
+      tracking_is_on_and_resource_has_helpers <-
+        isTRUE(tracking) && !isTRUE(helper) &&
+        !isTRUE(modified) # No point in checking modifications in helpers otherwise
+        
+      # Touch helper files to see if they got modified.
+      helper_files <- get_helpers(resource_dir)
+      for (file in helper_files) {
+        helper_object <- resource(file.path(resource_key, file), body = FALSE,
+                           tracking = FALSE, helper = TRUE)
+                           #defining_environment = parent.frame())
+        if (tracking_is_on_and_resource_has_helpers)
+          modified <- modified || helper_object$modified
+      }
+    }
+
+    # TODO: (RK) Finer control over defining environment.
+    output <- directorResource(current = current_details, cached = cached_details,
+         modified = modified, resource_key = resource_key,
+         source_args = source_args, director = .self,
+         defining_environment = parent.frame()) 
+
+    if (.dependency_nesting_level > 0 && !isTRUE(helper))
+      .stack$push(list(level = .dependency_nesting_level,
+                       key = resource_key,
+                       resource = output))
+    output
+  }
+}
+
+sanitize_provides_environment <- function(provides, defining_environment) {
+  if (!is.environment(provides)) {
+    if (length(provides) == 0) provides <- new.env(parent = defining_environment)
+    else provides <- list2env(provides, parent = defining_environment)
+  }
+
+  if (base::exists('..director_inject', envir = parent.env(provides), inherits = FALSE)) {
+    # TODO: (RK) Calling parent.env here twice since we're doing environment injection
+    # in resource$compile - is there a better way?
+    parent.env(parent.env(provides)) <- parent.env(topenv())
+  } else parent.env(provides) <- parent.env(topenv(provides))
+  # Do not allow access to the global environment since resources should be self-contained.
+  provides
+}
+
+virtual_resource <- function(name, defining_environment) {
+  # TODO: (RK) Should assuming virtual resource be the right behavior here?
+
+  if (!has_preprocessor(name)) { # No preprocessor exists
+    stop(sprintf("Cannot find resource %s, in%s project %s.",
+      sQuote(crayon::red(name)),
+      if (nzchar(.project_name)) paste0(" ", .project_name) else "",
+      sQuote(crayon::blue(.root))))
+  }
+
+  ## If there is no such file in the project but a preprocessor exists,
+  ## we let the preprocessor handle it. This is useful for "virtual"
+  ## resources that do not correspond to a file and are built some other
+  ## way (e.g., from a database, external web resource, etc.).
+  return(directorResource(current = NULL, cached = NULL,
+    modified = TRUE, resource_key = name,
+    source_args = list(local = new.env(parent = defining_environment)),
+    director = .self, defining_environment = defining_environment))
+}
