@@ -7,14 +7,20 @@
 #' reference class object by specifying some inputs, but want to make it
 #' easy to provide those inputs by users.
 #' 
-#' This method will return a list containing four keys, `current`, `cached`,
-#' `value`, and `modified` if it finds the given resource, or error
-#' if no such resource exists. The former two keys, `current` and `cached`,
-#' will contain information relating to the current and previous execution
-#' of this resource, while `value` contains a function that will execute the
-#' file and return its output, and `modified` is a logical flag indicating
-#' whether or not the file has been modified since it was last executed by
-#' the director.
+#' This method will return a \code{directorResource} object that represents
+#' that particular R script. A resource can have a \code{\link[=register_preprocessor]{preprocessor}}
+#' and a \code{link[=register_parser]{parser}} attached to it.
+#'
+#' The former determines how to source the R file. For example, if you need
+#' to inject additional variables prior to sourcing it, you can do so
+#' from the preprocessor.
+#' 
+#' The parser determines what to do with the R file after sourcing it.
+#' It can tell what the dependencies of the file are (i.e., what other
+#' resources were used when sourcing it), and whether or not it was modified
+#' (i.e., whether the R file or any of its dependencies were modified).
+#' 
+#' Together, a preprocessor, parser, and source file compose a resource.
 #'
 #' @param name character. The name of the resource (i.e. R script) relative
 #'   to the root of the director object.
@@ -24,37 +30,25 @@
 #'   environment will be set to \code{parent.env(topenv())} to prevent
 #'   access to global variables (and encourage modularity and lack of side
 #'   effects. There should always be a way to write your code without them).
-#' @param body logical. Whether or not the fetch the body of the resource
-#'   in the `current` and `cached` output lists.
+#' @param body logical. Whether or not to fetch the body of the resource.
 #' @param soft logical. Whether or not to modify the cache to reflect
 #'   the resource modification time and other details.
 #' @param ... additional arguments to pass to the \code{base::source}
 #'   function that gets executed when the `value` is accessed.
 #' @param tracking logical. Whether or not to perform modification tracking
 #'   by pushing accessed resources to the director's stack.
-#' @param check.helpers logical. If \code{TRUE}, the resource's helpers
-#'   (assuming it is an idempotent resource -- that is, a resource whose
-#'   parent directory has the same name as the resource). The default is
-#'   \code{TRUE}. If \code{FALSE}, the \code{name} parameter will not be
-#'   converted into a resource name.
-#' @return a four-element list with names `current`, `cached`, `value`,
-#'   and `modified`. The former two will both be two-element lists containing
-#'   keys `info` and `body` (unless director has never executed the resource before
-#'   in which case the latter will be \code{NULL}). The `info` key holds the
-#'   result of calling R's built-in \code{file.info} on the resource (and includes
-#'   information like created at and modified at time), whereas the `body`
-#'   key holds a character representation of the body of the resource (useful
-#'   for comparing if any actual modifications have been made).
+#' @param helper logical. If \code{TRUE}, allow processing of helper files.
+# TODO: (RK) Explain idempotence and helpers more: https://github.com/robertzk/director/issues/23
+#'   If a file shares its name with the parent directory (e.g., "foo"
+#'   and "foo/foo.R"), it is called an idempotent resource. Any other files
+#'   in the same directory as the idempotence resource, besides the file
+#'   itself, are called helper files, and are usually invisible to the
+#'   director object (e.g., "foo/other.R" if "foo/foo.R" exists).
 #'
-#'   The `value` key in the returned list holds a function which will
-#'   execute the given resource in the \code{provides} environment. A function
-#'   is returned instead of the actual value to let the caller control
-#'   whether or not the resource is executed (e.g., based on its properties
-#'   in the `current` list). Most frequently, this means consulting the
-#'   `modified` key of the returned list, which will hold a logical
-#'   indicating whether or not the resource has been modified since last
-#'   executed by the director (if this was never the case, `modified` will
-#'   be \code{FALSE}).
+#'   If \code{helper = TRUE}, these will temporarily be treated as a
+#'   resource so that we can track whether they were modified and re-use
+#'   other \code{directorResource} features. By default, \code{helper = FALSE}.
+#' @return A \code{\link{directorResource}} object.
 resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
                      tracking = TRUE, check.helpers = TRUE) {
 

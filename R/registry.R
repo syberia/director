@@ -192,6 +192,9 @@ registry <- setRefClass('registry',
   )
 )
 
+## In order to use both `registry()` and `registry$new()` when loading the
+## package externally, we must export the `registry` function in addition
+## to the reference class.
 #' @docType function
 #' @name registry
 #' @export

@@ -4,7 +4,8 @@
 \alias{enforce_type}
 \title{Enforce parameter types (logical, character, etc.).}
 \usage{
-enforce_type(object, admissible_types, function_name)
+enforce_type(object, admissible_types, function_name,
+  name = deparse(substitute(object)))
 }
 \arguments{
 \item{object}{ANY. An R object to enforce types on.}
@@ -13,6 +14,10 @@ enforce_type(object, admissible_types, function_name)
 
 \item{function_name}{character. The function this enforcement is occurring
 in, for error messages.}
+
+\item{name}{character. The name of the parameter whose type is being
+enforced. By default, the string expression passed in to the first
+argument, \code{object}.}
 }
 \value{
 Nothing, but error if the type does not match.
