@@ -23,11 +23,11 @@ accessor_method <- function(attr) {
 #'   evaluation to memoize in the calling environment.
 #' @name try_memoize
 try_memoize <- function(fn) {
-  if ('memoise' %in% installed.packages()) {
-    require(memoise)
-    eval.parent(substitute(memoise(fn)))
+  if (requireNamespace("memoise", quietly = TRUE)) {
+    eval.parent(substitute(memoise::memoise(fn)))
+  } else {
+    fn
   }
-  fn
 }
 
 # A reference class that implements a stack data structure.
