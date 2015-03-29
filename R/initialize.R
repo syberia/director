@@ -20,10 +20,10 @@ initialize <- function(root, project_name = '') {
 
   enforce_type(project_name, "character", "director$new")
 
-  if (length(project_name)) {
+  if (length(project_name) != 1) {
     stop("Project name for ", crayon::blue("director$new"), " call must ",
          "be a scalar character, but has length ",
-         crayon::red(length(project_name)), ".")
+         crayon::red(as.character(length(project_name))), ".")
   }
 
   if (!file.exists(root)) {
