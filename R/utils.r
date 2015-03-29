@@ -202,3 +202,22 @@ any_is_substring_of <- function(string, set_of_strings) {
   any(vapply(set_of_strings,
              function(x) substring(string, 1, nchar(x)) == x, logical(1)))
 }
+
+#' Enforce parameter types (logical, character, etc.).
+#'
+#' @param object ANY. An R object to enforce types on.
+#' @param admissible_types character. A character vector of allowed types. 
+#' @param function_name character. The function this enforcement is occurring
+#'    in, for error messages.
+#' @return Nothing, but error if the type does not match.
+#' @examples
+#' \dontrun{
+#' x <- 1
+#' enforce_type(x, "logical", "myfunction")
+#' # Will call stop() with the following error:
+#' # "In 'myfunction', the 'x' parameter must be a character; instead, I got
+#' # a logical.
+#' }
+enforce_type <- function(object, admissible_types, function_name) {
+
+}
