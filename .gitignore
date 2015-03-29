@@ -2,3 +2,6 @@
 vignettes/*.html
 vignettes/*.md
 *.zip
+
+\.Rcheck
+\.tar\.gz$
