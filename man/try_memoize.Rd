@@ -14,10 +14,6 @@ nothing, but \code{try_memoize} will use non-standard
   evaluation to memoize in the calling environment.
 }
 \description{
-This function will load the \code{memoise} package if it is
-available, or do nothing otherwise.
-}
-\details{
-(Blame Hadley for the spelling of memoise.)
+Attempt to memoize a function using the memoise package.
 }
 
