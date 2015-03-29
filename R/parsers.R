@@ -17,16 +17,22 @@
 #'   r <- d$resource('models/some_model.R')
 #'   r$value() # Will print: I am a models/some_model, a model!
 #' }
-register_parser <- function(path, parser, overwrite = FALSE, cache = FALSE) {
-  stopifnot(is.character(path))
-  parser <- if (missing(parser)) function() { } else parser
-  stopifnot(is.function(parser))
+register_parser <- function(path, parser = function() { }, overwrite = FALSE, cache = FALSE) {
+  enforce_type(path,   "character", "director$register_parser")
+  enforce_type(parser, "function",  "director$register_parser")
+  if (length(path) != 1) {
+    stop("A parser must be registered to a path that is a scalar character ",
+         "but instead I got a character vector of length",
+          crayon::red(as.character(length(path))), ".")
+  }
+
   if (length(formals(parser)) != 0) {
-    formals(parser) <- NULL # TODO: (RK) Record required uses?
+    # TODO: (RK) Require correct formals specification: https://github.com/robertzk/director/issues/21
+    formals(parser) <- NULL
   }
   
   if (is.element(path, names(.parsers)) && !isTRUE(overwrite)) {
-    stop("Parser already registered for path ", sQuote(path))
+    stop("Parser already registered for path ", crayon::red(path))
   }
 
   if (isTRUE(cache)) .cached_resources <<- c(.cached_resources, path)

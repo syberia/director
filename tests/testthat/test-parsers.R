@@ -1,6 +1,15 @@
 context('resource parsers')
 library(testthatsomemore)
 
+describe("erroring on invalid inputs", {
+  test_that("it errors when a non-character path is passed", {
+    d <- director(tempdir())
+    expect_error(d$register_parser(NULL), "parameter must be")
+    expect_error(d$register_parser(1), "parameter must be")
+    expect_error(d$register_parser(FALSE), "parameter must be")
+  })
+})
+
 test_that("it is able to follow a depth-1 dependency chain", {
   within_file_structure(list(blah = list('one.R'), foo = list('two.R')), {
     d <- director(tempdir)
