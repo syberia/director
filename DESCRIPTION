@@ -32,6 +32,7 @@ Collate:
     'director-preprocessors.R'
     'director-resource.R'
     'utils.R'
+    'resource-initialize.R'
     'director.R'
     'registry.R'
     'resource.R'

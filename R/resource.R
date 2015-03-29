@@ -1,4 +1,4 @@
-#' @include director.R utils.R
+#' @include director.R utils.R resource-initialize.R
 NULL
 
 setClassUnion('listOrNULL', c('list', 'NULL'))
@@ -48,6 +48,7 @@ setClassUnion('listOrNULL', c('list', 'NULL'))
 #' @name directorResource
 directorResource_ <- R6Class("directorResource",
   private = list(
+    #=== Members ===
     current = NULL, # list or NULL
     cached  = NULL, # list or NULL
     modified = FALSE, # logical
@@ -57,11 +58,15 @@ directorResource_ <- R6Class("directorResource",
     defining_environment = NULL, # environment
     dependencies = NULL, # character
     compiled = NULL, # logical
-    value = NULL # ANY
+    value = NULL, # ANY
+
+    #=== Methods ===
+    initialize_virtual = virtual_resource,
+    initialize_real    = initialize_real
   ),
 
   public = list(
-
+    initialize = resource_initialize
   )
 )
 

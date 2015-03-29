@@ -36,7 +36,7 @@ initialize <- function(root, project_name = '') {
           "and not a directory.")
   }
 
-  # Set reference class fields.
+  # Set R6 fields.
   .dependency_nesting_level <<- 0L
   .root             <<- normalizePath(root)
   # TODO: (RK) Customize location of the registry: https://github.com/robertzk/director/issues/20
@@ -48,6 +48,6 @@ initialize <- function(root, project_name = '') {
   .parsers          <<- list()
   .preprocessors    <<- list()
   .cached_resources <<- list()
-  cache            <<- simple_cache()
+  cache             <<- simple_cache()
 }
 

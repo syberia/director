@@ -9,7 +9,11 @@
 \format{\preformatted{List of 8
  $ new       :function (...)  
  $ classname : chr "directorResource"
- $ public    : list()
+ $ public    :List of 1
+  ..$ initialize:function (director, name, provided_environment = new.env(parent = defining_environment), 
+    defining_environment = parent.frame())  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 22 24 89 1 24 1 22 89
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1016fb008> 
  $ private   :List of 10
   ..$ current             : NULL
   ..$ cached              : NULL

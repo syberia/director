@@ -2,6 +2,7 @@
 #' @include director-initialize.R director-parsers.R
 #' @include director-preprocessors.R director-resource.R
 #' @include utils.R
+#' @include resource-initialize.R
 NULL
 
 # NOTE: This file is prepended with "zzz_" to ensure other files are parsed
@@ -69,7 +70,7 @@ director_ <- R6Class("director",
     # Methods
     initialize = initialize,
     exists     = director_exists,
-    resource   = resource2,
+    resource   = resource,
     virtual_resource = virtual_resource,
     register_parser = register_parser,
     register_preprocessor = register_preprocessor,
