@@ -8,7 +8,7 @@ setClassUnion('listOrNULL', c('list', 'NULL'))
 directorResource <- setRefClass('directorResource',
   fields = list(current = 'listOrNULL', cached = 'listOrNULL',
                 modified = 'logical', resource_key = 'character',
-                source_args = 'list', director = 'director',
+                source_args = 'list', director = 'ANY',
                 defining_environment = 'environment',
                 .dependencies = 'character', .compiled = 'logical',
                 .value = 'ANY'),
@@ -57,10 +57,10 @@ directorResource <- setRefClass('directorResource',
       # level on the director object that counts how deep we are within 
       # resource compilation (i.e., if a resource needs another resource
       # which needs another resources, etc.).
-      if (director$.dependency_nesting_level == 0) director$.stack$clear()
-      director$.dependency_nesting_level <<- director$.dependency_nesting_level + 1L
-      on.exit(director$.dependency_nesting_level <<- director$.dependency_nesting_level - 1L)
-      local_nesting_level <- director$.dependency_nesting_level 
+      director$clear_resource_stack()
+      director$increment_nesting_level()
+      on.exit(director$decrement_nesting_level())
+      local_nesting_level <- director$nesting_level()
  
       # TODO: (RK) Better resource provision injection
       if (!base::exists('..director_inject', envir = parent.env(source_args$local), inherits = FALSE)) {
@@ -90,7 +90,7 @@ directorResource <- setRefClass('directorResource',
       # Cache dependencies.
       dependencies <- 
         Filter(function(dependency) dependency$level == local_nesting_level, 
-               director$.stack$peek(TRUE))
+               director$dependency_stack$peek(TRUE))
       if (any(vapply(dependencies, function(d) d$resource$modified, logical(1))))
         modified <<- TRUE
 
@@ -98,8 +98,8 @@ directorResource <- setRefClass('directorResource',
       cached$modified     <<- modified
       update_cache()
 
-      while (!director$.stack$empty() && director$.stack$peek()$level == local_nesting_level)
-        director$.stack$pop()
+      while (!director$dependency_stack$empty() && director$dependency_stack$peek()$level == local_nesting_level)
+        director$dependency_stack$pop()
 
       .compiled <<- TRUE
     },
@@ -140,8 +140,7 @@ directorResource <- setRefClass('directorResource',
     #   the former the result of the preprocessor application, and the latter
     #   the environment that is made available to the parser later on.
     evaluate = function(source_args, args = list()) {
-      route <- Find(function(x) substring(resource_key, 1, nchar(x)) == x,
-        names(director$.preprocessors))
+      route <- director$match_preprocessor(resource_key)
 
       if (is.null(route)) {
         fn <- function(source_args) { do.call(base::source, source_args)$value }
@@ -149,7 +148,7 @@ directorResource <- setRefClass('directorResource',
         list(value = fn(source_args), preprocessor_output = emptyenv())
       }
       else {
-        fn <- director$.preprocessors[[route]]
+        fn <- director$preprocessor(route)
         env <- new.env(parent = environment(fn))
         environment(fn) <- env # TODO: (RK) Test this!
         environment(fn)$resource        <- resource_key
@@ -176,11 +175,10 @@ directorResource <- setRefClass('directorResource',
     # @param the parsed object.
     parse = function(value, provides, args = list()) {
       # TODO: (RK) Resource parsers?
-      route <- Find(function(x) substring(resource_key, 1, nchar(x)) == x,
-                    names(director$.parsers))
+      route <- director$match_parser(resource_key)
       if (is.null(route)) value$value
       else {
-        fn <- director$.parsers[[route]]
+        fn <- director$parser(route)
         env <- new.env(parent = environment(fn))
         environment(fn) <- env # TODO: (RK) Test this!
         environment(fn)$resource            <- resource_key
@@ -205,13 +203,15 @@ directorResource <- setRefClass('directorResource',
 
     update_cache = function() {
       cache_key <- resource_cache_key(resource_key)
-      director$.cache[[cache_key]]$dependencies <<- cached$dependencies
-      director$.cache[[cache_key]]$modified     <<- cached$modified
+      cache              <- director$cache$get(cache_key)
+      cache$dependencies <- cached$dependencies
+      cache$modified     <- cached$modified
+      director$cache$set(cache_key, cache)
     },
 
     dependencies = function() {
       get_dependencies <- function(key) {
-        deps <- director$.cache[[resource_cache_key(key)]]$dependencies %||% character(0)
+        deps <- director$cache$get(resource_cache_key(key))$dependencies %||% character(0)
         as.character(c(deps, sapply(deps, get_dependencies), recursive = TRUE))
       }
       unique(c(recursive = TRUE, as.character(cached$dependencies),
@@ -243,11 +243,14 @@ directorResource <- setRefClass('directorResource',
       }
       # We need to use `[` and not `$` or NULLs won't be cached.
       cached['value'] <<- list(value = .value)
-      director$.cache[[resource_cache_key(resource_key)]]['value'] <<- list(value = .value)
+      cache_key   <- resource_cache_key(resource_key)
+      cache_entry <- director$cache$get(cache_key)
+      cache_entry['value'] <- list(value = .value)
+      director$cache$set(cache_key, cache_entry)
     },
 
     caching_enabled = function() {
-      any_is_substring_of(resource_key, director$.cached_resources)
+      any_is_substring_of(resource_key, director$cached_resources())
     },
     is_cached = function() { is.element('value', names(cached)) }
 

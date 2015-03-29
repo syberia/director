@@ -221,3 +221,18 @@ enforce_type <- function(object, admissible_types, function_name, name = deparse
          "; instead, I got a ", crayon::red(class(object)[1]), ".")
   }
 }
+
+#' A simple caching structure.
+#'
+#' @return A list of four methods \code{get}, \code{set}, \code{exists}
+#'   and \code{unset} that modify another list under the hood.
+simple_cache <- function() {
+  cache <- list()
+  list(
+    get    = function(key) cache[[key]],
+    set    = function(key, value) cache[key] <<- structure(list(value), .Names = key),
+    exists = function(key) is.element(key, names(key)),
+    unset  = function(key) cache[[key]] <<- NULL
+  )
+}
+

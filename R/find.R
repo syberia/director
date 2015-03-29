@@ -80,11 +80,10 @@ director_find <- function(pattern = "", method = "wildcard", base = "", by_mtime
     ## job of actually finding resources that match this `pattern`
     ## to a helper function.
     ##
-    ## If you search [the R reference class documentation](https://stat.ethz.ch/R-manual/R-devel/library/methods/html/refClass.html)
-    ## for the string ".self", you will learn this is an environment
-    ## that points to the reference class object itself, like some language's
-    ## `this` keyword.
-    find_(.self, pattern, method, base, by_mtime)
+    ## The keyword `self` is an [R6 class keyword](https://github.com/wch/R6)  
+    ## that represents the environment containing this R6 object. It is
+    ## similar to other languages' `this` keyword.
+    find_(self, pattern, method, base, by_mtime)
   }
 }
 

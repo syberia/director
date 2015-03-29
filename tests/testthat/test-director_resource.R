@@ -13,6 +13,12 @@ test_that('it can find a simple resource', {
   })
 })
 
+test_that('it marks a new resource as modified', {
+  within_file_structure(list('blah.r'), { d <- director(tempdir)
+    expect_true(d$resource('blah')$modified)
+  })
+})
+
 test_that('a resource output has the keys current, cached, value, and modified', {
   within_file_structure(list('blah.r'), { d <- director(tempdir)
     expect_true(all(is.element(names(d$resource('blah')),
@@ -21,12 +27,6 @@ test_that('a resource output has the keys current, cached, value, and modified',
 })
 
 # test modified key in resource list
-
-test_that('it marks a new resource as modified', {
-  within_file_structure(list('blah.r'), { d <- director(tempdir)
-    expect_true(d$resource('blah')$modified)
-  })
-})
 
 test_that('it marks an old resource as not modified', {
   within_file_structure(list('blah.r'), { d <- director(tempdir)

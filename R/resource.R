@@ -85,15 +85,15 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE,
     # If this resource does not exist, let the preprocessor handle it instead.
     return(directorResource(current = NULL, cached = NULL,
       modified = TRUE, resource_key = name,
-      source_args = list(local = new.env(parent = parent.frame())), director = .self,
+      source_args = list(local = new.env(parent = parent.frame())), director = self,
       defining_environment = parent.frame()))
   }
 
-  filename        <- .self$filename(name, absolute = TRUE, check.exists = FALSE, helper = isTRUE(helper)) # Convert resource to filename.
+  filename        <- self$filename(name, absolute = TRUE, check.exists = FALSE, helper = isTRUE(helper)) # Convert resource to filename.
   resource_info   <- if (file.exists(filename)) file.info(filename)
   resource_key    <- strip_root(.root, resource_name(filename))
   cache_key       <- resource_cache_key(resource_key)
-  cached_details  <- .cache[[cache_key]]
+  cached_details  <- cache$get(cache_key)
   current_details <- list(info = resource_info)
   current_details$dependencies <- cached_details$dependencies
   if (is.element('value', names(cached_details)))
@@ -102,7 +102,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE,
   if (isTRUE(body)) current_details$body <-
     paste(readLines(filename, warn = FALSE), collapse = "\n")
 
-  if (identical(soft, FALSE)) .cache[[cache_key]] <<- current_details
+  if (identical(soft, FALSE)) cache$set(cache_key, current_details)
 
   source_args <- list(filename, local = provides)
   # TODO: (RK) Check if `local` is an environment in case user overwrote.
@@ -132,11 +132,11 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE,
   # TODO: (RK) Finer control over defining environment.
   output <- directorResource(current = current_details, cached = cached_details,
        modified = modified, resource_key = resource_key,
-       source_args = source_args, director = .self,
+       source_args = source_args, director = self,
        defining_environment = parent.frame()) 
 
   if (.dependency_nesting_level > 0 && !isTRUE(helper))
-    .stack$push(list(level = .dependency_nesting_level,
+    dependency_stack$push(list(level = .dependency_nesting_level,
                      key = resource_key,
                      resource = output))
   output
@@ -156,11 +156,11 @@ resource2 <- function(name, provides = list(), defining_environment = parent.fra
   if (!exists(name, helper = isTRUE(helper))) {
     virtual_resource(name, defining_environment)
   } else {
-    filename        <- .self$filename(name, absolute = TRUE, check.exists = FALSE, helper = isTRUE(helper)) # Convert resource to filename.
+    filename        <- self$filename(name, absolute = TRUE, check.exists = FALSE, helper = isTRUE(helper)) # Convert resource to filename.
     resource_info   <- if (file.exists(filename)) file.info(filename)
     resource_key    <- strip_root(.root, resource_name(filename))
     cache_key       <- resource_cache_key(resource_key)
-    cached_details  <- .cache[[cache_key]]
+    cached_details  <- cache$get(cache_key)
     current_details <- list(info = resource_info)
     current_details$dependencies <- cached_details$dependencies
     if (is.element('value', names(cached_details)))
@@ -169,7 +169,7 @@ resource2 <- function(name, provides = list(), defining_environment = parent.fra
     if (isTRUE(body)) current_details$body <-
       paste(readLines(filename, warn = FALSE), collapse = "\n")
 
-    if (identical(soft, FALSE)) .cache[[cache_key]] <<- current_details
+    if (identical(soft, FALSE)) cache$set(cache_key, current_details)
 
     source_args <- list(filename, local = provides)
     # TODO: (RK) Check if `local` is an environment in case user overwrote.
@@ -199,11 +199,11 @@ resource2 <- function(name, provides = list(), defining_environment = parent.fra
     # TODO: (RK) Finer control over defining environment.
     output <- directorResource(current = current_details, cached = cached_details,
          modified = modified, resource_key = resource_key,
-         source_args = source_args, director = .self,
+         source_args = source_args, director = self,
          defining_environment = parent.frame()) 
 
     if (.dependency_nesting_level > 0 && !isTRUE(helper))
-      .stack$push(list(level = .dependency_nesting_level,
+      dependency_stack$push(list(level = .dependency_nesting_level,
                        key = resource_key,
                        resource = output))
     output
@@ -242,5 +242,5 @@ virtual_resource <- function(name, defining_environment) {
   return(directorResource(current = NULL, cached = NULL,
     modified = TRUE, resource_key = name,
     source_args = list(local = new.env(parent = defining_environment)),
-    director = .self, defining_environment = defining_environment))
+    director = self, defining_environment = defining_environment))
 }

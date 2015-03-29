@@ -74,17 +74,24 @@ director_filename <- function(name, absolute = FALSE, check.exists = TRUE, helpe
 #'      specific files.}
 #' }
 #'
-#' @docType class
-#' @name director
 #' @rdname director
-#' @export
-director <- setRefClass("director",
-  fields = list(.root = 'character', .project_name = 'character',
-                .resource_cache = 'list', .stack = 'stack',
-                .registry = 'registry', .cache = 'list',
-                .dependency_nesting_level = 'integer',
-                .parsers = 'list', .preprocessors = 'list', .cached_resources = 'character'),
-  methods = list(
+director_ <- R6Class("director",
+  private = list(
+    .root           = NULL, # character
+    .project_name   = NULL, # character
+    .resource_cache = list(), # list
+    .registry       = NULL, # registry
+    .dependency_nesting_level = 0, # integer
+    .parsers        = list(), # list
+    .preprocessors  = list(), # list
+    .cached_resources = list() # character
+  ),
+  public = list(                    
+    # Members
+    dependency_stack = NULL, # stack
+    cache            = NULL,
+
+    # Methods
     initialize = initialize,
     exists     = director_exists,
     resource   = resource2,
@@ -93,6 +100,21 @@ director <- setRefClass("director",
     register_preprocessor = register_preprocessor,
     has_preprocessor = has_preprocessor,
     find       = director_find,
+
+    match_preprocessor = function(resource_name) {
+      Find(function(x) substring(resource_name, 1, nchar(x)) == x, names(.preprocessors))
+    },
+    match_parser = function(resource_name) {
+      Find(function(x) substring(resource_name, 1, nchar(x)) == x, names(.parsers))
+    },
+    preprocessor = function(x) .preprocessors[[x]],
+    parser = function(x) .parsers[[x]],
+    cached_resources = function() .cached_resources,
+
+    clear_resource_stack = function() { if (.dependency_nesting_level == 0) dependency_stack$clear() },
+    increment_nesting_level = function() { .dependency_nesting_level <<- .dependency_nesting_level + 1L },
+    decrement_nesting_level = function() { .dependency_nesting_level <<- .dependency_nesting_level - 1L },
+    nesting_level = function() { .dependency_nesting_level },
 
     root       = accessor_method(.root),
     absolute   = function(x) { file.path(root(), x) },
@@ -105,6 +127,16 @@ director <- setRefClass("director",
     filename  = director_filename
   )
 )
+
+director <- structure(
+  function(...) { director_$new(...) },
+  class = "director_"
+)
+
+`$.director_` <- function(...) {
+  stopifnot(identical(..2, "new"))
+  ..1
+}
 
 #' @docType function
 #' @name director
