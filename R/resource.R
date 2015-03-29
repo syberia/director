@@ -33,8 +33,6 @@
 #' @param body logical. Whether or not to fetch the body of the resource.
 #' @param soft logical. Whether or not to modify the cache to reflect
 #'   the resource modification time and other details.
-#' @param ... additional arguments to pass to the \code{base::source}
-#'   function that gets executed when the `value` is accessed.
 #' @param tracking logical. Whether or not to perform modification tracking
 #'   by pushing accessed resources to the director's stack.
 #' @param helper logical. If \code{TRUE}, allow processing of helper files.
@@ -49,7 +47,7 @@
 #'   resource so that we can track whether they were modified and re-use
 #'   other \code{directorResource} features. By default, \code{helper = FALSE}.
 #' @return A \code{\link{directorResource}} object.
-resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
+resource <- function(name, provides = list(), body = TRUE, soft = FALSE,
                      tracking = TRUE, helper = FALSE) {
 
   ## This does not hurt unless someone names their file "foo.R.R",
@@ -78,8 +76,10 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     # TODO: (RK) Should assuming virtual resource be the right behavior here?
 
     if (!has_preprocessor(name)) { # No preprocessor exists
-      stop("Cannot find resource ", crayon::red(sQuote(name)), " in ",
-           .project_name, " project ", crayon::blue(sQuote(.root)), ".")
+      stop(sprintf("Cannot find resource %s, in%s project %s.",
+        sQuote(crayon::red(name)),
+        if (nzchar(.project_name)) paste0(" ", .project_name) else "",
+        sQuote(crayon::blue(.root))))
     }
 
     # If this resource does not exist, let the preprocessor handle it instead.
@@ -104,7 +104,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
 
   if (identical(soft, FALSE)) .cache[[cache_key]] <<- current_details
 
-  source_args <- append(list(filename, local = provides), list(...))
+  source_args <- list(filename, local = provides)
   # TODO: (RK) Check if `local` is an environment in case user overwrote.
 
   modified <-
@@ -122,8 +122,8 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     helper_files <- get_helpers(resource_dir)
     for (file in helper_files) {
       helper_object <- resource(file.path(resource_key, file), body = FALSE,
-                         tracking = FALSE, helper = TRUE,
-                         defining_environment = parent.frame())
+                         tracking = FALSE, helper = TRUE)
+                         #defining_environment = parent.frame())
       if (tracking_is_on_and_resource_has_helpers)
         modified <- modified || helper_object$modified
     }
