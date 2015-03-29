@@ -39,7 +39,7 @@ resource_initialize <- function(director, name,
   director <<- director
   name     <<- resource_name(name)
   compiled <<- FALSE
-  value    <<- NULL
+  .value   <<- structure(NULL, class = "uninitializedField")
   defining_environment <<- defining_environment
 
   ## The default value of `defining_environment` is `parent.frame()`, and we
@@ -48,7 +48,7 @@ resource_initialize <- function(director, name,
 
   ## We use director$exists to determine whether `name` corresponds to a
   ## resource. If `helper` is `TRUE`, we look through helper .R files as well.
-  if (!exists(name, helper = isTRUE(helper))) {
+  if (!director$exists(name, helper = isTRUE(helper))) {
     initialize_virtual(name, defining_environment)
   } else {
     ## Convert from a list to an environment, if necessary, and set the parent
@@ -101,7 +101,7 @@ virtual_resource <- function(name, defining_environment) {
                                 helper = helper)
 }
 
-`set_details!` <- function() {
+`set_details!` <- function(soft) {
   resource_info   <- if (file.exists(filename)) file.info(filename)
   cache_key       <- resource_cache_key(name)
   cached          <<- director$cache$get(cache_key)
@@ -144,8 +144,8 @@ virtual_resource <- function(name, defining_environment) {
     # Touch helper files to see if they got modified.
     helper_files <- get_helpers(resource_dir)
     for (file in helper_files) {
-      helper_object <- directorResource(
-        file.path(name, file), tracking = FALSE, helper = TRUE)
+      helper_object <- directorResource_$new(director = director,
+        name = file.path(name, file), tracking = FALSE, helper = TRUE)
       ## Even though this statement does not always run, we still
       ## bother constructing each `directorResource` object to
       ## ensure that the `cached` entry is updated for those

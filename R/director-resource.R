@@ -143,5 +143,5 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE,
 #resource2 <- function(name, provides = list(), defining_environment = parent.frame(),
 #                     body = TRUE, soft = FALSE, tracking = TRUE, helper = FALSE) {
 resource2 <- function(...) {
-  directorResource$new(director = self, ...)
+  directorResource_$new(director = self, ...)
 }
