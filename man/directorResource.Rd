@@ -3,8 +3,51 @@
 \docType{class}
 \name{directorResource}
 \alias{directorResource}
-\title{Representation of a director resource.}
+\alias{directorResource-class}
+\title{R6 class representing a single director resource.}
 \description{
+In director objects, resources are R scripts that can be processed into
+other R objects. This is done through the use of
+\code{\link[=register_preprocessor]{preprocessors}} and
+\code{\link[=register_parser]{parsers}}.
+
 Representation of a director resource.
+}
+\details{
+A resource can be one of two types:
+
+\enumerate{
+   \item{Standalone. }{A simple R script with no dependencies. When
+     using director methods, like \code{director_object$find}, the
+     use of the ".R" extension is unnecessary and should be avoided.
+     For example, if we have a script "load_db.R", we can verify
+     our director sees it using \code{director_object$exists("load_db")}.}
+   \item{Idempotent. }{An R script with helper files. Since R does not
+     have a good dependency or namespacing system as in most OOP
+     languages, it is easy to favor long procedural scripts that
+     do not separate their components into modular pieces.
+
+However, once an R script becomes too long (over 100 lines of
+     code is a good heuristic), it should be broken up into helper
+     files that are glued together in the master script. To facilitate
+     this kind of modularity and
+     \link[=http://en.wikipedia.org/wiki/Don%27t_repeat_yourself]{Don't Repeat Yourself}
+     strategy, director provides the concept of an idempotent resource.
+
+If an R script shares its name with its parent directory (for example,
+     \code{"prep_data"} and \code{"prep_data/prep_data.R"}) it is called
+     an \strong{idempotent resource}. All other files in that directory
+     are called \strong{helper files} and will not be visible to the
+     \code{director} object.
+
+For example, imagine we have a directory \code{"prep_data"} with
+     files \code{"prep_data.R"}, \code{"bad_variables.R"}, and
+     \code{"numeric_variables.R"}. If we create a director object
+     \code{d <- director$new(dir)}, where \code{dir} is the enclosing
+     directory of \code{"prep_data"}, then calling \code{d$find("")}
+     will list all the resources and display \code{c("prep_data")}. Notice
+     that the name director uses to refer to an idempotent resource
+     is the \emph{directory name}, not the filename.}
+}
 }
 

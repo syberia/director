@@ -3,7 +3,6 @@
 export(director)
 export(is.director)
 export(registry)
-exportClasses(director)
 exportClasses(registry)
 import(crayon)
 import(digest)

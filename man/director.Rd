@@ -4,7 +4,96 @@
 \name{director}
 \alias{director}
 \alias{director-package}
+\alias{director_}
 \title{Management and Tracking of Files in R Projects.}
+\format{\preformatted{List of 8
+ $ new       :function (...)  
+ $ classname : chr "director"
+ $ public    :List of 23
+  ..$ dependency_stack       : NULL
+  ..$ cache                  : NULL
+  ..$ initialize             :function (root, project_name = "")  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 16 15 52 1 15 1 16 52
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x108f75838> 
+  ..$ exists                 :function (resource, helper = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 27 20 68 1 20 1 27 68
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1096c2948> 
+  ..$ resource               :function (name, provides = list(), defining_environment = parent.frame(), 
+    body = TRUE, soft = FALSE, tracking = TRUE, helper = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 143 14 209 1 14 1 143 209
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102e138e0> 
+  ..$ virtual_resource       :function (name, defining_environment)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 226 21 244 1 21 1 226 244
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102e138e0> 
+  ..$ register_parser        :function (path, parser = function() \{
+\}, overwrite = FALSE, cache = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 20 20 51 1 20 1 20 51
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102740720> 
+  ..$ register_preprocessor  :function (path, preprocessor, overwrite = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 15 26 38 1 26 1 15 38
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x100bcfa78> 
+  ..$ has_preprocessor       :function (resource_path)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 45 21 47 1 21 1 45 47
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x100bcfa78> 
+  ..$ find                   :function (pattern = "", method = "wildcard", base = "", by_mtime = TRUE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 56 18 88 1 18 1 56 88
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10937af80> 
+  ..$ match_preprocessor     :function (resource_name)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 73 26 75 5 26 5 73 75
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102bf57f8> 
+  ..$ match_parser           :function (resource_name)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 76 20 78 5 20 5 76 78
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102bf57f8> 
+  ..$ preprocessor           :function (x)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 79 20 79 50 20 50 79 79
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102bf57f8> 
+  ..$ parser                 :function (x)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 80 14 80 38 14 38 80 80
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102bf57f8> 
+  ..$ cached_resources       :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 81 24 81 51 24 51 81 81
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102bf57f8> 
+  ..$ clear_resource_stack   :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 83 28 83 102 28 102 83 83
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102bf57f8> 
+  ..$ increment_nesting_level:function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 84 31 84 105 31 105 84 84
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102bf57f8> 
+  ..$ decrement_nesting_level:function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 85 31 85 105 31 105 85 85
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102bf57f8> 
+  ..$ nesting_level          :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 86 21 86 60 21 60 86 86
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102bf57f8> 
+  ..$ root                   :function (`*VALUE*` = NULL)  
+  .. ..- attr(*, "srcref")= language 6L(5L, 8L, 44L, 5L, 44L, 6L, 8L)
+  ..$ absolute               :function (x)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 89 18 89 53 18 53 89 89
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102bf57f8> 
+  ..$ show                   :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 90 18 95 5 18 5 90 95
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102bf57f8> 
+  ..$ filename               :function (name, absolute = FALSE, check.exists = TRUE, helper = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 13 22 34 1 22 1 13 34
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x109600188> 
+ $ private   :List of 8
+  ..$ .root                    : NULL
+  ..$ .project_name            : NULL
+  ..$ .resource_cache          : list()
+  ..$ .registry                : NULL
+  ..$ .dependency_nesting_level: num 0
+  ..$ .parsers                 : list()
+  ..$ .preprocessors           : list()
+  ..$ .cached_resources        : list()
+ $ active    : NULL
+ $ inherit   : NULL
+ $ parent_env:<environment: namespace:director> 
+ $ lock      : logi TRUE
+ - attr(*, "class")= chr "R6ClassGenerator"
+}}
+\usage{
+director_
+}
 \description{
 The director package is responsible for managing and loading resources in
 some fixed directory structure. It has support for tracking changes between
@@ -12,8 +101,8 @@ consecutive loads of resources (so that we can tell if a script was modified
 since we last ran it) and defining parsers that allow us to generalize from
 the pernicious simple linear execution that is common to R.
 
-A director is a reference class responsible for a collection of
-file-traversal related responsibilities.
+A director is an \link[=https://github.com/wch/R6]{R6 class} responsible for
+a collection of file-traversal related responsibilities.
 }
 \details{
 Throughout, a "resource" refers to an R script
@@ -29,7 +118,7 @@ Throughout, a "resource" refers to an R script
   With this definition of resource, a director manages all of the following
   relative to a root directory.
 
-\itemize{
+\describe{
   \item{"Loading"}{Grabbing resources relative to the root directory
      using the \code{resource} method. This also provides information
      about the last time the resource was grabbed (modification time,
@@ -55,11 +144,5 @@ Throughout, a "resource" refers to an R script
      specific files.}
 }
 }
-\section{Methods}{
-
-\describe{
-\item{\code{exists(resource, helper = FALSE)}}{Determine whether or not a resource exists in this director structure.}
-
-\item{\code{find(pattern = "", method = "wildcard", base = "", by_mtime = TRUE)}}{Look for resources by wildcard, partial, or exact matches.}
-}}
+\keyword{datasets}
 

@@ -4,8 +4,8 @@
 \alias{resource}
 \title{Fetch a resource relative to a director object.}
 \usage{
-resource(name, provides = list(), body = TRUE, soft = FALSE, ...,
-  tracking = TRUE, helper = TRUE)
+resource(name, provides = list(), body = TRUE, soft = FALSE,
+  tracking = TRUE, helper = FALSE)
 }
 \arguments{
 \item{name}{character. The name of the resource (i.e. R script) relative
@@ -22,9 +22,6 @@ effects. There should always be a way to write your code without them).}
 
 \item{soft}{logical. Whether or not to modify the cache to reflect
 the resource modification time and other details.}
-
-\item{...}{additional arguments to pass to the \code{base::source}
-function that gets executed when the `value` is accessed.}
 
 \item{tracking}{logical. Whether or not to perform modification tracking
 by pushing accessed resources to the director's stack.}

@@ -7,10 +7,14 @@ setClassUnion('listOrNULL', c('list', 'NULL'))
 #' \code{\link[=register_preprocessor]{preprocessors}} and
 #' \code{\link[=register_parser]{parsers}}. 
 #'
-#' A resource can one of two types:
+#' A resource can be one of two types:
 #'
 #' \enumerate{
-#'    \item{Standalone. }{A simple R script with no dependencies.}
+#'    \item{Standalone. }{A simple R script with no dependencies. When
+#'      using director methods, like \code{director_object$find}, the
+#'      use of the ".R" extension is unnecessary and should be avoided.
+#'      For example, if we have a script "load_db.R", we can verify
+#'      our director sees it using \code{director_object$exists("load_db")}.}
 #'    \item{Idempotent. }{An R script with helper files. Since R does not
 #'      have a good dependency or namespacing system as in most OOP
 #'      languages, it is easy to favor long procedural scripts that
@@ -31,16 +35,20 @@ setClassUnion('listOrNULL', c('list', 'NULL'))
 #'
 #'      For example, imagine we have a directory \code{"prep_data"} with
 #'      files \code{"prep_data.R"}, \code{"bad_variables.R"}, and
-#'      \code{"numeric_variables.R"}. If create a director object with
+#'      \code{"numeric_variables.R"}. If we create a director object
 #'      \code{d <- director$new(dir)}, where \code{dir} is the enclosing
 #'      directory of \code{"prep_data"}, then calling \code{d$find("")}
+#'      will list all the resources and display \code{c("prep_data")}. Notice
+#'      that the name director uses to refer to an idempotent resource
+#'      is the \emph{directory name}, not the filename.}
 #' }
+#' @name directorResource
+NULL
 
 
 #' Representation of a director resource.
 #'
 #' @docType class
-#' @name directorResource
 #' @rdname directorResource
 directorResource <- setRefClass('directorResource',
   fields = list(current = 'listOrNULL', cached = 'listOrNULL',
