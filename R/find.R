@@ -90,7 +90,7 @@ director_find <- function(pattern = "", method = "wildcard", base = "", by_mtime
 find_ <- function(director, pattern, method, base, by_mtime) {
   all_files <- list.files(file.path(director$root(), base),
                           pattern = "\\.[rR]$", recursive = TRUE)
-  all_files <- tools::file_path_sans_ext(all_files)
+  all_files <- strip_r_extension(all_files)
 
   ## We will use the `apply_pattern` helper below, so all patterns should
   ## be `search_pattern` S3 objects.

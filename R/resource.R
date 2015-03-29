@@ -145,7 +145,7 @@ resource2 <- function(name, provides = list(), defining_environment = parent.fra
 
   ## This does not hurt unless someone names their file "foo.R.R",
   ## and it would be inconvenient to the user if we did not strip the extension.
-  name <- tools::file_path_sans_ext(name)
+  name <- strip_r_extension(name)
 
   provides <- sanitize_provides_environment(provides, defining_environment)
 
