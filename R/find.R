@@ -113,9 +113,14 @@ find_ <- function(director, pattern, method, base, by_mtime) {
 
 sort_by_mtime <- function(files, by_mtime, director) {
   if (isTRUE(by_mtime)) {
-    descending_by_modification_time <- -vapply(files,
-      function(f) file.info(director$filename(f, absolute = TRUE))$mtime, numeric(1))
-    files[order(descending_by_modification_time)]
+    modified_time <- function(file) {
+      ## `director$filename(..., absolute = TRUE)` will convert 
+      ## the resource name into a full file path.
+      file.info(director$filename(file, absolute = TRUE))$mtime
+    }
+
+    by_modification_time <- vapply(files, modified_time, numeric(1))
+    files[order(by_modification_time, decreasing = TRUE)]
   } else {
     files
   }
