@@ -13,7 +13,7 @@
 #'   The default is \code{FALSE}.
 #' @return the full path, relative to the director root if \code{full = FALSE}
 #'    and an absolute path if \code{FULL = TRUE}.
-director_.filename <- function(name, absolute = FALSE, check.exists = TRUE, helper = FALSE) {
+director_filename <- function(name, absolute = FALSE, check.exists = TRUE, helper = FALSE) {
   if (isTRUE(check.exists) && !exists(name, helper = isTRUE(helper))) {
     stop("Cannot convert resource ", sQuote(name), " to full file path, ",
          "as no such resource exists.")
@@ -101,7 +101,7 @@ director <- setRefClass("director",
             if (isTRUE(nzchar(.project_name))) paste(" for", .project_name, "project")),
           ".\n")
     },
-    .filename  = director_.filename
+    filename  = director_filename
   )
 )
 

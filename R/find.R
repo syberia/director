@@ -62,8 +62,12 @@ director_find <- function(pattern = "", method = "wildcard", base = "", by_mtime
   ## If multiple base paths are provided, union together the results of 
   ## calling find on each base individually.
   if (length(base) > 1) {
+    ## [The R Inferno](http://www.burns-stat.com/pages/Tutor/R_inferno.pdf)
+    ## recommends pre-allocating vectors for performance benefits.
     all <- vector('list', length(base))
     for (i in seq_along(all)) {
+      ## Although we need to do this instead of using `lapply`
+      ## so we can take advantage of [`Recall`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Recall.html).
       all[[i]] <- Recall(pattern = pattern, method = method,
                          base = base[i], by_mtime = FALSE)
       # TODO: (RK) Re-sort by modification time: https://github.com/robertzk/director/issues/19
@@ -72,6 +76,14 @@ director_find <- function(pattern = "", method = "wildcard", base = "", by_mtime
     ## vectors into a single character vector.
     c(all, recursive = TRUE)
   } else {
+    ## This function is already getting too complex, so delegate the
+    ## job of actually finding resources that match this `pattern`
+    ## to a helper function.
+    ##
+    ## If you search [the R reference class documentation](https://stat.ethz.ch/R-manual/R-devel/library/methods/html/refClass.html)
+    ## for the string ".self", you will learn this is an environment
+    ## that points to the reference class object itself, like some language's
+    ## `this` keyword.
     find_(.self, pattern, method, base, by_mtime)
   }
 }
@@ -80,19 +92,29 @@ find_ <- function(director, pattern, method, base, by_mtime) {
   all_files <- list.files(file.path(director$root(), base),
                           pattern = "\\.[rR]$", recursive = TRUE)
   all_files <- tools::file_path_sans_ext(all_files)
+
+  ## We will use the `apply_pattern` helper below, so all patterns should
+  ## be `search_pattern` S3 objects.
   if (!is.search_pattern(pattern)) {
     pattern <- search_pattern(pattern, method)
   }
+
+  ## First, remove helper files from consideration.
   all_files <- apply_pattern(search_pattern("", "idempotence"), all_files)
+  
+  ## Now filter to those files that satisfy the pattern.
+  ## For example, if we used `pattern = search_pattern("foo", "partial")`,
+  ## we would find files that contain "foo" as a substring.
   resources <- apply_pattern(pattern, all_files)
-  if (nzchar(base)) { resources <- file.path(base, resources) }
+
+  if (nzchar(base)) resources <- file.path(base, resources)
   sort_by_mtime(resources, by_mtime, director)
 }
 
 sort_by_mtime <- function(files, by_mtime, director) {
   if (isTRUE(by_mtime)) {
     descending_by_modification_time <- -vapply(files,
-      function(f) file.info(director$.filename(f, absolute = TRUE))$mtime, numeric(1))
+      function(f) file.info(director$filename(f, absolute = TRUE))$mtime, numeric(1))
     files[order(descending_by_modification_time)]
   } else {
     files
