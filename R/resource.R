@@ -52,7 +52,9 @@
 resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
                      tracking = TRUE, helper = FALSE) {
 
-  name <- strip_r_extension(name)
+  ## This does not hurt unless someone names their file "foo.R.R",
+  ## and it would be inconvenient to the user if we did not strip the extension.
+  name <- tools::file_path_sans_ext(name)
 
   if (!is.environment(provides)) {
     provides <-

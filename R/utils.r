@@ -78,8 +78,8 @@ is.idempotent_directory <- function(dir) {
 #'  extensionless_exists('foo')
 #' }
 extensionless_exists <- function(filename) {
-  file.exists(paste0(strip_r_extension(filename), '.r')) ||
-  file.exists(paste0(strip_r_extension(filename), '.R')) 
+  file.exists(paste0(tools::file_path_sans_ext(filename), '.r')) ||
+  file.exists(paste0(tools::file_path_sans_ext(filename), '.R')) 
   # Don't use the any + sapply trick because we can skip the latter check if the
   # former succeeds.
 }
@@ -109,15 +109,6 @@ complete_extension <- function(name, base = NULL) {
   } else {
     paste0(name, ".r")
   }
-}
-
-#' Strip R extension.
-#'
-#' @param filename character. The filename to strip.
-#' @return the filename without the '.r' or '.R' at the end.
-strip_r_extension <- function(filename) {
-  stopifnot(is.character(filename))
-  gsub("\\.[rR]$", "", filename)
 }
 
 #' Strip a root file path from an absolute filename.
@@ -152,7 +143,7 @@ drop_idempotence <- function(filename) {
 #' @param filename character. The filename.
 #' @return the resource name (i.e., stripped of idempotence and extension).
 resource_name <- function(filename) {
-  drop_idempotence(strip_r_extension(filename))
+  drop_idempotence(tools::file_path_sans_ext(filename))
 }
 
 #' Create a resource cache key from a resource key.
@@ -181,7 +172,7 @@ resource_cache_key <- function(resource_key) {
 get_helpers <- function(path) {
   helper_files <- list.files(path, pattern = '\\.[rR]$') # TODO: (RK) Recursive helpers?
   same_file <- which(vapply(helper_files, 
-    function(f) strip_r_extension(f) == basename(path), logical(1)))
+    function(f) tools::file_path_sans_ext(f) == basename(path), logical(1)))
   helper_files <- helper_files[-same_file]
 }
 
