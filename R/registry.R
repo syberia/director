@@ -88,7 +88,7 @@ registry <- setRefClass('registry',
 
       key <- .sanitize_key(key, read = TRUE, soft = soft)
       ## Recall that parentheses around an R expression drop invisibility.
-      if (!is.null(key)) (readRDS(key))
+      if (!is.null(key) && file.exists(key)) (readRDS(key))
     },
 
     #' Place an object in the registry.
@@ -109,6 +109,7 @@ registry <- setRefClass('registry',
       # TODO: (RK) Warn on overwrite?
 
       key <- .sanitize_key(key, read = FALSE)
+      dir.create(dirname(key), FALSE, TRUE)
       error_handler <- function(e) {
         stop("Failed to save registry key ", sQuote(crayon::red(key)), 
              " in registry with root ", sQuote(crayon::blue(.root)), 
