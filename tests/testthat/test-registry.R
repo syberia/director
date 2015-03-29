@@ -24,12 +24,18 @@ describe("handling invalid inputs", {
     expect_error(r$get("foo", 1), "parameter must be")
     expect_error(r$get("foo", FALSE), "parameter must be")
   })
-})
 
-test_that('it correctly errors if a specified root is actually a file', {
-  within_file_structure(list('root'),
-    expect_error(registry(file.path(tempdir, 'root')), 'must be a dir')
-  )
+  test_that("it errors when .sanitize_key is called with a non-character argument", {
+    r <- registry(tempdir())
+    expect_error(r$.sanitize_key(NULL), "parameter must be")
+    expect_error(r$.sanitize_key(1), "parameter must be")
+  })
+
+  test_that('it correctly errors if a specified root is actually a file', {
+    within_file_structure(list('root'),
+      expect_error(registry(file.path(tempdir, 'root')), 'must be a dir')
+    )
+  })
 })
 
 within_file_structure(list(), {
