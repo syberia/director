@@ -20,6 +20,7 @@
 register_parser <- function(path, parser = function() { }, overwrite = FALSE, cache = FALSE) {
   enforce_type(path,   "character", "director$register_parser")
   enforce_type(parser, "function",  "director$register_parser")
+
   if (length(path) != 1) {
     stop("A parser must be registered to a path that is a scalar character ",
          "but instead I got a character vector of length",
@@ -35,7 +36,9 @@ register_parser <- function(path, parser = function() { }, overwrite = FALSE, ca
     stop("Parser already registered for path ", crayon::red(path))
   }
 
-  if (isTRUE(cache)) .cached_resources <<- c(.cached_resources, path)
+  if (isTRUE(cache)) {
+    .cached_resources <<- c(.cached_resources, path)
+  }
 
   .parsers[[path]] <<- parser
 
