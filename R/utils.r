@@ -219,5 +219,17 @@ any_is_substring_of <- function(string, set_of_strings) {
 #' # a logical.
 #' }
 enforce_type <- function(object, admissible_types, function_name) {
-
+  ## The `is` function takes parameters `object` and `class`, so this
+  ## sneaky call is equivalent to 
+  ## 
+  ## ```r
+  ## any(sapply(admissible_types, function(type) is(object, type)))
+  ## ```
+  if (!any(vapply(admissible_types, is, logical(1), object = object))) {
+    stop(call. = FALSE, "In ", crayon::blue(function_name), ", the ",
+         crayon::blue(deparse(substitute(object))),
+         " parameter must be a ",
+         crayon::green(paste(admissible_types, collapse = " or ")),
+         "; instead, I got a ", crayon::red(class(object)[1]), ".")
+  }
 }
