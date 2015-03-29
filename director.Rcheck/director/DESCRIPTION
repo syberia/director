@@ -1,0 +1,27 @@
+Package: director
+Title: Load, track, and manage dependencies in a file structure.
+Description: Director is responsible for managing and loading resources in
+    some fixed directory structure. It has support for tracking changes between
+    consecutive loads of resources (so that we can tell if a script was modified
+    since we last ran it) and defining parsers that allow us to generalize from
+    the pernicious simple linear execution that is common to R.
+Version: 0.3.0
+Authors@R: c(person("Robert", "Krzyzanowski",
+    email = "technoguyrob@gmail.com", role = c("aut", "cre")))
+Depends: R (>= 3.0.1), methods
+Imports: digest, crayon, R6
+License: MIT
+LazyData: true
+VignetteBuilder: knitr
+Suggests: knitr, testthatsomemore, microbenchmark, memoise
+Roxygen: list(wrap = FALSE)
+Collate: 'director-exists.R' 'director-filename.R' 'director-find.R'
+        'director-initialize.R' 'director-package.R'
+        'director-parsers.R' 'director-preprocessors.R'
+        'director-resource.R' 'utils.R' 'resource-initialize.R'
+        'director.R' 'registry.R' 'resource.R' 'search_pattern.R'
+        'zzz.r'
+Packaged: 2015-03-29 22:04:38 UTC; robertk
+Author: Robert Krzyzanowski [aut, cre]
+Maintainer: Robert Krzyzanowski <technoguyrob@gmail.com>
+Built: R 3.0.2; ; 2015-03-29 22:05:02 UTC; unix

@@ -1,0 +1,156 @@
+* using log directory ‘/Users/robertk/dev/director/director.Rcheck’
+* using R version 3.0.2 (2013-09-25)
+* using platform: x86_64-apple-darwin10.8.0 (64-bit)
+* using session charset: UTF-8
+* checking for file ‘director/DESCRIPTION’ ... OK
+* this is package ‘director’ version ‘0.3.0’
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: ‘Robert Krzyzanowski <technoguyrob@gmail.com>’
+New submission
+Possibly mis-spelled fields in DESCRIPTION:
+  ‘Roxygen’
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... NOTE
+Found the following hidden files and directories:
+  .travis.yml
+These were most likely included in error. See section ‘Package
+structure’ in the ‘Writing R Extensions’ manual.
+
+CRAN-pack does not know about
+  .travis.yml
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘director’ can be installed ... OK
+* checking installed package size ... OK
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... NOTE
+Licenses which are templates and need ‘+ file LICENSE’:
+  MIT
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking R files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking dependencies in R code ... OK
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+director_exists: no visible global function definition for ‘absolute’
+director_exists: possible error in find(resource, method = "exact",
+  by_mtime = FALSE): unused arguments (method = "exact", by_mtime =
+  FALSE)
+director_filename: possible error in exists(name, helper =
+  isTRUE(helper)): unused argument (helper = isTRUE(helper))
+director_filename: no visible global function definition for ‘root’
+director_find: no visible binding for global variable ‘self’
+has_preprocessor: no visible binding for global variable
+  ‘.preprocessors’
+initialize: no visible binding for '<<-' assignment to
+  ‘.dependency_nesting_level’
+initialize: no visible binding for '<<-' assignment to ‘.root’
+initialize: no visible binding for '<<-' assignment to ‘.registry’
+initialize: no visible binding for '<<-' assignment to ‘.project_name’
+initialize: no visible binding for '<<-' assignment to
+  ‘dependency_stack’
+initialize: no visible binding for '<<-' assignment to
+  ‘.resource_cache’
+initialize: no visible binding for '<<-' assignment to ‘.parsers’
+initialize: no visible binding for '<<-' assignment to ‘.preprocessors’
+initialize: no visible binding for '<<-' assignment to
+  ‘.cached_resources’
+initialize: no visible binding for '<<-' assignment to ‘cache’
+initialize_real: possible error in `set_details!`(soft): unused
+  argument (soft)
+initialize_real: no visible binding for '<<-' assignment to
+  ‘source_args’
+initialize_real: no visible binding for global variable ‘filename’
+mark_as_dependency!: no visible binding for global variable ‘helper’
+mark_as_dependency!: no visible binding for global variable ‘name’
+mark_as_dependency!: no visible binding for global variable ‘self’
+register_parser: no visible binding for global variable ‘.parsers’
+register_parser: no visible binding for '<<-' assignment to
+  ‘.cached_resources’
+register_parser: no visible binding for global variable
+  ‘.cached_resources’
+register_parser: no visible binding for '<<-' assignment to ‘.parsers’
+register_preprocessor: no visible binding for global variable
+  ‘.preprocessors’
+register_preprocessor: no visible binding for '<<-' assignment to
+  ‘.preprocessors’
+resource: possible error in exists(name, helper = isTRUE(helper)):
+  unused argument (helper = isTRUE(helper))
+resource: no visible binding for global variable ‘.project_name’
+resource: no visible binding for global variable ‘self’
+resource: no visible binding for global variable ‘cache’
+resource: no visible binding for global variable
+  ‘.dependency_nesting_level’
+resource: no visible binding for global variable ‘dependency_stack’
+resource2: no visible binding for global variable ‘self’
+resource_initialize: no visible binding for '<<-' assignment to
+  ‘compiled’
+resource_initialize: no visible binding for '<<-' assignment to ‘value’
+resource_initialize: possible error in exists(name, helper =
+  isTRUE(helper)): unused argument (helper = isTRUE(helper))
+resource_initialize: no visible global function definition for
+  ‘initialize_virtual’
+set_details!: no visible binding for global variable ‘filename’
+set_details!: no visible binding for global variable ‘name’
+set_details!: no visible binding for '<<-' assignment to ‘cached’
+set_details!: no visible binding for '<<-' assignment to ‘current’
+set_details!: no visible binding for global variable ‘soft’
+set_filename!: no visible binding for '<<-' assignment to ‘filename’
+set_filename!: no visible binding for global variable ‘name’
+set_modified!: no visible binding for '<<-' assignment to ‘modified’
+set_modified!: no visible binding for global variable ‘name’
+virtual_resource: no visible binding for global variable
+  ‘.project_name’
+virtual_resource: no visible binding for '<<-' assignment to ‘current’
+virtual_resource: no visible binding for '<<-' assignment to ‘cached’
+virtual_resource: no visible binding for '<<-' assignment to ‘modified’
+virtual_resource: no visible binding for '<<-' assignment to
+  ‘source_args’
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd line widths ... OK
+* checking Rd cross-references ... WARNING
+Missing link or links in documentation object ‘/Users/robertk/dev/director/director.Rcheck/00_pkg_src/director/man/director.Rd’:
+  ‘https://github.com/wch/R6’
+
+See the information in section ‘Cross-references’ of the ‘Writing R
+Extensions’ manual.
+
+* checking for missing documentation entries ... WARNING
+Undocumented S4 classes:
+  ‘registry’
+All user-level objects in a package (including S4 classes and methods)
+should have documentation entries.
+See the chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking installed files from ‘inst/doc’ ... OK
+* checking files in ‘vignettes’ ... OK
+* checking examples ... OK
+* checking for unstated dependencies in tests ... WARNING
+‘library’ or ‘require’ call not declared from: ‘testthat’
+* checking tests ... OK
+  Running ‘test-all.R’
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... OK
+* checking re-building of vignette outputs ... OK
+WARNING: There were 3 warnings.
+NOTE: There were 4 notes.

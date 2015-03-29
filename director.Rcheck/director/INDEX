@@ -1,0 +1,43 @@
+any_is_substring_of     Whether or not any substring of a string is any
+                        of a set of strings.
+apply_pattern           Apply a pattern filter to a character vector.
+complete_extension      Complete the extension of a file (.r or .R).
+director                Management and Tracking of Files in R Projects.
+directorResource        R6 class representing a single director
+                        resource.
+director_exists         Determine whether a resource exists relative to
+                        a director object.
+director_filename       Convert a resource to a filename.
+director_find           Find resources within a director project.
+drop_idempotence        Convert an idempotent resource name to a
+                        non-idempotent resource name.
+enforce_type            Enforce parameter types (logical, character,
+                        etc.).
+extensionless_exists    Determine whether an R file exists regardless
+                        of case of extension.
+get_helpers             Get all helper files associated with an
+                        idempotent resource directory.
+has_preprocessor        Whether there exists a preprocessor for a
+                        resource.
+initialize              Initialize a director object.
+is.director             Whether or not an object is a director.
+is.idempotent_directory
+                        Whether or not a directory is an idempotent
+                        resource.
+register_parser         Register a resource parser.
+register_preprocessor   Register a resource preprocessor
+registry                A persistent on-disk cache of R objects
+                        associated with a directory.
+resource                Fetch a resource relative to a director object.
+resource_cache_key      Create a resource cache key from a resource
+                        key.
+resource_initialize     Initialize a director resource.
+resource_name           Convert a filename to a resource name.
+search_pattern          Define a search pattern for use with the find
+                        method on a director.
+simple_cache            A simple caching structure.
+strip_r_extension       Strip R extension.
+strip_root              Strip a root file path from an absolute
+                        filename.
+try_memoize             Attempt to memoize a function using the memoise
+                        package.

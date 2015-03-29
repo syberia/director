@@ -1,0 +1,399 @@
+pkgname <- "director"
+source(file.path(R.home("share"), "R", "examples-header.R"))
+options(warn = 1)
+base::assign(".ExTimings", "director-Ex.timings", pos = 'CheckExEnv')
+base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+base::assign(".format_ptime",
+function(x) {
+  if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
+  if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
+  options(OutDec = '.')
+  format(x[1L:3L], digits = 7L)
+},
+pos = 'CheckExEnv')
+
+### * </HEADER>
+library('director')
+
+base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+cleanEx()
+nameEx("any_is_substring_of")
+### * any_is_substring_of
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: any_is_substring_of
+### Title: Whether or not any substring of a string is any of a set of
+###   strings.
+### Aliases: any_is_substring_of
+
+### ** Examples
+
+stopifnot(director:::any_is_substring_of('test', c('blah', 'te', 'woo'))) # TRUE
+stopifnot(!director:::any_is_substring_of('test', c('blah', 'woo'))) # FALSE
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("any_is_substring_of", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("complete_extension")
+### * complete_extension
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: complete_extension
+### Title: Complete the extension of a file (.r or .R).
+### Aliases: complete_extension
+
+### ** Examples
+
+## Not run: 
+##D  # Assume we have a file \code{"foo.R"}.
+##D  stopifnot(complete_extension("foo") == "foo.R")
+##D 
+##D  # Assume we have a file \code{"bar.r"}.
+##D  stopifnot(complete_extension("bar") == "bar.R")
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("complete_extension", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("director_exists")
+### * director_exists
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: director_exists
+### Title: Determine whether a resource exists relative to a director
+###   object.
+### Aliases: director_exists
+
+### ** Examples
+
+## Not run: 
+##D   # Imagine we have a file structure:
+##D   #   - foo
+##D   #     - one
+##D   #       - one.R
+##D   #       - helper.R
+##D   #     - two.R
+##D   #
+##D   # Then the bellow will return \code{TRUE}, \code{FALSE}, and \code{TRUE},
+##D   # respectively. Note that the \code{"helper.R"} file is not considered a
+##D   # resource by the director as \code{"one.R"} shares its name with its
+##D   # parent directory and is considered the accessible resource.
+##D 
+##D   d <- director('foo')
+##D   d$exists('one')
+##D   d$exists('one/helper')
+##D   d$exists('two')
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("director_exists", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("director_find")
+### * director_find
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: director_find
+### Title: Find resources within a director project.
+### Aliases: director_find
+
+### ** Examples
+
+## Not run: 
+##D   # Imagine we have a file structure:
+##D   #   - foo
+##D   #     - one
+##D   #       - one.R
+##D   #       - helper.R
+##D   #     - two.R
+##D   #
+##D   # Then the bellow will return \code{"foo/one"}, \code{"two"}, and \code{""},
+##D   # respectively. Note that the \code{"helper.R"} file is not considered a
+##D   # resource by the director as \code{"one.R"} shares its name with its
+##D   # parent directory and is considered the accessible resource.
+##D 
+##D   d <- director('foo')
+##D   d$find('fone', method = 'wildcard') # "foo/one"
+##D   # Under the hood, this looks for the regex .*f.*o.*n.*e.*
+##D   d$find('wo',   method = 'partial')  # "two"
+##D   d$find('none', method = 'exact')    # ""
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("director_find", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("enforce_type")
+### * enforce_type
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: enforce_type
+### Title: Enforce parameter types (logical, character, etc.).
+### Aliases: enforce_type
+
+### ** Examples
+
+## Not run: 
+##D x <- 1
+##D enforce_type(x, "logical", "myfunction")
+##D # Will call stop() with the following error:
+##D # "In 'myfunction', the 'x' parameter must be a character; instead, I got
+##D # a logical.
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("enforce_type", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("extensionless_exists")
+### * extensionless_exists
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: extensionless_exists
+### Title: Determine whether an R file exists regardless of case of
+###   extension.
+### Aliases: extensionless_exists
+
+### ** Examples
+
+## Not run: 
+##D  # Assume we have a file \code{"foo.R"}. The following all return \code{TRUE}.
+##D  extensionless_exists('foo.R')
+##D  extensionless_exists('foo.r')
+##D  extensionless_exists('foo')
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("extensionless_exists", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("get_helpers")
+### * get_helpers
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: get_helpers
+### Title: Get all helper files associated with an idempotent resource
+###   directory.
+### Aliases: get_helpers
+
+### ** Examples
+
+## Not run: 
+##D   # If we have a directory structure given by \code{"model/model.R"},
+##D   # \code{"model/constants.R"}, \code{"model/functions.R"}, then the
+##D   # below will return \code{c("constants.R", "functions.R")}.
+##D   get_helpers("model")
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("get_helpers", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("initialize")
+### * initialize
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: initialize
+### Title: Initialize a director object.
+### Aliases: initialize
+
+### ** Examples
+
+## Not run: 
+##D director(tempdir())
+##D director(tempdir(), "my project") # Error messages on using the director's
+##D                                   # methods will now usually result in
+##D                                   # the ending "in project 'my project'".
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("initialize", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("is.idempotent_directory")
+### * is.idempotent_directory
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: is.idempotent_directory
+### Title: Whether or not a directory is an idempotent resource.
+### Aliases: is.idempotent_directory
+
+### ** Examples
+
+## Not run: 
+##D   # If we have a directory foo containing foo.R, then
+##D   is.idempotent_directory('foo')
+##D   # is TRUE, otherwise it's FALSE.
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("is.idempotent_directory", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("register_parser")
+### * register_parser
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: register_parser
+### Title: Register a resource parser.
+### Aliases: register_parser
+
+### ** Examples
+
+## Not run: 
+##D   d <- director('some/project')
+##D   d$register_parser('models', function() { print("I am a ", resource, ", a model!") })
+##D   r <- d$resource('models/some_model.R')
+##D   r$value() # Will print: I am a models/some_model, a model!
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("register_parser", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("register_preprocessor")
+### * register_preprocessor
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: register_preprocessor
+### Title: Register a resource preprocessor
+### Aliases: register_preprocessor
+
+### ** Examples
+
+## Not run: 
+##D   d <- director("some/project")
+##D   d$register_preprocessor('models', function() { print("I am a ", resource, ", a model!") })
+##D   r <- d$resource("models/some_model.R")
+##D   r$value() # Will print: I am a models/some_model, a model!
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("register_preprocessor", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("registry")
+### * registry
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: registry
+### Title: A persistent on-disk cache of R objects associated with a
+###   directory.
+### Aliases: registry
+
+### ** Examples
+
+## Not run: 
+##D   r <- registry('some/dir') # Create "some/dir" and make a registry there.
+##D   r$set('some/key', value <- list(1,2,3))
+##D   stopifnot(r$get('some/key'), value)
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("registry", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("search_pattern")
+### * search_pattern
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: search_pattern
+### Title: Define a search pattern for use with the find method on a
+###   director.
+### Aliases: search_pattern
+
+### ** Examples
+
+## Not run: 
+##D   d$find(search_pattern("this/file", "exact"))
+##D   # If d is a director object, the above will find exactly the resource
+##D   # "this/file".
+##D 
+##D   d$find(search_pattern("this", "partial"))
+##D   # The above will find any resource containing "this" as a substring.
+##D 
+##D   d$find(search_pattern("this", "wildcard"))
+##D   # The above will find any resource containing the consecutive letters
+##D   # "this" separated by arbitrary strings.
+##D 
+##D   d$find(search_pattern("foobar", "partial") | search_pattern("root", "exact"))
+##D   # The above will find any resource with the substring "foobar" or having
+##D   # exactly the name "root".
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("search_pattern", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("strip_root")
+### * strip_root
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: strip_root
+### Title: Strip a root file path from an absolute filename.
+### Aliases: strip_root
+
+### ** Examples
+
+## Not run: 
+##D   stopifnot("test" == strip_root("foo/bar/test", "test"))
+## End(Not run)
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("strip_root", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+### * <FOOTER>
+###
+options(digits = 7L)
+base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+grDevices::dev.off()
+###
+### Local variables: ***
+### mode: outline-minor ***
+### outline-regexp: "\\(> \\)?### [*]+" ***
+### End: ***
+quit('no')
