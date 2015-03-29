@@ -7,6 +7,15 @@ describe("erroring on invalid inputs", {
     expect_error(d$register_parser(NULL), "parameter must be")
     expect_error(d$register_parser(1), "parameter must be")
     expect_error(d$register_parser(FALSE), "parameter must be")
+    assert(d$register_parser("foo"))
+  })
+
+  test_that("it errors when a non-function parser is passed", {
+    d <- director(tempdir())
+    expect_error(d$register_parser("", NULL), "parameter must be")
+    expect_error(d$register_parser("", 1), "parameter must be")
+    expect_error(d$register_parser("", FALSE), "parameter must be")
+    assert(d$register_parser("foo", function() { }))
   })
 })
 
