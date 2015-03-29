@@ -20,9 +20,9 @@ Register a resource preprocessor
 }
 \examples{
 \dontrun{
-  d <- director('some/project')
+  d <- director("some/project")
   d$register_preprocessor('models', function() { print("I am a ", resource, ", a model!") })
-  r <- d$resource('models/some_model.R')
+  r <- d$resource("models/some_model.R")
   r$value() # Will print: I am a models/some_model, a model!
 }
 }

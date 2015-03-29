@@ -7,8 +7,14 @@ test_that('it allows NULL as a root', {
   assert(registry(NULL)) 
 })
 
-test_that('it correctly errors if a non-character root is passed', {
-  expect_error(registry(1337), 'must be initialized with a character')
+describe("handling invalid inputs", {
+  test_that('it correctly errors if a non-character root is passed', {
+    expect_error(registry(1337), "parameter must be")
+  })
+
+  test_that('it correctly errors if a non-scalar root is passed', {
+    expect_error(registry(c("foo", "bar")))
+  })
 })
 
 test_that('it correctly errors if a specified root is actually a file', {

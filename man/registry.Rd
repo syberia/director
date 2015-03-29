@@ -11,9 +11,14 @@ state across R sessions without encoding everything in the unreliable
 }
 \details{
 To create a registry, simply write \code{r <- registry("some/directory")}.
-You can then use \code{r$set('some/key', some_value)} and \code{r$get('some/key')}
-to set and retrieve values (arbitrary R objects).
+You can then use \code{r$set('some/key', some_value)} and
+\code{r$get('some/key')} to set and retrieve values (arbitrary R objects).
 }
+\section{Methods}{
+
+\describe{
+\item{\code{initialize(root = NULL)}}{Initialize a registry.}
+}}
 \examples{
 \dontrun{
   r <- registry('some/dir') # Create "some/dir" and make a registry there.

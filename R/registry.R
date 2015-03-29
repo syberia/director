@@ -5,13 +5,14 @@
 #' \code{.RData} file.
 #'
 #' To create a registry, simply write \code{r <- registry("some/directory")}.
-#' You can then use \code{r$set('some/key', some_value)} and \code{r$get('some/key')}
-#' to set and retrieve values (arbitrary R objects).
+#' You can then use \code{r$set('some/key', some_value)} and
+#' \code{r$get('some/key')} to set and retrieve values (arbitrary R objects).
 #'
 #' @docType class
 #' @name registry
 #' @rdname registry
 #' @export
+#' @exportClass registry
 #' @examples
 #' \dontrun{
 #'   r <- registry('some/dir') # Create "some/dir" and make a registry there.
@@ -31,17 +32,24 @@ registry <- setRefClass('registry',
     #' @examples
     #' registry(dirname(tempfile()))
     initialize = function(root = NULL) {
-      if (is.null(root)) return(NULL) # Empty object
-      if (!is.character(root))
-        stop("A registry must be initialized with a character path to a root ",
-             "directory")
-
-      if (!file.exists(root))
-        dir.create(root, showWarnings = FALSE, recursive = TRUE)
+      ## [A reference class docstring](http://stackoverflow.com/a/5931576/2540303)
+      "Initialize a registry."
       
-      if (!file.info(root)$isdir)
+      # Reference class objects are sometimes initialized on package install, but
+      # no arguments are passed! We let it through to avoid installation problems.
+      if (is.null(root)) return(NULL) 
+
+      enforce_type(root, "character", "registry$new")
+      stopifnot(length(root) == 1)
+
+      if (!file.exists(root)) {
+        dir.create(root, showWarnings = FALSE, recursive = TRUE)
+      }
+      
+      if (!file.info(root)$isdir) {
         stop("A registry's root must be a directory, not a file (you provided ",
              crayon::red(root), ")")
+      }
       
       .root <<- normalizePath(root)
     },
@@ -70,11 +78,14 @@ registry <- setRefClass('registry',
     #'   r$get('foo', 'bar', 'baz') # get key "foo/bar/baz"
     #' }
     get = function(key, ..., soft = TRUE) {
-      if (length(rest <- c(...)) != 0)
+      enforce_type(key, "character", "registry$get")
+
+      if (length(rest <- c(...)) != 0) {
         key <- do.call('file.path', as.list(c(key, rest)))
+      }
 
       key <- .sanitize_key(key, read = TRUE, soft = soft)
-      if (is.null(key)) NULL else (readRDS(key)) # do not use default invisibility
+      if (!is.null(key)) (readRDS(key)) # do not use default invisibility
     },
 
     #' Place an object in the registry.

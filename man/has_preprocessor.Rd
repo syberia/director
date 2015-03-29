@@ -9,6 +9,10 @@ has_preprocessor(resource_path)
 \arguments{
 \item{resource_path}{character. The resource name.}
 }
+\value{
+\code{TRUE} or \code{FALSE} depending on whether there
+  is a preprocessor for this resource.
+}
 \description{
 Whether there exists a preprocessor for a resource.
 }

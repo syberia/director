@@ -4,7 +4,8 @@
 \alias{register_parser}
 \title{Register a resource parser.}
 \usage{
-register_parser(path, parser, overwrite = FALSE, cache = FALSE)
+register_parser(path, parser = function() { }, overwrite = FALSE,
+  cache = FALSE)
 }
 \arguments{
 \item{path}{character. The prefix to look for in the director.}
