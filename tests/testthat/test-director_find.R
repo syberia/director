@@ -91,3 +91,9 @@ test_that('ignores modification time when by_mtime = FALSE', {
     expect_identical(c('boo', 'hello'), d$find('', by_mtime = FALSE))
   })
 })
+
+test_that("it supports finding with multiple bases", {
+  within_file_structure(list(uno = list('foo.R'), dos = list('foo.R')), { d <- director(tempdir)
+    expect_identical(d$find("foo", base = c("uno", "dos")), c("uno/foo", "dos/foo"))
+  })
+})

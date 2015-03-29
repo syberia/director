@@ -59,14 +59,18 @@ director_find <- function(pattern = "", method = "wildcard", base = "", by_mtime
 
   enforce_type(base, "character", "director$find")
 
+  ## If multiple base paths are provided, union together the results of 
+  ## calling find on each base individually.
   if (length(base) > 1) {
     all <- vector('list', length(base))
     for (i in seq_along(all)) {
-      all[[i]] <- Recall(search = search, method = method,
+      all[[i]] <- Recall(pattern = pattern, method = method,
                          base = base[i], by_mtime = FALSE)
-      # TODO: (RK) Re-sort by modification time.
+      # TODO: (RK) Re-sort by modification time: https://github.com/robertzk/director/issues/19
     }
-    Reduce(union, all)
+    ## Using `c` with `recursive = TRUE` will collapse the list of character 
+    ## vectors into a single character vector.
+    c(all, recursive = TRUE)
   } else {
     find_(.self, pattern, method, base, by_mtime)
   }
