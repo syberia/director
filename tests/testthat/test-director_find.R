@@ -97,3 +97,9 @@ test_that("it supports finding with multiple bases", {
     expect_identical(d$find("foo", base = c("uno", "dos")), c("uno/foo", "dos/foo"))
   })
 })
+
+test_that("it can find files with multiple extensions", {
+  within_file_structure(list(foo.sql.R = "'select * from foo'"), { d <- director(tempdir)
+    expect_identical(d$find(""), "foo.sql")
+  })
+})

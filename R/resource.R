@@ -156,7 +156,7 @@ resource2 <- function(name, provides = list(), defining_environment = parent.fra
   if (!exists(name, helper = isTRUE(helper))) {
     virtual_resource(name, defining_environment)
   } else {
-    filename        <- self$filename(name, absolute = TRUE, check.exists = FALSE, helper = isTRUE(helper)) # Convert resource to filename.
+    filename  <- self$filename(name, absolute = TRUE, check.exists = FALSE,helper = isTRUE(helper)) # Convert resource to filename.
     resource_info   <- if (file.exists(filename)) file.info(filename)
     resource_key    <- strip_root(.root, resource_name(filename))
     cache_key       <- resource_cache_key(resource_key)
