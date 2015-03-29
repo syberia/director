@@ -77,7 +77,7 @@ directorResource <- setRefClass('directorResource',
         injects$resource_name <- resource_key
         injects$resource_exists <- function(...) director$exists(...)
         injects$helper   <-
-          function(...) director$resource(..., check.helpers = FALSE)$value(parse. = FALSE)
+          function(...) director$resource(..., helper = TRUE)$value(parse. = FALSE)
         environment(injects$helper) <- scoping_environment
         parent.env(source_args$local) <<- injects
       }

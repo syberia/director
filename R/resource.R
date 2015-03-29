@@ -50,7 +50,7 @@
 #'   other \code{directorResource} features. By default, \code{helper = FALSE}.
 #' @return A \code{\link{directorResource}} object.
 resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
-                     tracking = TRUE, check.helpers = TRUE) {
+                     tracking = TRUE, helper = FALSE) {
 
   name <- strip_r_extension(name)
 
@@ -72,7 +72,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   }
 
   # Note below we are using director$exists not base::exists
-  if (!exists(name, helper = !isTRUE(check.helpers))) {
+  if (!exists(name, helper = isTRUE(helper))) {
     # TODO: (RK) Should assuming virtual resource be the right behavior here?
 
     if (!has_preprocessor(name)) { # No preprocessor exists
@@ -87,7 +87,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
       defining_environment = parent.frame()))
   }
 
-  filename        <- .self$filename(name, absolute = TRUE, check.exists = FALSE, helper = !isTRUE(check.helpers)) # Convert resource to filename.
+  filename        <- .self$filename(name, absolute = TRUE, check.exists = FALSE, helper = isTRUE(helper)) # Convert resource to filename.
   resource_info   <- if (file.exists(filename)) file.info(filename)
   resource_key    <- strip_root(.root, resource_name(filename))
   cache_key       <- resource_cache_key(resource_key)
@@ -113,17 +113,17 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   
   if (is.idempotent_directory(resource_dir)) {
     tracking_is_on_and_resource_has_helpers <-
-      isTRUE(tracking) && isTRUE(check.helpers) &&
+      isTRUE(tracking) && !isTRUE(helper) &&
       !isTRUE(modified) # No point in checking modifications in helpers otherwise
       
     # Touch helper files to see if they got modified.
     helper_files <- get_helpers(resource_dir)
     for (file in helper_files) {
-      helper <- resource(file.path(resource_key, file), body = FALSE,
-                         tracking = FALSE, check.helpers = FALSE,
+      helper_object <- resource(file.path(resource_key, file), body = FALSE,
+                         tracking = FALSE, helper = TRUE,
                          defining_environment = parent.frame())
       if (tracking_is_on_and_resource_has_helpers)
-        modified <- modified || helper$modified
+        modified <- modified || helper_object$modified
     }
   }
 
@@ -133,7 +133,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
        source_args = source_args, director = .self,
        defining_environment = parent.frame()) 
 
-  if (.dependency_nesting_level > 0 && isTRUE(check.helpers))
+  if (.dependency_nesting_level > 0 && !isTRUE(helper))
     .stack$push(list(level = .dependency_nesting_level,
                      key = resource_key,
                      resource = output))
