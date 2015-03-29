@@ -5,7 +5,7 @@
 \title{Fetch a resource relative to a director object.}
 \usage{
 resource(name, provides = list(), body = TRUE, soft = FALSE, ...,
-  tracking = TRUE, helper = FALSE)
+  tracking = TRUE, helper = TRUE)
 }
 \arguments{
 \item{name}{character. The name of the resource (i.e. R script) relative

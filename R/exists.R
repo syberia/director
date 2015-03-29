@@ -30,7 +30,7 @@ director_exists <- function(resource, helper = FALSE) {
 
   ## We want to handle inputs like "foo.R" gracefully, since there is no reason
   ## to make life painful for the user.
-  resource <- tools::file_path_sans_ext(resource)
+  resource <- strip_r_extension(resource)
 
   ## Since R is a language that does not have good support for mixins
   ## and hierarchical structure, we will borrow ideas from the node.js,
