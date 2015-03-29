@@ -32,6 +32,12 @@ resource_initialize <- function(director, name,
                                 defining_environment = parent.frame(),
                                 helper = FALSE, tracking = TRUE) {
 
+  enforce_type(director, "director", "directorResource$initialize")
+
+  director <<- director
+  helper   <- isTRUE(helper)
+  tracking <- isTRUE(tracking)
+
   ## This does not hurt unless someone names their file "foo.R.R",
   ## and it would be inconvenient to the user if we did not strip the extension.
   name <- strip_r_extension(name)
@@ -74,11 +80,11 @@ sanitize_provided_environment <- function(provides, defining_environment) {
 virtual_resource <- function(name, defining_environment) {
   # TODO: (RK) Should assuming virtual resource be the right behavior here?
 
-  if (!has_preprocessor(name)) { # No preprocessor exists
+  if (!director$has_preprocessor(name)) { # No preprocessor exists
     stop(sprintf("Cannot find resource %s, in%s project %s.",
       sQuote(crayon::red(name)),
-      if (nzchar(.project_name)) paste0(" ", .project_name) else "",
-      sQuote(crayon::blue(.root))))
+      if (nzchar(.project_name)) paste0(" ", director$project_name()) else "",
+      sQuote(crayon::blue(director$root()))))
   }
 
   ## If there is no such file in the project but a preprocessor exists,
@@ -92,15 +98,18 @@ virtual_resource <- function(name, defining_environment) {
 }
 
 initialize_real <- function(name, provided_environment, helper, tracking) {
-  filename  <- self$filename(name, absolute = TRUE, check.exists = FALSE,helper = isTRUE(helper)) # Convert resource to filename.
+  filename <- director$filename(name, absolute = TRUE, check.exists = FALSE,
+                                helper = isTRUE(helper)) 
   resource_info   <- if (file.exists(filename)) file.info(filename)
-  resource_key    <- strip_root(.root, resource_name(filename))
+  resource_key    <- strip_root(director$root(), resource_name(filename))
   cache_key       <- resource_cache_key(resource_key)
   cached_details  <- cache$get(cache_key)
   current_details <- list(info = resource_info)
   current_details$dependencies <- cached_details$dependencies
-  if (is.element('value', names(cached_details)))
+
+  if (is.element('value', names(cached_details))) {
     current_details['value'] <- cached_details['value'] # (avoid NULL problems)
+  }
 
   if (isTRUE(body)) current_details$body <-
     paste(readLines(filename, warn = FALSE), collapse = "\n")
@@ -144,3 +153,13 @@ initialize_real <- function(name, provided_environment, helper, tracking) {
                      resource = output))
   output
 }
+#    current = NULL, # list or NULL
+#    cached  = NULL, # list or NULL
+#    modified = FALSE, # logical
+#    resource_key = NULL, # character
+#    source_args = NULL, # list
+#    director = NULL, # director    
+#    defining_environment = NULL, # environment
+#    dependencies = NULL, # character
+#    compiled = NULL, # logical
+#    value = NULL, # ANY

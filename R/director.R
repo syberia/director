@@ -92,7 +92,8 @@ director_ <- R6Class("director",
     decrement_nesting_level = function() { .dependency_nesting_level <<- .dependency_nesting_level - 1L },
     nesting_level = function() { .dependency_nesting_level },
 
-    root       = accessor_method(.root),
+    root         = function() { .root },
+    project_name = function() { .project_name },
     absolute   = function(x) { file.path(root(), x) },
     show       = function() {
       cat(sep = '', "Director object",

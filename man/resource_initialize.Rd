@@ -4,8 +4,8 @@
 \alias{resource_initialize}
 \title{Initialize a director resource.}
 \usage{
-resource_initialize(director, name, provided_environment = new.env(parent =
-  defining_environment), defining_environment = parent.frame())
+resource_initialize(director, name, provided_environment = new.env(),
+  defining_environment = parent.frame(), helper = FALSE, tracking = TRUE)
 }
 \arguments{
 \item{director}{director. The director object to which this resource
@@ -29,6 +29,16 @@ environment of the \code{provided_environment}. If, for example,
 the resource is created from a package method and uses functions
 from within that package's Imports, the \code{defining_environment}
 will ensure that compiling the resource will find those methods.}
+
+\item{helper}{logical. Whether or not to treat helper files as resources.
+This is used internally to keep track of modifications.}
+
+\item{tracking}{logical. Whether or not to perform dependency tracking.
+   If \code{TRUE} (the default), then \code{this_resource$modified()}
+   will return \code{TRUE} if any of its dependencies have been modified.
+
+   Another resource is a dependency if it was compiled during the compilation
+   of this resource.}
 }
 \description{
 Initialize a director resource.

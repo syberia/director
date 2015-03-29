@@ -10,11 +10,11 @@
  $ new       :function (...)  
  $ classname : chr "directorResource"
  $ public    :List of 1
-  ..$ initialize:function (director, name, provided_environment = new.env(parent = defining_environment), 
-    defining_environment = parent.frame())  
-  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 22 24 89 1 24 1 22 89
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1016fb008> 
- $ private   :List of 10
+  ..$ initialize:function (director, name, provided_environment = new.env(), defining_environment = parent.frame(), 
+    helper = FALSE, tracking = TRUE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 30 24 62 1 24 1 30 62
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10932fee0> 
+ $ private   :List of 12
   ..$ current             : NULL
   ..$ cached              : NULL
   ..$ modified            : logi FALSE
@@ -25,6 +25,12 @@
   ..$ dependencies        : NULL
   ..$ compiled            : NULL
   ..$ value               : NULL
+  ..$ initialize_virtual  :function (name, defining_environment)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 80 21 98 1 21 1 80 98
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10932fee0> 
+  ..$ initialize_real     :function (name, provided_environment, helper, tracking)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 100 20 155 1 20 1 100 155
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10932fee0> 
  $ active    : NULL
  $ inherit   : NULL
  $ parent_env:<environment: namespace:director> 
