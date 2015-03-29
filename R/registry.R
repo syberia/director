@@ -81,6 +81,7 @@ registry <- setRefClass('registry',
       enforce_type(key, "character", "registry$get")
 
       if (length(rest <- c(...)) != 0) {
+        enforce_type(rest, "character", "registry$get", "...")
         key <- do.call('file.path', as.list(c(key, rest)))
       }
 

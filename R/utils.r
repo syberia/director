@@ -204,6 +204,9 @@ any_is_substring_of <- function(string, set_of_strings) {
 #' @param admissible_types character. A character vector of allowed types. 
 #' @param function_name character. The function this enforcement is occurring
 #'    in, for error messages.
+#' @param name character. The name of the parameter whose type is being
+#'    enforced. By default, the string expression passed in to the first
+#'    argument, \code{object}.
 #' @return Nothing, but error if the type does not match.
 #' @examples
 #' \dontrun{
@@ -213,7 +216,7 @@ any_is_substring_of <- function(string, set_of_strings) {
 #' # "In 'myfunction', the 'x' parameter must be a character; instead, I got
 #' # a logical.
 #' }
-enforce_type <- function(object, admissible_types, function_name) {
+enforce_type <- function(object, admissible_types, function_name, name = deparse(substitute(object))) {
   ## The `is` function takes parameters `object` and `class`, so this
   ## sneaky call is equivalent to 
   ## 
@@ -222,8 +225,7 @@ enforce_type <- function(object, admissible_types, function_name) {
   ## ```
   if (!any(vapply(admissible_types, is, logical(1), object = object))) {
     stop(call. = FALSE, "In ", crayon::blue(function_name), ", the ",
-         crayon::blue(deparse(substitute(object))),
-         " parameter must be a ",
+         crayon::blue(name), " parameter must be a ",
          crayon::green(paste(admissible_types, collapse = " or ")),
          "; instead, I got a ", crayon::red(class(object)[1]), ".")
   }

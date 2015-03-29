@@ -15,6 +15,15 @@ describe("handling invalid inputs", {
   test_that('it correctly errors if a non-scalar root is passed', {
     expect_error(registry(c("foo", "bar")))
   })
+
+  test_that("it errors when a non-character key is retrieved", {
+    r <- registry(tempdir())
+    expect_error(r$get(NULL), "parameter must be")
+    expect_error(r$get(1), "parameter must be")
+    expect_error(r$get(list('a')), "parameter must be")
+    expect_error(r$get("foo", 1), "parameter must be")
+    expect_error(r$get("foo", FALSE), "parameter must be")
+  })
 })
 
 test_that('it correctly errors if a specified root is actually a file', {
