@@ -22,3 +22,18 @@ Suggests:
     microbenchmark,
     memoise
 Roxygen: list(wrap = FALSE)
+Collate:
+    'director-exists.R'
+    'director-filename.R'
+    'director-find.R'
+    'director-initialize.R'
+    'director-package.R'
+    'director-parsers.R'
+    'director-preprocessors.R'
+    'director-resource.R'
+    'utils.R'
+    'director.R'
+    'registry.R'
+    'resource.R'
+    'search_pattern.R'
+    'zzz.r'

@@ -1,3 +1,9 @@
+#' @include director-exists.R director-filename.R director-find.R
+#' @include director-initialize.R director-parsers.R
+#' @include director-preprocessors.R director-resource.R
+#' @include utils.R
+NULL
+
 # NOTE: This file is prepended with "zzz_" to ensure other files are parsed
 # first. This is because the DESCRIPTION file's "Collate" directive is obsolete.
 
