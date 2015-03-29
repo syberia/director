@@ -1,39 +1,8 @@
 # NOTE: This file is prepended with "zzz_" to ensure other files are parsed
 # first. This is because the DESCRIPTION file's "Collate" directive is obsolete.
 
-#' Convert a resource to a filename.
-#'
-#' @param name character. The resource name to convert to a full path.
-#' @param absolute character. Whether or not to return the absolute path
-#'    (i.e., prepended by the director root). The default is \code{FALSE}.
-#' @param check.exists logical. Whether or not to check if the file exists.
-#'    The default is \code{TRUE}. This should be primarily used if the file
-#'    has already been checked for existence.
-#' @param helper logical. Whether or not to handle helper files instead of resources.
-#'   The default is \code{FALSE}.
-#' @return the full path, relative to the director root if \code{full = FALSE}
-#'    and an absolute path if \code{FULL = TRUE}.
-director_filename <- function(name, absolute = FALSE, check.exists = TRUE, helper = FALSE) {
-  if (isTRUE(check.exists) && !exists(name, helper = isTRUE(helper))) {
-    stop("Cannot convert resource ", sQuote(name), " to full file path, ",
-         "as no such resource exists.")
-  }
-
-  if (isTRUE(file.info(file.path(root(), name))$isdir)) {
-    file <- complete_extension(file.path(name, basename(name)), root())
-  } else {
-    file <- complete_extension(name, root())
-  }
-
-  if (absolute) {
-    file.path(root(), file)
-  } else {
-    file
-  }
-}
-
-#' A director is a reference class responsible for a collection of
-#' file-traversal related responsibilities.
+#' A director is an \link[=https://github.com/wch/R6]{R6 class} responsible for
+#' a collection of file-traversal related responsibilities.
 #'
 #' @details Throughout, a "resource" refers to an R script
 #'   with possible helper functions. A resource with helpers is identified
@@ -48,7 +17,7 @@ director_filename <- function(name, absolute = FALSE, check.exists = TRUE, helpe
 #'   With this definition of resource, a director manages all of the following
 #'   relative to a root directory. 
 #'
-#' \itemize{
+#' \describe{
 #'   \item{"Loading"}{Grabbing resources relative to the root directory
 #'      using the \code{resource} method. This also provides information
 #'      about the last time the resource was grabbed (modification time,
