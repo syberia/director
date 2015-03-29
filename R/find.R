@@ -57,11 +57,7 @@ director_find <- function(pattern = "", method = "wildcard", base = "", by_mtime
   ## [A reference class docstring](http://stackoverflow.com/a/5931576/2540303)
   "Look for resources by wildcard, partial, or exact matches."
 
-  stopifnot(isTRUE(by_mtime) || identical(by_mtime, FALSE))
-  if (!is.character(base)) {
-    stop("In director$find, the base parameter must be a character; ",
-         "instead I got a ", sQuote(class(base)[1]))
-  }
+  enforce_type(base, "character", "director$find")
 
   if (length(base) > 1) {
     all <- vector('list', length(base))
