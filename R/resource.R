@@ -55,7 +55,7 @@ directorResource_ <- R6Class("directorResource",
     name = NULL, # character
     source_args = NULL, # list
     filename = NULL, # character
-    provided_environment, # environment
+    provided_environment = NULL, # environment
 
     director = NULL, # director    
     defining_environment = NULL, # environment

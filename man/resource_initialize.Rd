@@ -5,7 +5,8 @@
 \title{Initialize a director resource.}
 \usage{
 resource_initialize(director, name, provided_environment = new.env(),
-  defining_environment = parent.frame(), helper = FALSE, tracking = TRUE)
+  defining_environment = parent.frame(), helper = FALSE, tracking = TRUE,
+  soft = FALSE)
 }
 \arguments{
 \item{director}{director. The director object to which this resource
@@ -39,6 +40,9 @@ This is used internally to keep track of modifications.}
 
    Another resource is a dependency if it was compiled during the compilation
    of this resource.}
+
+\item{soft}{logical. Whether or not to replaced the cached info about the
+resource.}
 }
 \description{
 Initialize a director resource.

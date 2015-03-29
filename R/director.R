@@ -92,6 +92,9 @@ director_ <- R6Class("director",
     increment_nesting_level = function() { .dependency_nesting_level <<- .dependency_nesting_level + 1L },
     decrement_nesting_level = function() { .dependency_nesting_level <<- .dependency_nesting_level - 1L },
     nesting_level = function() { .dependency_nesting_level },
+    push_dependency = function(dependency) {
+      dependency_stack$push(dependency)
+    },
 
     root         = function() { .root },
     project_name = function() { .project_name },
