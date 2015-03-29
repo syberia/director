@@ -52,8 +52,11 @@ directorResource_ <- R6Class("directorResource",
     current = NULL, # list or NULL
     cached  = NULL, # list or NULL
     modified = FALSE, # logical
-    resource_key = NULL, # character
+    name = NULL, # character
     source_args = NULL, # list
+    filename = NULL, # character
+    provided_environment, # environment
+
     director = NULL, # director    
     defining_environment = NULL, # environment
     dependencies = NULL, # character
@@ -62,7 +65,12 @@ directorResource_ <- R6Class("directorResource",
 
     #=== Methods ===
     initialize_virtual = virtual_resource,
-    initialize_real    = initialize_real
+    initialize_real    = initialize_real,
+
+    `set_filename!` = `set_filename!`,
+    `set_details` = `set_details!`,
+    `set_modified!` = `set_modified!`,
+    `mark_as_dependency!` = `mark_as_dependency!`
   ),
 
   public = list(

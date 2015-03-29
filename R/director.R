@@ -87,6 +87,7 @@ director_ <- R6Class("director",
     parser = function(x) .parsers[[x]],
     cached_resources = function() .cached_resources,
 
+    tracking_dependencies = function() { .dependency_nesting_level > 0L },
     clear_resource_stack = function() { if (.dependency_nesting_level == 0) dependency_stack$clear() },
     increment_nesting_level = function() { .dependency_nesting_level <<- .dependency_nesting_level + 1L },
     decrement_nesting_level = function() { .dependency_nesting_level <<- .dependency_nesting_level - 1L },

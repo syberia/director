@@ -27,25 +27,24 @@
 #'
 #'    Another resource is a dependency if it was compiled during the compilation
 #'    of this resource.
+#' @param soft logical. Whether or not to replaced the cached info about the
+#'    resource.
 resource_initialize <- function(director, name,
                                 provided_environment = new.env(),
                                 defining_environment = parent.frame(),
-                                helper = FALSE, tracking = TRUE) {
+                                helper = FALSE, tracking = TRUE, soft = FALSE) {
 
   enforce_type(director, "director", "directorResource$initialize")
 
   director <<- director
-  helper   <- isTRUE(helper)
-  tracking <- isTRUE(tracking)
-
-  ## This does not hurt unless someone names their file "foo.R.R",
-  ## and it would be inconvenient to the user if we did not strip the extension.
-  name <- strip_r_extension(name)
+  name     <<- resource_name(name)
+  compiled <<- FALSE
+  value    <<- NULL
+  defining_environment <<- defining_environment
 
   ## The default value of `defining_environment` is `parent.frame()`, and we
   ## mean the calling environment of *this* function, not any helper functions
   ## that use `defining_environment`.
-  force(defining_environment)
 
   ## We use director$exists to determine whether `name` corresponds to a
   ## resource. If `helper` is `TRUE`, we look through helper .R files as well.
@@ -54,10 +53,11 @@ resource_initialize <- function(director, name,
   } else {
     ## Convert from a list to an environment, if necessary, and set the parent
     ## environment to `defining_environment`.
-    provided_environment <-
+    provided_environment <<-
       sanitize_provided_environment(provided_environment, defining_environment)
 
-    initialize_real(name, provided_environment, helper, tracking)
+    initialize_real(provided_environment, isTRUE(helper),
+                    isTRUE(tracking), isTRUE(soft))
   }
 }
 
@@ -91,68 +91,91 @@ virtual_resource <- function(name, defining_environment) {
   ## we let the preprocessor handle it. This is useful for "virtual"
   ## resources that do not correspond to a file and are built some other
   ## way (e.g., from a database, external web resource, etc.).
-  return(directorResource(current = NULL, cached = NULL,
-    modified = TRUE, resource_key = name,
-    source_args = list(local = new.env(parent = defining_environment)),
-    director = self, defining_environment = defining_environment))
+  current <<- cached <<- NULL
+  modified <<- TRUE
+  source_args <<- list(local = new.env(parent = defining_environment))
 }
 
-initialize_real <- function(name, provided_environment, helper, tracking) {
-  filename <- director$filename(name, absolute = TRUE, check.exists = FALSE,
-                                helper = isTRUE(helper)) 
-  resource_info   <- if (file.exists(filename)) file.info(filename)
-  resource_key    <- strip_root(director$root(), resource_name(filename))
-  cache_key       <- resource_cache_key(resource_key)
-  cached_details  <- cache$get(cache_key)
-  current_details <- list(info = resource_info)
-  current_details$dependencies <- cached_details$dependencies
+`set_filename!` <- function(helper) {
+  filename <<- director$filename(name, absolute = TRUE, check.exists = FALSE,
+                                helper = helper)
+}
 
-  if (is.element('value', names(cached_details))) {
-    current_details['value'] <- cached_details['value'] # (avoid NULL problems)
+`set_details!` <- function() {
+  resource_info   <- if (file.exists(filename)) file.info(filename)
+  cache_key       <- resource_cache_key(name)
+  cached          <<- director$cache$get(cache_key)
+
+  current <<- list(
+    info         = resource_info,
+    dependencies = cached$dependencies
+  )
+
+  if (is.element('value', names(cached))) {
+    ## If `cached$value` was `NULL`, using 
+    ## `current$value <- cached$value` would remove the
+    ## element from the list instead of assigning it the value `NULL`.
+    current['value'] <<- cached['value'] 
   }
 
-  if (isTRUE(body)) current_details$body <-
-    paste(readLines(filename, warn = FALSE), collapse = "\n")
+  if (!soft) {
+    director$cache$set(cache_key, current)
+  }
+}
 
-  if (identical(soft, FALSE)) cache$set(cache_key, current_details)
+`set_modified!` <- function(helper, tracking) {
+  modified <<-
+    ## If we have no file info now but we did last time this resource
+    ## was parsed, the file was deleted (and thus modified).
+    (is.null(current$info) && !is.null(cached)) || 
+    ## If the modification timestamp has changed, the file has been
+    ## modified.
+    (current$info$mtime > cached$info$mtime %||% 0) 
 
-  source_args <- list(filename, local = provides)
-  # TODO: (RK) Check if `local` is an environment in case user overwrote.
-
-  modified <-
-    (is.null(resource_info) && !is.null(cached_details)) || # file was deleted
-    (resource_info$mtime > cached_details$info$mtime %||% 0) # file was changed
-
-  resource_dir <- file.path(.root, resource_key)
+  resource_dir <- file.path(director$root(), name)
   
+  ## If the resource is idempotent, we will look through the helper files
+  ## to see if their modification time has changed, to mark the
+  ## `modified` flag appropriately.
   if (is.idempotent_directory(resource_dir)) {
     tracking_is_on_and_resource_has_helpers <-
-      isTRUE(tracking) && !isTRUE(helper) &&
-      !isTRUE(modified) # No point in checking modifications in helpers otherwise
+      tracking && !helper && !modified
       
     # Touch helper files to see if they got modified.
     helper_files <- get_helpers(resource_dir)
     for (file in helper_files) {
-      helper_object <- resource(file.path(resource_key, file), body = FALSE,
-                         tracking = FALSE, helper = TRUE)
-                         #defining_environment = parent.frame())
+      helper_object <- directorResource(
+        file.path(name, file), tracking = FALSE, helper = TRUE)
+      ## Even though this statement does not always run, we still
+      ## bother constructing each `directorResource` object to
+      ## ensure that the `cached` entry is updated for those
+      ## helper files in the `director` cache.
       if (tracking_is_on_and_resource_has_helpers)
-        modified <- modified || helper_object$modified
+        modified <<- modified || helper_object$modified
     }
   }
-
-  # TODO: (RK) Finer control over defining environment.
-  output <- directorResource(current = current_details, cached = cached_details,
-       modified = modified, resource_key = resource_key,
-       source_args = source_args, director = self,
-       defining_environment = parent.frame()) 
-
-  if (.dependency_nesting_level > 0 && !isTRUE(helper))
-    dependency_stack$push(list(level = .dependency_nesting_level,
-                     key = resource_key,
-                     resource = output))
-  output
 }
+
+`mark_as_dependency!` <- function() {
+  if (director$tracking_dependencies() && !helper) {
+    director$push_dependency(
+      list(
+        level    = director$nesting_level(),
+        key      = name,
+        resource = self
+      )
+    )                            
+  }
+}
+
+initialize_real <- function(provided_environment, helper, tracking, soft) {
+  `set_filename!`(helper)
+  `set_details!`(soft)
+  `set_modified!`(helper, tracking)
+  source_args <<- list(filename, local = provided_environment)
+  if (!helper) `mark_as_dependency!`()
+}
+
 #    current = NULL, # list or NULL
 #    cached  = NULL, # list or NULL
 #    modified = FALSE, # logical
