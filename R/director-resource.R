@@ -117,7 +117,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE,
     # Touch helper files to see if they got modified.
     helper_files <- get_helpers(resource_dir)
     for (file in helper_files) {
-      helper_object <- resource(file.path(resource_key, file), body = FALSE,
+      helper_object <- self$resource(file.path(resource_key, file), body = FALSE,
                          tracking = FALSE, helper = TRUE)
                          #defining_environment = parent.frame())
       if (tracking_is_on_and_resource_has_helpers)
