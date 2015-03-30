@@ -14,79 +14,77 @@
   ..$ cache                  : NULL
   ..$ initialize             :function (root, project_name = "")  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 16 15 52 1 15 1 16 52
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1029de438> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1261e42e0> 
   ..$ exists                 :function (resource, helper = FALSE)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 27 20 68 1 20 1 27 68
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1023d7f18> 
-  ..$ resource               :function (name, provides = list(), body = TRUE, soft = FALSE, tracking = TRUE, 
-    helper = FALSE)  
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x121360920> 
+  ..$ resource               :function (name, provides = list(), body = TRUE, soft = FALSE, tracking = TRUE, helper = FALSE)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 50 13 139 1 13 1 50 139
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x100bd2a00> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x122730748> 
   ..$ virtual_resource       :function (name, defining_environment)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 80 21 97 1 21 1 80 97
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10147f558> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1253cbbc0> 
   ..$ register_parser        :function (path, parser = function() \{
 \}, overwrite = FALSE, cache = FALSE)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 20 20 51 1 20 1 20 51
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1013af460> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1260c4510> 
   ..$ register_preprocessor  :function (path, preprocessor, overwrite = FALSE)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 15 26 38 1 26 1 15 38
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a508a0> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1227eaca0> 
   ..$ has_preprocessor       :function (resource_path)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 45 21 47 1 21 1 45 47
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a508a0> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1227eaca0> 
   ..$ find                   :function (pattern = "", method = "wildcard", base = "", by_mtime = TRUE)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 56 18 88 1 18 1 56 88
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102905fc8> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1262bff88> 
   ..$ match_preprocessor     :function (resource_name)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 80 26 82 5 26 5 80 82
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ match_parser           :function (resource_name)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 83 20 85 5 20 5 83 85
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ preprocessor           :function (x)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 86 20 86 50 20 50 86 86
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ parser                 :function (x)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 87 14 87 38 14 38 87 87
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ cached_resources       :function ()  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 88 24 88 51 24 51 88 88
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ tracking_dependencies  :function ()  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 90 29 90 73 29 73 90 90
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ clear_resource_stack   :function ()  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 91 28 91 102 28 102 91 91
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ increment_nesting_level:function ()  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 92 31 92 105 31 105 92 92
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ decrement_nesting_level:function ()  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 93 31 93 105 31 105 93 93
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ nesting_level          :function ()  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 94 21 94 60 21 60 94 94
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ push_dependency        :function (dependency)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 95 23 97 5 23 5 95 97
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ root                   :function ()  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 99 20 99 39 20 39 99 99
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ project_name           :function ()  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 100 20 100 47 20 47 100 100
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ absolute               :function (x)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 101 18 101 53 18 53 101 101
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
   ..$ show                   :function ()  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 102 18 107 5 18 5 102 107
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x102a5ea28> 
-  ..$ filename               :function (name, absolute = FALSE, check.exists = TRUE, helper = FALSE, 
-    enclosing = FALSE)  
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x125ecd0b0> 
+  ..$ filename               :function (name, absolute = FALSE, check.exists = TRUE, helper = FALSE, enclosing = FALSE)  
   .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 16 22 43 1 22 1 16 43
-  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1023bac70> 
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x1262d9308> 
  $ private   :List of 8
   ..$ .root                    : NULL
   ..$ .project_name            : NULL
