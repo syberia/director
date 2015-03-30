@@ -102,6 +102,7 @@ test_that('modified is FALSE if both get modified and a followup second check is
     writeLines('', file.path(tempdir, 'blah', 'helper.r'))
     writeLines('', file.path(tempdir, 'blah', 'helper2.r'))
     d$resource('blah') # trigger cache hit
+    d$resource('blah') # trigger cache hit
     expect_false(d$resource('blah', modification_tracker.touch = FALSE,
                             modification_tracker.return = "modified"))
   })

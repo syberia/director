@@ -3,24 +3,25 @@ library(testthatsomemore)
 
 test_that('it correctly identifies a resource run-time dependency for a simple example', {
   within_file_structure(list(bar.R = 'resource("foo")', 'foo.R'), { d <- director(tempdir)
-    (r <- d$resource('bar'))$value()
-    expect_identical(r$dependencies(), 'foo')
+    d$resource('bar')
+    expect_identical(d$resource("bar", dependency_tracker.return = "dependencies"), "foo")
   })
 })
 
 test_that('it correctly identifies a parser run-time dependency for a simple example', {
   within_file_structure(list('bar.R', 'foo.R'), { d <- director(tempdir)
     d$register_parser('bar', function() director$resource('foo'))
-    (r <- d$resource('bar'))$value()
-    expect_identical(r$dependencies(), 'foo')
+    d$resource('bar')
+    expect_identical(d$resource("bar", dependency_tracker.return = "dependencies"), "foo")
   })
 })
 
 test_that('it correctly identifies a resource and parser run-time dependency for a simple example', {
   within_file_structure(list(bar.R = 'resource("baz")', 'foo.R', 'baz.R'), { d <- director(tempdir)
     d$register_parser('bar', function() director$resource('foo'))
-    (r <- d$resource('bar'))$value()
-    expect_identical(sort(r$dependencies()), sort(c('foo', 'baz')))
+    d$resource('bar')
+    expect_identical(sort(d$resource("bar", dependency_tracker.return = "dependencies")),
+                     c("baz", "foo"))
   })
 })
 
@@ -30,38 +31,41 @@ test_that('it correctly identifies a nested run-time dependency', {
     d$register_parser('bar', function() director$resource('foo'))
     d$register_parser('foo', function() director$resource('baz'))
     d$register_parser('baz', function() director$resource('bum'))
-    (r <- d$resource('bar'))$value()
-    expect_identical(sort(r$dependencies()), sort(c('foo', 'baz', 'bum')))
-    expect_identical(sort(r$dependencies()), sort(c('foo', 'baz', 'bum')))
+    d$resource('bar')
+    expect_identical(sort(d$resource("bar", dependency_tracker.return = "dependencies")),
+                     c("baz", "bum", "foo"))
   })
 })
 
 test_that('it correctly identifies a run-time dependency for an intermediate resource', {
   within_file_structure(list(bar.R = 'resource("baz")', 'foo.R', 'baz.R', 'bum.R'), {
     d <- director(tempdir)
-    d$register_parser('bar', function() director$resource('foo')$value())
-    d$register_parser('foo', function() director$resource('baz')$value())
-    d$register_parser('baz', function() director$resource('bum')$value())
+    d$register_parser('bar', function() director$resource('foo'))
+    d$register_parser('foo', function() director$resource('baz'))
+    d$register_parser('baz', function() director$resource('bum'))
     
-    (r <- d$resource('foo'))$value()
-    expect_identical(sort(r$dependencies()), sort(c('baz', 'bum')))
+    d$resource('foo')
+    expect_identical(sort(d$resource("foo", dependency_tracker.return = "dependencies")),
+                     c("baz", "bum"))
   })
 })
 
 test_that('it maintains hierarchical dependencies', {
   within_file_structure(list(bar.R = 'resource("baz")', 'foo.R', 'baz.R', 'bum.R'), {
     d <- director(tempdir)
-    d$register_parser('bar', function() director$resource('foo')$value())
-    d$register_parser('foo', function() director$resource('baz')$value())
-    d$register_parser('baz', function() director$resource('bum')$value())
-    (r <- d$resource('bar'))$value()
-    expect_identical(sort(r$dependencies()), sort(c('foo', 'baz', 'bum')))
-    (r <- d$resource('foo'))$value()
-    expect_identical(sort(r$dependencies()), sort(c('baz', 'bum')))
-    (r <- d$resource('baz'))$value()
-    expect_identical(sort(r$dependencies()), sort(c('bum')))
-    (r <- d$resource('bum'))$value()
-    expect_identical(r$dependencies(), character(0))
+    d$register_parser('bar', function() director$resource('foo'))
+    d$register_parser('foo', function() director$resource('baz'))
+    d$register_parser('baz', function() director$resource('bum'))
+    d$resource('bar')
+    expect_identical(sort(d$resource("bar", dependency_tracker.return = "dependencies")),
+                     c("baz", "bum", "foo"))
+    d$resource('foo')
+    expect_identical(sort(d$resource("foo", dependency_tracker.return = "dependencies")),
+                     c("baz", "bum"))
+    d$resource('baz')
+    expect_identical(sort(d$resource("baz", dependency_tracker.return = "dependencies")), "bum")
+    d$resource('bum')
+    expect_identical(sort(d$resource("bum", dependency_tracker.return = "dependencies")), character(0))
   })
 })
 

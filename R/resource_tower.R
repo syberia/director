@@ -132,6 +132,16 @@ dependency_tracker <- function(object, ..., dependency_tracker.return = "object"
         dependency_tracker.return = "any_dependencies_modified")
     }
     return(modified || any(vapply(dependencies, is_modified, logical(1))))
+  } else if (identical(dependency_tracker.return, "dependencies")) {
+    dependencies <- object$state$dependency_tracker.dependencies %||% character(0)
+    nested_dependencies <- lapply(
+      dependencies,
+      director$resource,
+      modification_tracker.touch = FALSE,
+      dependency_tracker.return  = "dependencies"
+    )
+    # TODO: (RK) Figure out why we need unique, nested dependencies should not need it.
+    return(unique(c(recursive = TRUE, dependencies, nested_dependencies)))
   }
 
   if (!base::exists("dependency_stack", envir = director_state)) {
