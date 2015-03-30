@@ -42,7 +42,7 @@ describe("tower creation", {
     assert(tower(list(cool_function, function(object, ..., blah) {
       yield %to% me
     })))
-    check that simple towers can be created
+  })
 })
 
 describe("running tower examples", {  
