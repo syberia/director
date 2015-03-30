@@ -20,13 +20,15 @@ resource_tower <- function(director, name, ...) {
   }
   resource <- resource_class(director, name, parent.frame())
 
-  virtual_check        %>>%
-  modification_tracker %>>%
-  dependency_tracker   %>>% 
+  tower(
+    virtual_check        %>>%
+    modification_tracker %>>%
+    dependency_tracker   %>>% 
   # caching_layer        %>>%
   # preprocessor         %>>%
   # parser               %>>%
-  as.active_resource(resource)
+    identity2
+  )(as.active_resource(resource), ...)
 }
 
 # An active resource is just a list that holds a resource,
