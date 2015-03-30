@@ -126,3 +126,19 @@ describe("destruction actions", {
     expect_output(fn1 %>>% fn2 %>>% 1, "21")
   })
 })
+
+describe("floating towers", {
+  ## Floating towers are of the form fn1 %>>% fn2, which have not been
+  ## evaluated on an argument yet.
+  test_that("it can create a floating tower of identities", {
+    t <- tower(identity2 %>>% identity2)
+    expect_is(t, "tower")
+    expect_equal(t(1), 1)
+  })
+
+  test_that("it can create a floating tower of distinct functions", {
+    t <- tower(double_function %>>% increment_function)
+    expect_is(t, "tower")
+    expect_equal(t(1), 4)
+  })
+})
