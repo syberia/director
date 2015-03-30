@@ -22,7 +22,7 @@ resource_tower <- function(director, name) {
 
   virtual_check        %>>%
   modification_tracker %>>%
-  # dependency_tracker   %>>% 
+  dependency_tracker   %>>% 
   # caching_layer        %>>%
   # preprocessor         %>>%
   # parser               %>>%
@@ -92,22 +92,71 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
       object$state$modification.queue <- sized_queue(size = 2)
     }
 
+    modified <- function() {
+      ## A resource has been modified if its modification time has changed. 
+      !do.call(identical, lapply(seq(2), object$state$modification.queue$get))
+    }
+
     if (isTRUE(modification_tracker.touch)) {
       filename <- director$filename(object$resource$name, enclosing = TRUE)
       mtime    <- file.info(filename)$mtime
       object$state$modification.queue$push(mtime)
-
-      ## A resource has been modified if its modification time has changed. 
-      modified <- !do.call(identical,
-        lapply(seq(2), object$state$modification.queue$get))
-
-      object$injects %<<% list(modified = modified)
+      object$injects %<<% list(modified = modified())
     }
 
-    yield()
-  
+    if (identical(modification_tracker.return, "modified")) {
+      modified()
+    } else {
+      yield()
+    }
     # TODO: (RK) Set any_dependencies_modified on exit
   }
+}
+
+dependency_tracker <- function(object, ...) {
+  director <- object$resource$director
+
+  if (!base::exists("dependency_stack", envir = director_state)) {
+    director_state$dependency_stack <- shtack$new()
+  }
+
+  nesting_level <- director_state$dependency_nesting_level %||% 0
+  if (nesting_level > 0L) {
+    director_state$dependency_stack$push(
+      dependency(nesting_level + 1, object$resource$name)
+    )
+  } else {
+    director_state$dependency_stack$clear()
+  }
+  director_state$dependency_nesting_level <- nesting_level + 1
+
+  object <- yield()
+
+  director_state$dependency_nesting_level <- nesting_level - 1
+  dependencies <- Filter(
+    function(dependency) dependency$level == nesting_level + 1, 
+    director_state$dependency_stack$peek(TRUE)
+  )
+
+  any_modified <- any(vapply(dependencies, function(d) {
+    resource_tower(director, d$name, modification_tracker.touch = FALSE,
+                   modification_tracker.return = "modified")
+  }, logical(1)))
+
+  object$injects %<<% list(any_dependencies_modified = any_modified)
+
+  while (!director_state$dependency_stack$empty() &&
+         director_state$dependency_stack$peek()$level == nesting_level + 1) {
+    director$dependency_stack$pop()
+  }
+
+  yield()
+}
+
+dependency <- function(nesting_level, resource_name) {
+  structure(class = "directorDependency", list(
+    level = nesting_level, resource_name = resource_name
+  ))
 }
 
 
