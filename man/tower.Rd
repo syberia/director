@@ -4,12 +4,14 @@
 \alias{tower}
 \title{Create a tower of functions.}
 \usage{
-tower(functions)
+tower(functions = list())
 }
 \arguments{
 \item{functions}{list. A list of functions in the tower. The
 first argument of each function must be named "object" and
-each function must take a \code{...} parameter.}
+each function must take a \code{...} parameter. By default
+\code{list()}, which creates an identity tower that performs
+no operation.}
 }
 \value{
 An S3 "tower" object, which is a callable function
@@ -60,6 +62,6 @@ t <- tower(functions)
 v <- t(1) # This is now 5, since in the tower, we increment object,
           # Multiply it by 2 in the next function, then increment it
           # again after receiving the previous function.
-stopifnot(v == 6)
+stopifnot(v == 5)
 }
 

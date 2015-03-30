@@ -90,6 +90,24 @@ tower <- function(functions = list()) {
   structure(functions[[1]], class = "tower")
 }
 
+`%>>%` <- function(lhs, rhs) {
+  merge <- function(lhs, rhs) {
+    # TODO: (RK) Use better heuristic here.
+    if (!is.function(rhs)) {
+      tower(as.pre_tower(lhs))(rhs)
+    } else {
+      as.pre_tower(list(lhs, rhs))
+    }
+  }
+
+  merge(lhs, rhs)
+}
+
+as.pre_tower <- function(fn) {
+  structure(c(recursive = TRUE, fn), class = "pre_tower")
+}
+is.pre_tower <- function(obj) is(obj, "pre_tower")
+
 identity2 <- structure(function(...) ..1, class = "identity")
 is.identity2 <- function(x) is(x, "identity")
 

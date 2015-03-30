@@ -38,6 +38,7 @@ Collate:
     'director.R'
     'registry.R'
     'resource.R'
+    'resource_tower.R'
     'search_pattern.R'
     'tower.R'
     'zzz.r'
