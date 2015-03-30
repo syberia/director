@@ -101,11 +101,11 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
                                     absolute = TRUE, enclosing = TRUE)
       mtime    <- file.info(filename)$mtime
       object$state$modification_tracker.queue$push(mtime)
-      object$injects %<<% list(modified = modified())
     }
+    object$injects %<<% list(modified = modified())
 
     if (identical(modification_tracker.return, "modified")) {
-      modified()
+      object$injects$modified
     } else if (identical(modification_tracker.return, "mtime")) {
       object$state$modification_tracker.queue$get(1)
     } else {
@@ -115,8 +115,18 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
   }
 }
 
-dependency_tracker <- function(object, ...) {
+dependency_tracker <- function(object, ..., dependency_tracker.return = "object") {
   director <- object$resource$director
+
+  if (identical(dependency_tracker.return, "any_dependencies_modified")) {
+    dependencies <- object$state$dependency_tracker.dependencies %||% character(0)
+    modified <- object$injects$modified
+    is_modified <- function(name) {
+      object$resource$director$resource(name, modification_tracker.touch = FALSE,
+        dependency_tracker.return = "any_dependencies_modified")
+    }
+    return(modified || any(vapply(dependencies, is_modified, logical(1))))
+  }
 
   if (!base::exists("dependency_stack", envir = director_state)) {
     director_state$dependency_stack <- shtack$new()
@@ -139,10 +149,13 @@ dependency_tracker <- function(object, ...) {
     function(dependency) dependency$level == nesting_level + 1, 
     director_state$dependency_stack$peek(TRUE)
   )
+  object$state$dependency_tracker.dependencies <-
+    vapply(dependencies, getElement, character(1), "resource_name")
+  print(object$state$dependency_tracker.dependencies)
 
   # TODO: (RK) This is incorrect, figure out right dependency modification check
   any_modified <- any(vapply(dependencies, function(d) {
-    resource_tower(director, d$name, modification_tracker.touch = FALSE,
+    resource_tower(director, d$resource_name, modification_tracker.touch = FALSE,
                    modification_tracker.return = "modified")
   }, logical(1)))
 
@@ -150,7 +163,7 @@ dependency_tracker <- function(object, ...) {
 
   while (!director_state$dependency_stack$empty() &&
          director_state$dependency_stack$peek()$level == nesting_level + 1) {
-    director$dependency_stack$pop()
+    director_state$dependency_stack$pop()
   }
   
   value
@@ -227,6 +240,7 @@ preprocessor <- function(object, ..., parse. = TRUE) {
     }
     source_env <- new.env(parent = parent.env(topenv(parent.env(environment())))) %<<%
       object$injects
+    object$state$preprocessor.source_env <- source_env
     environment(default_preprocessor) <- 
       new.env(parent = object$resource$defining_environment) %<<%
       list(source_env = source_env)
