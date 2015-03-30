@@ -70,7 +70,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE,
   }
 
   # Note below we are using director$exists not base::exists
-  if (!exists(name, helper = isTRUE(helper))) {
+  if (!self$exists(name, helper = isTRUE(helper))) {
     # TODO: (RK) Should assuming virtual resource be the right behavior here?
 
     if (!has_preprocessor(name)) { # No preprocessor exists

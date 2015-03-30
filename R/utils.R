@@ -305,6 +305,7 @@ sized_queue <- function(size) {
   structure(class = "sized_queue", list(
     push = function(el) {
       queue <<- append(list(el), queue)[seq_len(size)]
+      el
     },
     get = function(el) if (el > size) NULL else queue[[el]]
   ))

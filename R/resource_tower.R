@@ -47,12 +47,14 @@ generate_state <- function(resource) {
     digest::digest(list(director$root(), director$project_name()))
   }
 
-  if (!exists(director_key, envir = director_state, inherits = FALSE)) {
+  ## We do not need `inherits = FALSE` because the parent environment is
+  ## the empty environment.
+  if (!exists(director_key, envir = director_state)) {
     director_state[[director_key]] <- new.env(parent = emptyenv())
   }
   state <- director_state[[director_key]]
 
-  if (!exists(resource$name, envir = state, inherits = FALSE)) {
+  if (!exists(resource$name, envir = state)) {
     state[[resource$name]] <- new.env(parent = emptyenv())
   }
   state[[resource$name]]
@@ -77,8 +79,15 @@ virtual_check <- function(object, ...) {
 modification_tracker <- function(object, ..., modification_tracker.return = "object") {
   director <- object$resource$director
 
+  # if (object$injects$virtual
+  if (!exists("modification.queue", envir = object$state)) {
+    object$state$modification.queue <- sized_queue()
+  }
+
   filename <- director$filename(object$resource$name, enclosing = TRUE)
-   
+  #mtime    <- file.info(
+  object$state$modification.queue$push
+
 }
 
 
