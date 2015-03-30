@@ -59,5 +59,9 @@ describe("running tower examples", {
   test_that("it can run a 1-tower", {
     expect_equal(tower(list(double_function))(1), 2)
   })
+
+  test_that("it can run a 2-tower", {
+    expect_equal(tower(list(double_function, double_function))(1), 4)
+  })
 })
 
