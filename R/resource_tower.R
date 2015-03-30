@@ -97,9 +97,15 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
     }
 
     if (isTRUE(modification_tracker.touch)) {
+      # Directory modification is only defined as adding files.
       filename <- director$filename(object$resource$name,
                                     absolute = TRUE, enclosing = TRUE)
-      mtime    <- file.info(filename)$mtime
+      if (is.idempotent_directory(filename)) {
+        files <- c(filename, get_helpers(filename, full.names = TRUE, leave_idempotent = TRUE))
+        mtime <- max(file.info(files)$mtime, na.rm = TRUE)
+      } else {
+        mtime <- file.info(filename)$mtime
+      }
       object$state$modification_tracker.queue$push(mtime)
     }
     object$injects %<<% list(modified = modified())
@@ -135,7 +141,7 @@ dependency_tracker <- function(object, ..., dependency_tracker.return = "object"
   nesting_level <- director_state$dependency_nesting_level %||% 0
   if (nesting_level > 0L) {
     director_state$dependency_stack$push(
-      dependency(nesting_level + 1, object$resource$name)
+      dependency(nesting_level, object$resource$name)
     )
   } else {
     director_state$dependency_stack$clear()
@@ -144,14 +150,13 @@ dependency_tracker <- function(object, ..., dependency_tracker.return = "object"
 
   value <- yield()
 
-  director_state$dependency_nesting_level <- nesting_level - 1
+  director_state$dependency_nesting_level <- nesting_level
   dependencies <- Filter(
     function(dependency) dependency$level == nesting_level + 1, 
     director_state$dependency_stack$peek(TRUE)
   )
   object$state$dependency_tracker.dependencies <-
     vapply(dependencies, getElement, character(1), "resource_name")
-  print(object$state$dependency_tracker.dependencies)
 
   # TODO: (RK) This is incorrect, figure out right dependency modification check
   any_modified <- any(vapply(dependencies, function(d) {

@@ -1,6 +1,38 @@
 context('resource parsers')
 library(testthatsomemore)
 
+test_that("it notices modification of a helper of a dependent resource", {
+  within_file_structure(list(blah = list('one.R'), foo = list(two = list('two.R', 'helper.R'))), {
+    d <- director(tempdir)
+    d$register_parser('blah', function() { director$resource('foo/two') })
+    d$register_parser('foo', function() { "test" })
+    replicate(2, d$resource('blah/one'))
+    expect_false(d$resource("blah/one", modification_tracker.touch = FALSE,
+                            dependency_tracker.return = "any_dependencies_modified"))
+    Sys.sleep(1)
+    touch(file.path(tempdir, 'foo', 'two', 'helper.R'))
+    d$resource('blah/one')
+    expect_true(d$resource("blah/one", modification_tracker.touch = FALSE,
+                           dependency_tracker.return = "any_dependencies_modified"))
+  })
+})
+
+test_that("it remembers dependencies", {
+  within_file_structure(list(blah = list('one.R'), foo = list('two.R')), {
+    d <- director(tempdir)
+    d$register_parser('blah', function() { director$resource('foo/two') })
+    d$register_parser('foo', function() { "test" })
+    replicate(2, d$resource('blah/one'))
+    expect_false(d$resource("blah/one", modification_tracker.touch = FALSE,
+                            dependency_tracker.return = "any_dependencies_modified"))
+    Sys.sleep(1)
+    touch(file.path(tempdir, 'foo', 'two.R'))
+    d$resource('blah/one')
+    expect_true(d$resource("blah/one", modification_tracker.touch = FALSE,
+                           dependency_tracker.return = "any_dependencies_modified"))
+  })
+})
+
 describe("erroring on invalid inputs", {
   test_that("it errors when a non-character path is passed", {
     d <- director(tempdir())
@@ -23,7 +55,7 @@ describe("erroring on invalid inputs", {
 test_that("it is able to follow a depth-1 dependency chain", {
   within_file_structure(list(blah = list('one.R'), foo = list('two.R')), {
     d <- director(tempdir)
-    d$register_parser('blah', function() { options(foo=T);on.exit(options(foo=F)); director$resource('foo/two') })
+    d$register_parser('blah', function() { director$resource('foo/two') })
     d$register_parser('foo', function() { "test" })
     expect_equal(d$resource("blah/one"), 'test')
   })
@@ -80,23 +112,6 @@ test_that("it can ascertain dependencies for a complicated chain", {
 
 ### These tests go last because they must use Sys.sleep
 
-test_that("it remembers dependencies", {
-  within_file_structure(list(blah = list('one.R'), foo = list('two.R')), {
-    d <- director(tempdir)
-    d$register_parser('blah', function() { director$resource('foo/two') })
-    d$register_parser('foo', function() { "test" })
-    replicate(2, d$resource('blah/one'))
-    expect_false(d$resource("blah/one", modification_tracker.touch = FALSE,
-                            modification_tracker.return = "modified"))
-    Sys.sleep(1)
-    touch(file.path(tempdir, 'foo', 'two.R'))
-    d$resource('blah/one')
-    #browser()
-    expect_true(d$resource("blah/one", modification_tracker.touch = FALSE,
-                           dependency_tracker.return = "any_dependencies_modified"))
-  })
-})
-
 test_that("it remembers depth-2 dependencies", {
   within_file_structure(list(blah = list('one.R'), foo = list('two.R'),
                              faz = list('three.R')), {
@@ -107,28 +122,12 @@ test_that("it remembers depth-2 dependencies", {
     d$resource('blah/one')
     d$resource('blah/one')
     expect_false(d$resource("blah/one", modification_tracker.touch = FALSE,
-                            modification_tracker.return = "modified"))
+                            dependency_tracker.return = "any_dependencies_modified"))
     Sys.sleep(1)
     touch(file.path(tempdir, 'faz', 'three.R'))
     d$resource('blah/one')
     expect_true(d$resource("blah/one", modification_tracker.touch = FALSE,
-                           modification_tracker.return = "modified"))
-  })
-})
-
-test_that("it notices modification of a helper of a dependent resource", {
-  within_file_structure(list(blah = list('one.R'), foo = list(two = list('two.R', 'helper.R'))), {
-    d <- director(tempdir)
-    d$register_parser('blah', function() { director$resource('foo/two') })
-    d$register_parser('foo', function() { "test" })
-    replicate(2, d$resource('blah/one'))
-    expect_false(d$resource("blah/one", modification_tracker.touch = FALSE,
-                            modification_tracker.return = "modified"))
-    Sys.sleep(1)
-    touch(file.path(tempdir, 'foo', 'two', 'helper.R'))
-    d$resource('blah/one')
-    expect_true(d$resource("blah/one", modification_tracker.touch = FALSE,
-                           modification_tracker.return = "modified"))
+                           dependency_tracker.return = "any_dependencies_modified"))
   })
 })
 
