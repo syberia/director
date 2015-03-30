@@ -63,5 +63,21 @@ describe("running tower examples", {
   test_that("it can run a 2-tower", {
     expect_equal(tower(list(double_function, double_function))(1), 4)
   })
+
+  test_that("it can run a tower composed of multiple pieces", {
+    functions <- list(
+      function(object, ...) {
+        object <- object + 1
+        object <- yield()
+        object + 1
+      },
+
+      function(object, ...) {
+        object <- object * 2
+        yield()
+      }
+    )
+    expect_equal(tower(functions)(1), 5)
+  })
 })
 
