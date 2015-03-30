@@ -25,7 +25,7 @@ resource_tower <- function(director, name, ...) {
     modification_tracker %>>%
     dependency_tracker   %>>% 
     caching_layer        %>>%
-  # preprocessor         %>>%
+    preprocessor         %>>%
   # parser               %>>%
     identity2
   )(as.active_resource(resource), ...)
@@ -194,8 +194,57 @@ caching_layer <- function(object, ..., recompile. = FALSE) {
 # applied as well.
 preprocessor <- function(object, ..., parse. = TRUE) {
   director <- object$resource$director
+  browser()
 
-  route <- object
+  route <- director$match_preprocessor(object$resource$name)
+
+  # No preprocessor for this resource.
+  filename <- director$filename(object$resource$name)
+  if (is.null(route)) {
+    # Use the default preprocessor, base::source.
+    default_preprocessor <- function(filename) {
+      # TODO: (RK) Figure out correct environment assignment.
+      base::source(filename,
+        new.env(parent = parent.env(topenv(object$resource$defining_environment)))
+      )
+    }
+    environment(default_preprocessor) <- object$resource$defining_environment
+    value <- list(
+      value = default_preprocessor(filename),
+      preprocessor_output = emptyenv()
+    )
+  } else {
+    object$injects %<<% list(
+      # TODO: (RK) Use alist so these aren't evaluated right away.
+      root = director$root,
+      # TODO: (RK) Use find_director helper to go off root + project_name
+      resource = function(...) director$resource(...),
+      resource_name = object$resource$name,
+      resource_exists = function(...) director$exists(...),
+      helper = NULL # TODO: (RK) Allow helper parsing.
+    )
+
+    fn <- director$preprocessor(route)
+    env <- new.env(parent = environment(fn))
+    # TODO: (RK) Intersect with preprocessor formals.
+    preprocessor_context <- env %<<% list(
+      # TODO: (RK) Use alist so these aren't evaluated right away.
+       resource = object$resource$name,
+       director = director,
+       modified = object$injects$modified,
+       any_dependencies_modified = object$injects$any_dependencies_modified,
+       filename = filename,
+       source_env =
+         new.env(parent = parent.env(topenv(object$resource$defining_environment))),
+       source = function() eval.parent(quote(base::source(filename, source_env)$value)),
+       preprocessor_output = preprocessor_output <- new.env(parent = emptyenv()),
+       "%||%" = function(x, y) if (is.null(x)) y else x
+    )
+    environment(fn) <- preprocessor_context
+
+    object$preprocessed <- list(value = fn(), preprocessor_output = preprocessor_output)
+    yield() # Apply parser.
+  }
 }
 
 
