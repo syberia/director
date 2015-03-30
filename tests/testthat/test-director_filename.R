@@ -26,6 +26,12 @@ test_that("it correctly converts an idempotent resource with helpers to a filena
   })
 })
 
+test_that("it can give the enclosing directory of an idempotent resource", {
+  within_file_structure(list(foo = list("foo.R")), { d <- director(tempdir)
+    expect_equal(d$filename("foo", enclosing = TRUE), "foo")
+  })
+})
+
 # Uncomment this test if we realize we need to allow case-sensitive extensions.
 # https://github.com/robertzk/director/issues/17
 
