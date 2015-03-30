@@ -514,15 +514,15 @@ directorResource <- setRefClass('directorResource',
 
     update_cache = function() {
       cache_key <- resource_cache_key(resource_key)
-      cache              <- director$cache$get(cache_key)
+      cache              <- director$cache_get(cache_key)
       cache$dependencies <- cached$dependencies
       cache$modified     <- cached$modified
-      director$cache$set(cache_key, cache)
+      director$cache_set(cache_key, cache)
     },
 
     dependencies = function() {
       get_dependencies <- function(key) {
-        deps <- director$cache$get(resource_cache_key(key))$dependencies %||% character(0)
+        deps <- director$cache_get(resource_cache_key(key))$dependencies %||% character(0)
         as.character(c(deps, sapply(deps, get_dependencies), recursive = TRUE))
       }
       unique(c(recursive = TRUE, as.character(cached$dependencies),
@@ -555,9 +555,9 @@ directorResource <- setRefClass('directorResource',
       # We need to use `[` and not `$` or NULLs won't be cached.
       cached['value'] <<- list(value = .value)
       cache_key   <- resource_cache_key(resource_key)
-      cache_entry <- director$cache$get(cache_key)
+      cache_entry <- director$cache_get(cache_key)
       cache_entry['value'] <- list(value = .value)
-      director$cache$set(cache_key, cache_entry)
+      director$cache_set(cache_key, cache_entry)
     },
 
     caching_enabled = function() {
