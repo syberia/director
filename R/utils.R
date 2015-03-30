@@ -255,3 +255,22 @@ duplicate <- function(original) {
   .Call(duplicate_, original)
 }
 
+#' Append to a list or environment, overwriting if necessary.
+#'
+#' @param obj1. The object to be appended to.
+#' @param obj2. The object to append.
+#' @examples
+#' \dontrun{
+#'   x <- list(a = 1)
+#'   x %<<% list(b = 2) # list(a = 1, b = 2)
+#'   x %<<% list(a = 2) # list(a = 2)
+#'   y <- list2env(x)
+#'   y %<<% list(b = 2) # environment with a = 1 and b = 2
+#'   y %<<% list2env(list(b = 2)) # same as above
+#'   y %<<% list(a = 2) # environment with a = 2
+#' }
+`%<<%` <- function(obj1, obj2) {
+  all_named <- function(x) { !is.null(names(x)) && all(nzchar(names(x))) }
+  if (is.list(obj1)) stopifnot(all_named(obj1))
+  if (is.list(obj2)) stopifnot(all_named(obj2))
+}
