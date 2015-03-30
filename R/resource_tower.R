@@ -13,18 +13,20 @@ director_state <- new.env(parent = emptyenv())
 resource_tower <- function(director, name) {
   # This is the dream! Now we have to make it happen.
 
-  resource_class <- function(director, name) {
-    structure(list(director = director, name = name), class = "director_resource")
+  resource_class <- function(director, name, defining_environment = parent.frame()) {
+    structure(list(director = director, name = name,
+                   defining_environment = defining_environment),
+              class = "director_resource")
   }
-  resource <- resource_class(director, name)
+  resource <- resource_class(director, name, parent.frame())
 
-  # virtual_check        %>>%
-  # modification_tracker %>>%
+  virtual_check        %>>%
+  modification_tracker %>>%
   # dependency_tracker   %>>% 
   # caching_layer        %>>%
   # preprocessor         %>>%
   # parser               %>>%
-  # as.active_resource(resource)
+  as.active_resource(resource)
 }
 
 # An active resource is just a list that holds a resource,
@@ -43,18 +45,18 @@ generate_state <- function(resource) {
   # TODO: (RK) Issue warnings when directors on the same directory with the
   # same project name are instantiated, as they will conflict with each
   # others' global state: https://github.com/robertzk/director/issues/25
-  director_key <- function(director) {
+  director_key <- (function(director) {
     digest::digest(list(director$root(), director$project_name()))
-  }
+  })(resource$director)
 
   ## We do not need `inherits = FALSE` because the parent environment is
   ## the empty environment.
-  if (!exists(director_key, envir = director_state)) {
+  if (!base::exists(director_key, envir = director_state)) {
     director_state[[director_key]] <- new.env(parent = emptyenv())
   }
   state <- director_state[[director_key]]
 
-  if (!exists(resource$name, envir = state)) {
+  if (!base::exists(resource$name, envir = state)) {
     state[[resource$name]] <- new.env(parent = emptyenv())
   }
   state[[resource$name]]
@@ -62,7 +64,7 @@ generate_state <- function(resource) {
 
 virtual_check <- function(object, ...) {
   director <- object$resource$director
-  virtual <- !director$exists(object$resource$name)
+  virtual  <- !director$exists(object$resource$name)
   object$injects %<<% list(virtual = virtual)
   
   if (virtual && !director$has_preprocessor(object$resource$name)) {
@@ -76,7 +78,8 @@ virtual_check <- function(object, ...) {
   yield()
 }
 
-modification_tracker <- function(object, ..., modification_tracker.return = "object") {
+modification_tracker <- function(object, ..., modification_tracker.return = "object",
+                                 modification_tracker.touch = TRUE) {
   director <- object$resource$director
 
   if (isTRUE(object$injects$virtual)) {
@@ -85,19 +88,22 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
     object$injects %<<% list(modified = TRUE)
     yield()
   } else {
-    if (!exists("modification.queue", envir = object$state)) {
+    if (!base::exists("modification.queue", envir = object$state)) {
       object$state$modification.queue <- sized_queue(size = 2)
     }
 
-    filename <- director$filename(object$resource$name, enclosing = TRUE)
-    mtime    <- file.info(filename)$mtime
-    object$state$modification.queue$push(mtime)
+    if (isTRUE(modification_tracker.touch)) {
+      filename <- director$filename(object$resource$name, enclosing = TRUE)
+      mtime    <- file.info(filename)$mtime
+      object$state$modification.queue$push(mtime)
 
-    ## A resource has been modified if its modification time has changed. 
-    modified <- !do.call(identical,
-      lapply(seq(2), object$state$modification.queue$get))
+      ## A resource has been modified if its modification time has changed. 
+      modified <- !do.call(identical,
+        lapply(seq(2), object$state$modification.queue$get))
 
-    object$injects %<<% list(modified = modified)
+      object$injects %<<% list(modified = modified)
+    }
+
     yield()
   
     # TODO: (RK) Set any_dependencies_modified on exit
