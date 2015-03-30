@@ -70,7 +70,7 @@ director_ <- R6::R6Class("director",
     # Methods
     initialize = initialize,
     exists     = director_exists,
-    resource   = resource,
+    resource   = resource3,
     virtual_resource = virtual_resource,
     register_parser = register_parser,
     register_preprocessor = register_preprocessor,

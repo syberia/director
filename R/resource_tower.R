@@ -97,7 +97,8 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
     }
 
     if (isTRUE(modification_tracker.touch)) {
-      filename <- director$filename(object$resource$name, enclosing = TRUE)
+      filename <- director$filename(object$resource$name,
+                                    absolute = TRUE, enclosing = TRUE)
       mtime    <- file.info(filename)$mtime
       object$state$modification_tracker.queue$push(mtime)
       object$injects %<<% list(modified = modified())
@@ -105,6 +106,8 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
 
     if (identical(modification_tracker.return, "modified")) {
       modified()
+    } else if (identical(modification_tracker.return, "mtime")) {
+      object$state$modification_tracker.queue$get(1)
     } else {
       yield()
     }
@@ -194,31 +197,37 @@ preprocessor <- function(object, ..., parse. = TRUE) {
 
   route <- director$match_preprocessor(object$resource$name)
 
-  filename <- object$state$filename <- director$filename(object$resource$name)
+  filename <- object$state$filename <-
+    director$filename(object$resource$name, absolute = TRUE)
+
+  object$injects %<<% list(
+    # TODO: (RK) Use alist so these aren't evaluated right away.
+    root = director$root,
+    # TODO: (RK) Use find_director helper to go off root + project_name
+    resource = function(...) director$resource(...),
+    resource_name = object$resource$name,
+    resource_exists = function(...) director$exists(...),
+    helper = NULL # TODO: (RK) Allow helper parsing.
+  )
+
   if (is.null(route)) {
     # No preprocessor for this resource.
     # Use the default preprocessor, base::source.
     default_preprocessor <- function(filename) {
       # TODO: (RK) Figure out correct environment assignment.
-      base::source(filename,
-        new.env(parent = parent.env(topenv(object$resource$defining_environment)))
-      )
+      base::source(filename, local = source_env)$value
     }
-    environment(default_preprocessor) <- object$resource$defining_environment
-    value <- list(
+    source_env <- new.env(parent = parent.env(topenv(parent.env(environment())))) %<<%
+      object$injects
+    environment(default_preprocessor) <- 
+      new.env(parent = object$resource$defining_environment) %<<%
+      list(source_env = source_env)
+
+    object$preprocessed <- list(
       value = default_preprocessor(filename),
       preprocessor_output = emptyenv()
     )
   } else {
-    object$injects %<<% list(
-      # TODO: (RK) Use alist so these aren't evaluated right away.
-      root = director$root,
-      # TODO: (RK) Use find_director helper to go off root + project_name
-      resource = function(...) director$resource(...),
-      resource_name = object$resource$name,
-      resource_exists = function(...) director$exists(...),
-      helper = NULL # TODO: (RK) Allow helper parsing.
-    )
 
     object$state$preprocessor.source_env <- new.env(parent = object$injects)
 
@@ -236,12 +245,16 @@ preprocessor <- function(object, ..., parse. = TRUE) {
        "%||%" = function(x, y) if (is.null(x)) y else x
     )
 
-    object$preprocessed <- list(value = fn(), preprocessor_output = preprocessor_output)
-    if (isTRUE(parse.)) {
-      yield() # Apply parser.
-    } else {
-      object$preprocessed$value
-    }
+    object$preprocessed <- list(
+      value = fn(),
+      preprocessor_output = preprocessor_output
+    )
+  }
+
+  if (isTRUE(parse.)) {
+    yield() # Apply parser.
+  } else {
+    object$preprocessed$value
   }
 }
 
