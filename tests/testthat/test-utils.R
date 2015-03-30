@@ -41,5 +41,11 @@ describe("%<<% operator", {
       expect_identical(tolist(x %<<% list(a = 2)), list(a = 2))
     })
 
+    test_that("it can insert environments into environments", {
+      x <- list2env(list(a = 1))
+      expect_identical(tolist(x %<<% list2env(list(b = 2))), list(a = 1, b = 2))
+      x <- list2env(list(a = 1))
+      expect_identical(tolist(x %<<% list2env(list(a = 2))), list(a = 2))
+    })
   })
 })
