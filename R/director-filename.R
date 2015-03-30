@@ -18,7 +18,7 @@ director_filename <- function(name, absolute = FALSE, check.exists = TRUE,
   ## [A reference class docstring](http://stackoverflow.com/a/5931576/2540303)
   "Convert a resource name to a file name."
 
-  if (isTRUE(check.exists) && !exists(name, helper = isTRUE(helper))) {
+  if (isTRUE(check.exists) && !self$exists(name, helper = isTRUE(helper))) {
     stop("Cannot convert resource ", crayon::red(name), " to full file path, ",
          "as no such resource exists.")
   }
