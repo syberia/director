@@ -21,11 +21,12 @@ register_preprocessor <- function(path, preprocessor, overwrite = FALSE) {
     formals(preprocessor) <- NULL
   }
   
-  if (is.element(path, names(.preprocessors)) && !isTRUE(overwrite)) {
+  if (is.element(path, paste0("/", names(.preprocessors))) && !isTRUE(overwrite)) {
     stop("Preprocessor already registered for path ", crayon::red(path), ".")
   }
 
-  .preprocessors[[path]] <<- preprocessor
+  # Prefix "/" for empty paths.
+  .preprocessors[[paste0("/", path)]] <<- preprocessor
 
   ## We store each preprocessor function by path in descending order by length.
   ## This will favor paths that are more fully specified. For example,
@@ -43,6 +44,6 @@ register_preprocessor <- function(path, preprocessor, overwrite = FALSE) {
 #' @return \code{TRUE} or \code{FALSE} depending on whether there
 #'   is a preprocessor for this resource.
 has_preprocessor <- function(resource_path) {
-  any_is_substring_of(resource_path, names(.preprocessors))
+  !is.null(self$match_preprocessor(resource_path))
 }
 
