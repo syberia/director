@@ -7,6 +7,7 @@ double_function <- function(object, ...) {
   object <- 2 * yield()
   object
 }
+increment_function <- function(object, ...) { yield() + 1 }
 
 describe("handling invalid inputs", {
   test_that("it errors if a non-list is passed", {
@@ -97,3 +98,17 @@ describe("running tower examples", {
   })
 })
 
+describe("tower composition notation", {
+  test_that("we can compose a 1-tower", {
+    expect_equal(double_function %>>% 1, 2)
+  })
+
+  test_that("we can compose a 2-tower", {
+    expect_equal(double_function %>>% double_function %>>% 1, 4)
+  })
+
+  test_that("we can compose a 2-tower composed of different functions", {
+    expect_equal(double_function %>>% increment_function %>>% 1, 4)
+    expect_equal(increment_function %>>% double_function %>>% 1, 3)
+  })
+})
