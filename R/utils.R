@@ -301,4 +301,11 @@ duplicate <- function(original) {
 #'   q$get(3) # NULL
 #' }
 sized_queue <- function(size) {
+  queue <- vector('list', size)
+  structure(class = "sized_queue", list(
+    push = function(el) {
+      queue <<- append(list(el), queue)[seq_len(size)]
+    },
+    get = function(el) queue[[el]]
+  ))
 }
