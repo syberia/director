@@ -252,12 +252,13 @@ preprocessor <- function(object, ..., parse. = TRUE) {
 
     object$preprocessed <- list(
       value = default_preprocessor(filename),
-      preprocessor_output = emptyenv()
+      preprocessor_output = new.env(parent = emptyenv())
     )
   } else {
 
     object$state$preprocessor.source_env <- new.env(parent = object$injects)
 
+    preprocessor_output <- new.env(parent = emptyenv())
     fn <- director$preprocessor(route)
     environment(fn) <- new.env(parent = environment(fn)) %<<% object$injects %<<% list(
       # TODO: (RK) Intersect with preprocessor formals.
@@ -268,7 +269,7 @@ preprocessor <- function(object, ..., parse. = TRUE) {
        args = list(...),
        source_env = object$state$preprocessor.source_env,
        source = function() eval.parent(quote(base::source(filename, source_env)$value)),
-       preprocessor_output = preprocessor_output <- new.env(parent = emptyenv()),
+       preprocessor_output = preprocessor_output,
        "%||%" = function(x, y) if (is.null(x)) y else x
     )
 
@@ -305,6 +306,7 @@ parser <- function(object, ...) {
        input = object$state$preprocessor.source_env,
        output = object$preprocessed$value,
        director = director,
+       preprocessor_output = object$preprocessed$preprocessor_output,
        filename = object$state$filename,
        args = list(...),
        "%||%" = function(x, y) if (is.null(x)) y else x
