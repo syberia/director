@@ -274,7 +274,7 @@ duplicate <- function(original) {
   if (is.list(obj1)) stopifnot(all_named(obj1))
   if (is.list(obj2)) stopifnot(all_named(obj2))
 
-  for (name in names(obj2)) {
+  for (name in ls(obj2)) {
     obj1[[name]] <- obj2[[name]]
   }
   obj1

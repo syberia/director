@@ -19,4 +19,10 @@ describe("%<<% operator", {
     expect_identical(x %<<% list(b = 2), list(a = 1, b = 2))
     expect_identical(x %<<% list(a = 2), list(a = 2))
   })
+
+  test_that("it can insert environments into lists", {
+    x <- list(a = 1)
+    expect_identical(x %<<% list2env(list(b = 2)), list(a = 1, b = 2))
+    expect_identical(x %<<% list2env(list(a = 2)), list(a = 2))
+  })
 })
