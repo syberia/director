@@ -38,7 +38,7 @@ as.active_resource <- function(resource) {
 virtual_check <- function(object, ...) {
   director <- object$resource$director
   virtual <- !director$exists(object$resource$name)
-  object$inject %<<% list(virtual = virtual)
+  object$injects %<<% list(virtual = virtual)
   
   if (virtual && !director$has_preprocessor(object$resource$name)) {
     project_name <- director$project_name()

@@ -8,10 +8,13 @@
 #'    we are certain the file exists and can skip the check.
 #' @param helper logical. Whether or not to handle helper files instead of
 #'   resources. The default is \code{FALSE}.
+#' @param enclosing logical. If \code{TRUE} and \code{name} refers to an
+#'   idempotent resource the directory name will be returned instead of the
+#'   .R file.
 #' @return the absolute path, relative to the director root if
 #'    \code{absolute = FALSE} and an absolute path if \code{absolute = TRUE}.
 director_filename <- function(name, absolute = FALSE, check.exists = TRUE,
-                              helper = FALSE) {
+                              helper = FALSE, enclosing = FALSE) {
   ## [A reference class docstring](http://stackoverflow.com/a/5931576/2540303)
   "Convert a resource name to a file name."
 
@@ -21,13 +24,19 @@ director_filename <- function(name, absolute = FALSE, check.exists = TRUE,
   }
 
   if (isTRUE(file.info(file.path(root(), name))$isdir)) {
+    idempotent <- TRUE
     file <- complete_extension(file.path(name, basename(name)), root())
   } else {
+    idempotent <- FALSE
     file <- complete_extension(name, root())
   }
 
-  if (absolute) {
-    file.path(root(), file)
+  if (isTRUE(absolute)) {
+    file <- file.path(root(), file)
+  }
+  
+  if (isTRUE(enclosing) && idempotent) {
+    dirname(file) 
   } else {
     file
   }

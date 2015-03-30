@@ -5,7 +5,7 @@
 \title{Convert a resource to a filename.}
 \usage{
 director_filename(name, absolute = FALSE, check.exists = TRUE,
-  helper = FALSE)
+  helper = FALSE, enclosing = FALSE)
 }
 \arguments{
 \item{name}{character. The resource name to convert to a full path.}
@@ -19,6 +19,10 @@ we are certain the file exists and can skip the check.}
 
 \item{helper}{logical. Whether or not to handle helper files instead of
 resources. The default is \code{FALSE}.}
+
+\item{enclosing}{logical. If \code{TRUE} and \code{name} refers to an
+idempotent resource the directory name will be returned instead of the
+.R file.}
 }
 \value{
 the absolute path, relative to the director root if
