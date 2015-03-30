@@ -40,7 +40,8 @@ register_parser <- function(path, parser = function() { }, overwrite = FALSE, ca
     .cached_resources <<- c(.cached_resources, path)
   }
 
-  .parsers[[path]] <<- parser
+  # Prefix "/" for empty paths.
+  .parsers[[paste0("/", path)]] <<- parser
 
   ## We store each parser function by path in descending order by length.
   ## This will favor paths that are more fully specified. For example,

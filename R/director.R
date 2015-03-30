@@ -78,13 +78,15 @@ director_ <- R6::R6Class("director",
     find       = director_find,
 
     match_preprocessor = function(resource_name) {
-      Find(function(x) substring(resource_name, 1, nchar(x)) == x, names(.preprocessors))
+      Find(function(x) substring(resource_name, 1, nchar(x)) == x,
+           substring(names(.preprocessors), 2))
     },
     match_parser = function(resource_name) {
-      Find(function(x) substring(resource_name, 1, nchar(x)) == x, names(.parsers))
+      Find(function(x) substring(resource_name, 1, nchar(x)) == x,
+           substring(names(.parsers), 2))
     },
-    preprocessor = function(x) .preprocessors[[x]],
-    parser = function(x) .parsers[[x]],
+    preprocessor = function(x) .preprocessors[[paste0("/", x)]],
+    parser = function(x) .parsers[[paste0("/", x)]],
     cached_resources = function() .cached_resources,
 
     tracking_dependencies = function() { .dependency_nesting_level > 0L },

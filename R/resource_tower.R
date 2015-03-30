@@ -197,8 +197,12 @@ preprocessor <- function(object, ..., parse. = TRUE) {
 
   route <- director$match_preprocessor(object$resource$name)
 
-  filename <- object$state$filename <-
-    director$filename(object$resource$name, absolute = TRUE)
+  if (isTRUE(object$injects$virtual)) {
+    filename <- NULL
+  } else {
+    filename <- object$state$filename <-
+      director$filename(object$resource$name, absolute = TRUE)
+  }
 
   object$injects %<<% list(
     # TODO: (RK) Use alist so these aren't evaluated right away.
@@ -211,6 +215,10 @@ preprocessor <- function(object, ..., parse. = TRUE) {
   )
 
   if (is.null(route)) {
+    if (isTRUE(object$injects$virtual)) {
+      stop("Cannot preprocess virtual resource without a preprocessor")
+    }
+
     # No preprocessor for this resource.
     # Use the default preprocessor, base::source.
     default_preprocessor <- function(filename) {
