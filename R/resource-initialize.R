@@ -157,7 +157,7 @@ virtual_resource <- function(name, defining_environment) {
 }
 
 `mark_as_dependency!` <- function() {
-  if (director$tracking_dependencies() && !helper) {
+  if (director$tracking_dependencies()) {
     director$push_dependency(
       list(
         level    = director$nesting_level(),

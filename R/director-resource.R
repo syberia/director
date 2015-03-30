@@ -105,9 +105,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE,
   source_args <- list(filename, local = provides)
   # TODO: (RK) Check if `local` is an environment in case user overwrote.
 
-  modified <-
-    (is.null(resource_info) && !is.null(cached_details)) || # file was deleted
-    (resource_info$mtime > cached_details$info$mtime %||% 0) # file was changed
+  modified <- (resource_info$mtime %||% Inf > cached_details$info$mtime %||% 0)
 
   resource_dir <- file.path(.root, resource_key)
   
