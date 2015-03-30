@@ -54,5 +54,7 @@ describe("sized_queue", {
   test_that("it handles queue overflow correctly", {
     q <- sized_queue(size = 2)
     q$push(1); expect_equal(lapply(1:2, q$get), list(1, NULL))
+    q$push(2); expect_equal(lapply(1:2, q$get), list(2, 1))
+    q$push(3); expect_equal(lapply(1:3, q$get), list(3, 2, NULL))
   })
 })
