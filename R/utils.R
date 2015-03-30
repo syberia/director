@@ -273,4 +273,9 @@ duplicate <- function(original) {
   all_named <- function(x) { !is.null(names(x)) && all(nzchar(names(x))) }
   if (is.list(obj1)) stopifnot(all_named(obj1))
   if (is.list(obj2)) stopifnot(all_named(obj2))
+
+  for (name in names(obj2)) {
+    obj1[[name]] <- obj2[[name]]
+  }
+  obj1
 }

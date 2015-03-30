@@ -13,4 +13,10 @@ describe("%<<% operator", {
     expect_error(list(a = 1) %<<% list(2))
     expect_error(list(1) %<<% list(a = 2))
   })
+
+  test_that("it can insert list elements", {
+    x <- list(a = 1)
+    expect_identical(x %<<% list(b = 2), list(a = 1, b = 2))
+    expect_identical(x %<<% list(a = 2), list(a = 2))
+  })
 })
