@@ -3,6 +3,7 @@
 export(director)
 export(is.director)
 export(registry)
+export(tower)
 exportClasses(registry)
 import(R6)
 import(crayon)

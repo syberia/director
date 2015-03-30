@@ -42,4 +42,24 @@ For composability, every function in a tower should have a
 \code{yield} keyword. The last function in the tower will
 yield to an identity function that simply returns the \code{object}.
 }
+\examples{
+functions <- list(
+  function(object, ...) {
+    object <- object + 1
+    object <- yield()
+    object + 1
+  },
+
+  function(object, ...) {
+    object <- object * 2
+    yield()
+  }
+)
+
+t <- tower(functions)
+v <- t(1) # This is now 5, since in the tower, we increment object,
+          # Multiply it by 2 in the next function, then increment it
+          # again after receiving the previous function.
+stopifnot(v == 6)
+}
 

@@ -30,13 +30,33 @@
 #'    and must be passed the \code{object} as the first argument.
 #'    Additional arguments will be passed to the first function
 #'    in the tower.
+#' @export
+#' @examples
+#' functions <- list(
+#'   function(object, ...) {
+#'     object <- object + 1
+#'     object <- yield()
+#'     object + 1
+#'   },
+#'
+#'   function(object, ...) {
+#'     object <- object * 2
+#'     yield()
+#'   }
+#' )
+#'
+#' t <- tower(functions)
+#' v <- t(1) # This is now 5, since in the tower, we increment object,
+#'           # Multiply it by 2 in the next function, then increment it
+#'           # again after receiving the previous function.
+#' stopifnot(v == 5)
 tower <- function(functions) {
   stopifnot(is.list(functions),
             length(functions) > 0,
             all(sapply(functions, is.function)))
 
   verify_function <- function(fn) {
-    formal_names <- formals(fn)
+    formal_names <- names(formals(fn))
     stopifnot(identical(formal_names[1], "object"))
     stopifnot(is.element("...", formal_names))
     stopifnot(is.element("yield", all.names(body(fn))))
