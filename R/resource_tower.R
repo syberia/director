@@ -26,7 +26,7 @@ resource_tower <- function(director, name, ...) {
     dependency_tracker   %>>% 
     caching_layer        %>>%
     preprocessor         %>>%
-  # parser               %>>%
+    parser               %>>%
     identity2
   )(as.active_resource(resource), ...)
 }
@@ -197,9 +197,9 @@ preprocessor <- function(object, ..., parse. = TRUE) {
 
   route <- director$match_preprocessor(object$resource$name)
 
-  # No preprocessor for this resource.
-  filename <- director$filename(object$resource$name)
+  filename <- object$state$filename <- director$filename(object$resource$name)
   if (is.null(route)) {
+    # No preprocessor for this resource.
     # Use the default preprocessor, base::source.
     default_preprocessor <- function(filename) {
       # TODO: (RK) Figure out correct environment assignment.
@@ -223,23 +223,21 @@ preprocessor <- function(object, ..., parse. = TRUE) {
       helper = NULL # TODO: (RK) Allow helper parsing.
     )
 
+    object$state$preprocessor.source_env <- new.env(parent = object$injects)
+
     fn <- director$preprocessor(route)
-    env <- new.env(parent = environment(fn))
-    # TODO: (RK) Intersect with preprocessor formals.
-    preprocessor_context <- env %<<% list(
+    environment(fn) <- new.env(parent = environment(fn)) %<<% object$injects %<<% list(
+      # TODO: (RK) Intersect with preprocessor formals.
       # TODO: (RK) Use alist so these aren't evaluated right away.
        resource = object$resource$name,
        director = director,
-       modified = object$injects$modified,
-       any_dependencies_modified = object$injects$any_dependencies_modified,
        filename = filename,
-       source_env =
-         new.env(parent = parent.env(topenv(object$resource$defining_environment))),
+       args = list(...),
+       source_env = object$state$preprocessor.source_env,
        source = function() eval.parent(quote(base::source(filename, source_env)$value)),
        preprocessor_output = preprocessor_output <- new.env(parent = emptyenv()),
        "%||%" = function(x, y) if (is.null(x)) y else x
     )
-    environment(fn) <- preprocessor_context
 
     object$preprocessed <- list(value = fn(), preprocessor_output = preprocessor_output)
     if (isTRUE(parse.)) {
@@ -248,6 +246,36 @@ preprocessor <- function(object, ..., parse. = TRUE) {
       object$preprocessed$value
     }
   }
+}
+
+# Apply the parser to a resource. If parse. = TRUE, the parser will be
+# applied as well.
+parser <- function(object, ...) {
+  director <- object$resource$director
+
+  route <- director$match_parser(object$resource$name)
+
+  if (is.null(route)) {
+    # No parser for this resource.
+    # Use the default parser, just grab the value.
+    object <- object$preprocessed$value
+  } else {
+    fn <- director$parser(route)
+    environment(fn) <- new.env(parent = environment(fn)) %<<% list(
+      # TODO: (RK) Intersect with parser formals.
+      # TODO: (RK) Use alist so these aren't evaluated right away.
+       resource = object$resource$name,
+       input = object$state$preprocessor.source_env,
+       output = object$preprocessed$value,
+       director = director,
+       filename = object$state$filename,
+       args = list(...),
+       "%||%" = function(x, y) if (is.null(x)) y else x
+    )
+    object <- fn()
+  }
+
+  yield()
 }
 
 
