@@ -194,7 +194,6 @@ caching_layer <- function(object, ..., recompile. = FALSE) {
 # applied as well.
 preprocessor <- function(object, ..., parse. = TRUE) {
   director <- object$resource$director
-  browser()
 
   route <- director$match_preprocessor(object$resource$name)
 
@@ -243,7 +242,11 @@ preprocessor <- function(object, ..., parse. = TRUE) {
     environment(fn) <- preprocessor_context
 
     object$preprocessed <- list(value = fn(), preprocessor_output = preprocessor_output)
-    yield() # Apply parser.
+    if (isTRUE(parse.)) {
+      yield() # Apply parser.
+    } else {
+      object$preprocessed$value
+    }
   }
 }
 
