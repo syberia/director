@@ -79,15 +79,29 @@ virtual_check <- function(object, ...) {
 modification_tracker <- function(object, ..., modification_tracker.return = "object") {
   director <- object$resource$director
 
-  # if (object$injects$virtual
-  if (!exists("modification.queue", envir = object$state)) {
-    object$state$modification.queue <- sized_queue()
+  if (isTRUE(object$injects$virtual)) {
+    ## Virtual resources are always considered to be modified, since we have
+    ## no way to tell.
+    object$injects %<<% list(modified = TRUE)
+    yield()
+  } else {
+    if (!exists("modification.queue", envir = object$state)) {
+      object$state$modification.queue <- sized_queue(size = 2)
+    }
+
+    filename <- director$filename(object$resource$name, enclosing = TRUE)
+    mtime    <- file.info(filename)$mtime
+    object$state$modification.queue$push(mtime)
+
+    ## A resource has been modified if its modification time has changed. 
+    modified <- !do.call(identical,
+      lapply(seq(2), object$state$modification.queue$get))
+
+    object$injects %<<% list(modified = modified)
+    yield()
+  
+    # TODO: (RK) Set any_dependencies_modified on exit
   }
-
-  filename <- director$filename(object$resource$name, enclosing = TRUE)
-  #mtime    <- file.info(
-  object$state$modification.queue$push
-
 }
 
 
