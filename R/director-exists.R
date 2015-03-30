@@ -58,7 +58,7 @@ director_exists <- function(resource, helper = FALSE) {
   ## straight up error if `helper` is not a logical vector!
   if (isTRUE(helper))  {
     ## `absolute` is a method on the director class.
-    extensionless_exists(absolute(resource))
+    extensionless_exists(self$absolute(resource))
   } else {
     ## If the director `find` method returns an exact match for this resource
     ## (i.e., `find("foo")` is `"foo"`), the resource exists and we're in

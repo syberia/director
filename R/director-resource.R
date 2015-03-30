@@ -143,3 +143,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE,
 resource2 <- function(...) {
   directorResource_$new(director = self, ...)
 }
+
+resource3 <- function(name, ...) {
+  resource_tower(self, name, ...)
+}
