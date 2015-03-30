@@ -95,6 +95,9 @@ director_ <- R6::R6Class("director",
     push_dependency = function(dependency) {
       dependency_stack$push(dependency)
     },
+    peek_dependency_stack = function(...) { dependency_stack$peek(...) },
+    pop_dependency_stack = function() { dependency_stack$pop() },
+    empty_dependency_stack = function() { dependency_stack$empty() },
 
     root         = function() { .root },
     project_name = function() { .project_name },

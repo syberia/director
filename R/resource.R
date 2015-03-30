@@ -143,7 +143,7 @@ directorResource_ <- R6::R6Class("directorResource",
       # Cache dependencies.
       dependencies <- 
         Filter(function(dependency) dependency$level == local_nesting_level, 
-               director$dependency_stack$peek(TRUE))
+               self$director$dependency_stack$peek(TRUE))
       if (any(vapply(dependencies, function(d) d$resource$modified, logical(1))))
         modified <<- TRUE
 
@@ -151,8 +151,9 @@ directorResource_ <- R6::R6Class("directorResource",
       cached$modified     <<- modified
       update_cache()
 
-      while (!director$dependency_stack$empty() && director$dependency_stack$peek()$level == local_nesting_level)
-        director$dependency_stack$pop()
+      while (!self$director$dependency_stack$empty() &&
+             !self$director$dependency_stack$peek()$level == local_nesting_level)
+        self$director$dependency_stack$pop()
 
       compiled <<- TRUE
     },
@@ -289,7 +290,7 @@ directorResource_ <- R6::R6Class("directorResource",
     },
 
     cache_value_if_necessary = function() {
-      if (!caching_enabled()) return()
+      if (!self$caching_enabled()) return()
       if (is(.value, 'uninitializedField')) {
         stop("directorResource$cache_value_if_necessary: Cannot cache resource ",
              "value because it has not been parsed.")
@@ -297,9 +298,9 @@ directorResource_ <- R6::R6Class("directorResource",
       # We need to use `[` and not `$` or NULLs won't be cached.
       cached['value'] <<- list(value = .value)
       cache_key   <- resource_cache_key(name)
-      cache_entry <- director$cache$get(cache_key)
+      cache_entry <- self$director$cache$get(cache_key)
       cache_entry['value'] <- list(value = .value)
-      director$cache$set(cache_key, cache_entry)
+      self$director$cache$set(cache_key, cache_entry)
     },
 
     caching_enabled = function() {
@@ -399,7 +400,7 @@ directorResource <- setRefClass('directorResource',
       # Cache dependencies.
       dependencies <- 
         Filter(function(dependency) dependency$level == local_nesting_level, 
-               director$dependency_stack$peek(TRUE))
+               director$peek_dependency_stack(TRUE))
       if (any(vapply(dependencies, function(d) d$resource$modified, logical(1))))
         modified <<- TRUE
 
@@ -407,8 +408,9 @@ directorResource <- setRefClass('directorResource',
       cached$modified     <<- modified
       update_cache()
 
-      while (!director$dependency_stack$empty() && director$dependency_stack$peek()$level == local_nesting_level)
-        director$dependency_stack$pop()
+      while (!director$empty_dependency_stack() &&
+             director$peek_dependency_stack()$level == local_nesting_level)
+        director$pop_dependency_stack()
 
       .compiled <<- TRUE
     },
