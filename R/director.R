@@ -89,6 +89,9 @@ director_ <- R6::R6Class("director",
     parser = function(x) .parsers[[paste0("/", x)]],
     cached_resources = function() .cached_resources,
 
+    cache_get = function(k) { cache$get(k) },
+    cache_set = function(k, v) { cache$set(k, v) },
+
     tracking_dependencies = function() { .dependency_nesting_level > 0L },
     clear_resource_stack = function() { if (.dependency_nesting_level == 0) dependency_stack$clear() },
     increment_nesting_level = function() { .dependency_nesting_level <<- .dependency_nesting_level + 1L },
@@ -103,7 +106,7 @@ director_ <- R6::R6Class("director",
 
     root         = function() { .root },
     project_name = function() { .project_name },
-    absolute   = function(x) { file.path(root(), x) },
+    absolute   = function(x) { file.path(self$root(), x) },
     show       = function() {
       cat(sep = '', "Director object",
           if (isTRUE(nzchar(.root))) paste0(" monitoring ", sQuote(.root),
