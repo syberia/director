@@ -6,6 +6,9 @@
 #   # Apply tower
 # }
 
+# Minimalist persistent global state.
+director_state <- new.env(parent = emptyenv())
+
 # Construct a resource-compiling tower.
 resource_tower <- function(director, name) {
   # This is the dream! Now we have to make it happen.
@@ -31,8 +34,28 @@ as.active_resource <- function(resource) {
   list(
     resource = resource,
     injects  = new.env(parent = topenv(resource$defining_environment)),
-    state    = NULL # TODO: (RK) Figure out what kind of thing this is.
+    state    = generate_state(resource)
   )
+}
+
+# Generate the persistent global state for a resource.
+generate_state <- function(resource) {
+  # TODO: (RK) Issue warnings when directors on the same directory with the
+  # same project name are instantiated, as they will conflict with each
+  # others' global state: https://github.com/robertzk/director/issues/25
+  director_key <- function(director) {
+    digest::digest(list(director$root(), director$project_name()))
+  }
+
+  if (!exists(director_key, envir = director_state, inherits = FALSE)) {
+    director_state[[director_key]] <- new.env(parent = emptyenv())
+  }
+  state <- director_state[[director_key]]
+
+  if (!exists(resource$name, envir = state, inherits = FALSE)) {
+    state[[resource$name]] <- new.env(parent = emptyenv())
+  }
+  state[[resource$name]]
 }
 
 virtual_check <- function(object, ...) {
@@ -52,7 +75,6 @@ virtual_check <- function(object, ...) {
 }
 
 modification_tracker <- function(object, ..., modification_tracker.return = "object") {
-
 }
 
 
