@@ -24,6 +24,17 @@ resource_tower <- function(director, name) {
   # as.active_resource(resource)
 }
 
+# An active resource is just a list that holds a resource,
+# but also an "injects" environment and "state", which is
+# like the equivalent of the Haskell IO monad.
+as.active_resource <- function(resource) {
+  list(
+    resource = resource,
+    injects  = new.env(parent = topenv(resource$defining_environment)),
+    state    = NULL # TODO: (RK) Figure out what kind of thing this is.
+  )
+}
+
 virtual_check <- function(object, ...) {
   director <- object$resource$director
   virtual <- !director$exists(object$resource$name)
