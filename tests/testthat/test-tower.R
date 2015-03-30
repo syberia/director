@@ -3,6 +3,10 @@ library(testthatsomemore)
 
 cool_function <- function(object, ...) yield()
 uncool_function <- function(object, ...) breadcrumbs()
+double_function <- function(object, ...) {
+  object <- 2 * yield()
+  object
+}
 
 describe("handling invalid inputs", {
   test_that("it errors if a non-list is passed", {
@@ -46,5 +50,14 @@ describe("tower creation", {
 })
 
 describe("running tower examples", {  
+  test_that("it can run the identity tower", {
+    expect_equal(tower()(1), 1)
+    expect_equal(tower()(NULL), NULL)
+    expect_equal(tower()(list(), 5), list())
+  })
+
+  test_that("it can run a 1-tower", {
+    expect_equal(tower(list(double_function))(1), 2)
+  })
 })
 
