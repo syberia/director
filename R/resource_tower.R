@@ -26,8 +26,7 @@ resource_tower <- function(director, name, ...) {
     dependency_tracker   %>>% 
     caching_layer        %>>%
     preprocessor         %>>%
-    parser               %>>%
-    identity2
+    parser               
   )(as.active_resource(resource), ...)
 }
 
