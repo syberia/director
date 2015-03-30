@@ -11,8 +11,6 @@ director_state <- new.env(parent = emptyenv())
 
 # Construct a resource-compiling tower.
 resource_tower <- function(director, name, ...) {
-  # This is the dream! Now we have to make it happen.
-
   resource_class <- function(director, name, defining_environment = parent.frame()) {
     structure(list(director = director, name = name,
                    defining_environment = defining_environment),

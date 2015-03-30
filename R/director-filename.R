@@ -23,16 +23,16 @@ director_filename <- function(name, absolute = FALSE, check.exists = TRUE,
          "as no such resource exists.")
   }
 
-  if (isTRUE(file.info(file.path(root(), name))$isdir)) {
+  if (isTRUE(file.info(file.path(self$root(), name))$isdir)) {
     idempotent <- TRUE
-    file <- complete_extension(file.path(name, basename(name)), root())
+    file <- complete_extension(file.path(name, basename(name)), self$root())
   } else {
     idempotent <- FALSE
-    file <- complete_extension(name, root())
+    file <- complete_extension(name, self$root())
   }
 
   if (isTRUE(absolute)) {
-    file <- file.path(root(), file)
+    file <- file.path(self$root(), file)
   }
   
   if (isTRUE(enclosing) && idempotent) {
