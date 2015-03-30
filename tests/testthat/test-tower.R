@@ -79,5 +79,21 @@ describe("running tower examples", {
     )
     expect_equal(tower(functions)(1), 5)
   })
+
+  test_that("it can run a tower composed of multiple pieces in reverse", {
+    functions <- list(
+      function(object, ...) {
+        object <- object + 1
+        object <- yield()
+        object + 1
+      },
+
+      function(object, ...) {
+        object <- object * 2
+        yield()
+      }
+    )
+    expect_equal(tower(rev(functions))(1), 4)
+  })
 })
 
