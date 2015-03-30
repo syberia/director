@@ -24,7 +24,7 @@ resource_tower <- function(director, name, ...) {
     virtual_check        %>>%
     modification_tracker %>>%
     dependency_tracker   %>>% 
-  # caching_layer        %>>%
+    caching_layer        %>>%
   # preprocessor         %>>%
   # parser               %>>%
     identity2
@@ -90,19 +90,19 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
     object$injects %<<% list(modified = TRUE)
     yield()
   } else {
-    if (!base::exists("modification.queue", envir = object$state)) {
-      object$state$modification.queue <- sized_queue(size = 2)
+    if (!base::exists("modification_tracker.queue", envir = object$state)) {
+      object$state$modification_tracker.queue <- sized_queue(size = 2)
     }
 
     modified <- function() {
       ## A resource has been modified if its modification time has changed. 
-      !do.call(identical, lapply(seq(2), object$state$modification.queue$get))
+      !do.call(identical, lapply(seq(2), object$state$modification_tracker.queue$get))
     }
 
     if (isTRUE(modification_tracker.touch)) {
       filename <- director$filename(object$resource$name, enclosing = TRUE)
       mtime    <- file.info(filename)$mtime
-      object$state$modification.queue$push(mtime)
+      object$state$modification_tracker.queue$push(mtime)
       object$injects %<<% list(modified = modified())
     }
 
@@ -140,6 +140,7 @@ dependency_tracker <- function(object, ...) {
     director_state$dependency_stack$peek(TRUE)
   )
 
+  # TODO: (RK) This is incorrect, figure out right dependency modification check
   any_modified <- any(vapply(dependencies, function(d) {
     resource_tower(director, d$name, modification_tracker.touch = FALSE,
                    modification_tracker.return = "modified")
@@ -161,19 +162,41 @@ dependency <- function(nesting_level, resource_name) {
   ))
 }
 
-caching_layer <- function(object, ...) {
+# If recompile. = TRUE, the caching layer will always be ignored.
+caching_layer <- function(object, ..., recompile. = FALSE) {
   caching_enabled <- any_is_substring_of(object$resource$name,
     object$resource$director$cached_resources())
+  caching_enabled <- caching_enabled && !isTRUE(recompile.)
 
-  # if (caching_enabled)
+  if (!caching_enabled) {
+    yield()
+  } else {
+    is_cached <- base::exists("caching_layer.value", envir = object$state)
 
-  value <- yield()
+    ## If this resource has been parsed before but any of its dependencies
+    ## have been modified, we should wipe the cache.
+    if (is_cached && isTRUE(object$injects$any_dependencies_modified)) {
+      base::rm("caching_layer.value", envir = object$state)
+      is_cached <- FALSE
+    }
 
-  # if (caching_enabled && 
-
-  value
+    if (is_cached) {
+      object$state$caching_layer.value
+    } else {
+      value <- yield()
+      object$state$caching_layer.value <- value
+      value
+    }
+  }
 }
 
+# Apply the preprocessor to a resource. If parse. = TRUE, the parser will be
+# applied as well.
+preprocessor <- function(object, ..., parse. = TRUE) {
+  director <- object$resource$director
+
+  route <- object
+}
 
 
 ## Virtual check:

@@ -63,7 +63,7 @@ director_exists <- function(resource, helper = FALSE) {
     ## If the director `find` method returns an exact match for this resource
     ## (i.e., `find("foo")` is `"foo"`), the resource exists and we're in
     ## business!
-    length(find(resource, method = "exact", by_mtime = FALSE)) == 1
+    length(self$find(resource, method = "exact", by_mtime = FALSE)) == 1
   }
 }
 
