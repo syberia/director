@@ -60,7 +60,7 @@ tower <- function(functions = list()) {
     formal_names <- names(formals(fn))
     stopifnot(identical(formal_names[1], "object"))
     stopifnot(is.element("...", formal_names))
-    stopifnot(is.element("yield", all.names(body(fn))))
+    stopifnot(is.identity2(fn) || is.element("yield", all.names(body(fn))))
   }
   lapply(functions, verify_function)
 
@@ -108,6 +108,6 @@ as.pre_tower <- function(fn) {
 }
 is.pre_tower <- function(obj) is(obj, "pre_tower")
 
-identity2 <- structure(function(...) ..1, class = "identity")
+identity2 <- structure(function(object, ...) object, class = "identity")
 is.identity2 <- function(x) is(x, "identity")
 
