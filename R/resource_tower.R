@@ -40,6 +40,11 @@ virtual_check <- function(object, ...) {
   yield()
 }
 
+modification_tracker <- function(object, ..., modification_tracker.return = "object") {
+
+}
+
+
 
 ## Virtual check:
 # - Check if virtual resource, inject "virtual"
