@@ -132,7 +132,7 @@ dependency_tracker <- function(object, ...) {
   }
   director_state$dependency_nesting_level <- nesting_level + 1
 
-  object <- yield()
+  value <- yield()
 
   director_state$dependency_nesting_level <- nesting_level - 1
   dependencies <- Filter(
@@ -151,14 +151,27 @@ dependency_tracker <- function(object, ...) {
          director_state$dependency_stack$peek()$level == nesting_level + 1) {
     director$dependency_stack$pop()
   }
-
-  yield()
+  
+  value
 }
 
 dependency <- function(nesting_level, resource_name) {
   structure(class = "directorDependency", list(
     level = nesting_level, resource_name = resource_name
   ))
+}
+
+caching_layer <- function(object, ...) {
+  caching_enabled <- any_is_substring_of(object$resource$name,
+    object$resource$director$cached_resources())
+
+  # if (caching_enabled)
+
+  value <- yield()
+
+  # if (caching_enabled && 
+
+  value
 }
 
 

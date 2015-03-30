@@ -57,4 +57,12 @@ describe("sized_queue", {
     q$push(2); expect_equal(lapply(1:2, q$get), list(2, 1))
     q$push(3); expect_equal(lapply(1:3, q$get), list(3, 2, NULL))
   })
+
+  test_that("it can record the lnegth", {
+    q <- sized_queue(size = 2)
+    expect_equal(q$length(), 0)
+    q$push(1); expect_equal(q$length(), 1)
+    q$push(1); expect_equal(q$length(), 2)
+    q$push(1); expect_equal(q$length(), 2)
+  })
 })
