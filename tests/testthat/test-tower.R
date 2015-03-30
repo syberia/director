@@ -112,3 +112,17 @@ describe("tower composition notation", {
     expect_equal(increment_function %>>% double_function %>>% 1, 3)
   })
 })
+
+describe("destruction actions", {
+  test_that("we can catch destruction actions correctly", {
+    fn1 <- function(object, ...) {
+      on.exit(cat(attr(object, "foo")))
+      object <- yield()
+      cat(attr(object, "foo") + 1)
+    }
+    fn2 <- function(object, ...) {
+      structure(yield(), foo = 1)
+    }
+    expect_output(fn1 %>>% fn2 %>>% 1, "21")
+  })
+})
