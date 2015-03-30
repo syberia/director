@@ -75,6 +75,10 @@ virtual_check <- function(object, ...) {
 }
 
 modification_tracker <- function(object, ..., modification_tracker.return = "object") {
+  director <- object$resource$director
+
+  filename <- director$filename(object$resource$name, enclosing = TRUE)
+   
 }
 
 

@@ -279,3 +279,26 @@ duplicate <- function(original) {
   }
   obj1
 }
+
+#' Queue with size limit.
+#'
+#' If you push more elements onto the queue than it has room for, they will
+#' fall off screaming and wailing.
+#'
+#' @param size integer. Maximum number of elements in the queue.
+#' @examples
+#' \dontrun{
+#'   q <- sized_queue(size = 2)
+#'   q$push(1)
+#'   q$get(1) # 1
+#'   q$get(2) # NULL
+#'   q$push(2)
+#'   q$get(1) # 2
+#'   q$get(2) # 1
+#'   q$push(3)
+#'   q$get(1) # 3
+#'   q$get(2) # 2
+#'   q$get(3) # NULL
+#' }
+sized_queue <- function(size) {
+}
