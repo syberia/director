@@ -25,7 +25,9 @@
 #'
 #' @param functions list. A list of functions in the tower. The
 #'    first argument of each function must be named "object" and
-#'    each function must take a \code{...} parameter.
+#'    each function must take a \code{...} parameter. By default
+#'    \code{list()}, which creates an identity tower that performs
+#'    no operation.
 #' @return An S3 "tower" object, which is a callable function
 #'    and must be passed the \code{object} as the first argument.
 #'    Additional arguments will be passed to the first function
@@ -50,9 +52,8 @@
 #'           # Multiply it by 2 in the next function, then increment it
 #'           # again after receiving the previous function.
 #' stopifnot(v == 5)
-tower <- function(functions) {
+tower <- function(functions = list()) {
   stopifnot(is.list(functions),
-            length(functions) > 0,
             all(sapply(functions, is.function)))
 
   verify_function <- function(fn) {
