@@ -247,3 +247,11 @@ simple_cache <- function() {
   )
 }
 
+#' Duplicate a function object.
+#'
+#' @param original function.
+#' @useDynLib director duplicate_
+duplicate <- function(original) {
+  .Call(duplicate_, original)
+}
+
