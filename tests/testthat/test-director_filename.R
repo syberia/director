@@ -1,6 +1,12 @@
 context('director$filename')
 library(testthatsomemore)
 
+describe("invalid inputs", {
+  test_that("it cannot convert a non-existent resource to a filename", {
+    expect_error(director(tempdir())$filename("foo"), "no such resource")
+  })
+})
+
 test_that('it correctly completes the name of an extensionless nested file (uppercase .R)', {
   within_file_structure(list(blah = list('test.R')), {
     d <- director(tempdir)
