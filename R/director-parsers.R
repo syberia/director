@@ -32,7 +32,7 @@ register_parser <- function(path, parser = function() { }, overwrite = FALSE, ca
     formals(parser) <- NULL
   }
   
-  if (is.element(path, paste0("/", names(.parsers))) && !isTRUE(overwrite)) {
+  if (is.element(paste0("/", path), names(.parsers)) && !isTRUE(overwrite)) {
     stop("Parser already registered for path ", crayon::red(path))
   }
 

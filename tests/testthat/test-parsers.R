@@ -1,6 +1,25 @@
 context('resource parsers')
 library(testthatsomemore)
 
+describe("invalid inputs", {
+  test_that("it errors if we try to register a non-scalar path", {
+    d <- director(tempdir())
+    expect_error(
+      d$register_parser(c("foo", "bar"), identity),
+      "that is a scalar"
+    )
+  })
+
+  test_that("it does not allow path overwriting", {
+    d <- director(tempdir())
+    d$register_parser(c("foo"), identity)
+    expect_error(
+      d$register_parser(c("foo"), identity),
+      "Parser already registered"
+    )
+  })
+})
+
 test_that("it notices modification of a helper of a dependent resource", {
   within_file_structure(list(blah = list('one.R'), foo = list(two = list('two.R', 'helper.R'))), {
     d <- director(tempdir)
