@@ -144,6 +144,7 @@ resource2 <- function(...) {
   directorResource_$new(director = self, ...)
 }
 
-resource3 <- function(name, ...) {
-  resource_tower(self, name, ...)
+resource3 <- function(name, ..., defining_environment = parent.frame()) {
+  resource <- director_resource(self, name, defining_environment)
+  process_resource(resource, ...)
 }

@@ -9,15 +9,15 @@
 # Minimalist persistent global state.
 director_state <- new.env(parent = emptyenv())
 
-resource_class <- function(director, name, defining_environment = parent.frame()) {
+director_resource <- function(director, name, defining_environment = parent.frame()) {
   structure(list(director = director, name = name,
                  defining_environment = defining_environment),
             class = "director_resource")
 }
 
 # Construct a resource-compiling tower.
-resource_tower <- function(director, name, ...) {
-  resource <- resource_class(director, name, parent.frame())
+process_resource <- function(resource, ...) {
+  enforce_type(resource, "director_resource", "process_resource")
 
   tower(
     virtual_check        %>>%
@@ -171,7 +171,7 @@ dependency_tracker <- function(object, ..., dependency_tracker.return = "object"
 
   # TODO: (RK) This is incorrect, figure out right dependency modification check
   any_modified <- any(vapply(dependencies, function(d) {
-    resource_tower(director, d$resource_name, modification_tracker.touch = FALSE,
+    director$resource(d$resource_name, modification_tracker.touch = FALSE,
                    modification_tracker.return = "modified")
   }, logical(1)))
 
