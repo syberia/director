@@ -78,6 +78,10 @@ describe("applying patterns", {
   test_that("it can determine one idempotent resource", {
     expect_identical(apply_pattern(search_pattern("", "idempotence"), "foo/foo"), "foo")
   })
+
+  test_that("errors on non-patterns", {
+    expect_error(apply_pattern("foo", "bar"), "Invalid pattern")
+  })
 })
 
 describe("operators", {
