@@ -50,7 +50,9 @@ NULL
 #'      specific files.}
 #' }
 #'
+#' @docType class
 #' @rdname director
+#' @format NULL
 director_ <- R6::R6Class("director",
   private = list(
     .root           = NULL, # character
