@@ -142,3 +142,9 @@ describe("floating towers", {
     expect_equal(t(1), 4)
   })
 })
+
+describe("pre_towers", {
+  test_that("determining pre_towers works", {
+    expect_true(is.pre_tower(identity2 %>>% identity2))
+  })
+})
