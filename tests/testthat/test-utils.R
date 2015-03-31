@@ -66,3 +66,12 @@ describe("sized_queue", {
     q$push(1); expect_equal(q$length(), 2)
   })
 })
+
+describe("get_helpers", {
+  test_that("within an idempotent directory, gets helpers", {
+    within_file_structure(list(a = list("a.R", "b.R", c = list("d.R"), d = list("d.R", "e.R"))), {
+      expect_equal(get_helpers(file.path(tempdir, "a")), "b.R")
+      expect_equal(sort(get_helpers(file.path(tempdir, "a"), leave_idempotent = TRUE)), c("a.R", "b.R"))
+    })
+  })
+})
