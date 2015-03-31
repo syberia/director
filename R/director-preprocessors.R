@@ -16,12 +16,18 @@ register_preprocessor <- function(path, preprocessor, overwrite = FALSE) {
   enforce_type(path,         "character", "director$register_preprocessor")
   enforce_type(preprocessor, "function",  "director$register_preprocessor")
 
+  if (length(path) != 1) {
+    stop("A preprocessor must be registered to a path that is a scalar character ",
+         "but instead I got a character vector of length",
+          crayon::red(as.character(length(path))), ".")
+  }
+
   if (length(formals(preprocessor)) != 0) {
     # TODO: (RK) Require correct formals specification: https://github.com/robertzk/director/issues/21
     formals(preprocessor) <- NULL
   }
   
-  if (is.element(path, paste0("/", names(.preprocessors))) && !isTRUE(overwrite)) {
+  if (is.element(paste0("/", path), names(.preprocessors)) && !isTRUE(overwrite)) {
     stop("Preprocessor already registered for path ", crayon::red(path), ".")
   }
 

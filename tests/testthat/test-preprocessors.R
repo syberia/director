@@ -1,6 +1,25 @@
 context('preprocessors')
 library(testthatsomemore) 
 
+describe("invalid inputs", {
+  test_that("it errors if we try to register a non-scalar path", {
+    d <- director(tempdir())
+    expect_error(
+      d$register_preprocessor(c("foo", "bar"), identity),
+      "that is a scalar"
+    )
+  })
+
+  test_that("it does not allow path overwriting", {
+    d <- director(tempdir())
+    d$register_preprocessor(c("foo"), identity)
+    expect_error(
+      d$register_preprocessor(c("foo"), identity),
+      "Preprocessor already registered"
+    )
+  })
+})
+
 test_that("it is able to register a preprocessor", {
   within_file_structure(list(blah = list('one.R'), foo = list('two.R')), {
     d <- director(tempdir)
