@@ -246,10 +246,6 @@ preprocessor <- function(object, ..., parse. = TRUE) {
   )
 
   if (is.null(route)) {
-    if (isTRUE(object$injects$virtual)) {
-      stop("Cannot preprocess virtual resource without a preprocessor")
-    }
-
     # No preprocessor for this resource.
     # Use the default preprocessor, base::source.
     default_preprocessor <- function(filename) {
