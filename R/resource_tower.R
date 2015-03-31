@@ -94,12 +94,7 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
       object$state$modification_tracker.queue <- sized_queue(size = 2)
     }
 
-    modified <- function() {
-      ## A resource has been modified if its modification time has changed. 
-      !do.call(identical, lapply(seq(2), object$state$modification_tracker.queue$get))
-    }
-
-    if (isTRUE(modification_tracker.touch)) {
+    if (Sys.time() > object$state$modification_tracker.queue$get(1) %||% 0) {
       # Directory modification is only defined as adding files.
       filename <- director$filename(object$resource$name,
                                     absolute = TRUE, enclosing = TRUE)
@@ -109,8 +104,18 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
       } else {
         mtime <- file.info(filename)$mtime
       }
-      object$state$modification_tracker.queue$push(mtime)
     }
+
+    if (isTRUE(modification_tracker.touch)) {
+      object$state$modification_tracker.queue$push(mtime)
+      modified <- function() {
+        ## A resource has been modified if its modification time has changed. 
+        !do.call(identical, lapply(seq(2), object$state$modification_tracker.queue$get))
+      }
+    } else {
+      modified <- function() { !identical(object$state$modification_tracker.queue$get(1), mtime) }
+    }
+
     object$injects %<<% list(modified = modified())
 
     if (identical(modification_tracker.return, "modified")) {
@@ -147,6 +152,11 @@ dependency_tracker <- function(object, ..., dependency_tracker.return = "object"
     return(unique(c(recursive = TRUE, dependencies, nested_dependencies)))
   }
 
+  any_modified <- director$resource(object$resource$name,
+    dependency_tracker.return = "any_dependencies_modified",
+    modification_tracker.touch = FALSE)
+  object$injects %<<% list(any_dependencies_modified = any_modified)
+
   if (!base::exists("dependency_stack", envir = director_state)) {
     director_state$dependency_stack <- shtack$new()
   }
@@ -168,16 +178,16 @@ dependency_tracker <- function(object, ..., dependency_tracker.return = "object"
     function(dependency) dependency$level == nesting_level + 1, 
     director_state$dependency_stack$peek(TRUE)
   )
-  object$state$dependency_tracker.dependencies <-
-    vapply(dependencies, getElement, character(1), "resource_name")
+  if (!isTRUE(object$injects$cache_used)) {
+    object$state$dependency_tracker.dependencies <-
+      vapply(dependencies, getElement, character(1), "resource_name")
+  }
 
   # TODO: (RK) This is incorrect, figure out right dependency modification check
   any_modified <- any(vapply(dependencies, function(d) {
     director$resource(d$resource_name, modification_tracker.touch = FALSE,
                    modification_tracker.return = "modified")
   }, logical(1)))
-
-  object$injects %<<% list(any_dependencies_modified = any_modified)
 
   while (!director_state$dependency_stack$empty() &&
          director_state$dependency_stack$peek()$level == nesting_level + 1) {
@@ -197,26 +207,22 @@ dependency <- function(nesting_level, resource_name) {
 caching_layer <- function(object, ..., recompile. = FALSE) {
   caching_enabled <- any_is_substring_of(object$resource$name,
     object$resource$director$cached_resources())
-  caching_enabled <- caching_enabled && !isTRUE(recompile.)
 
   if (!caching_enabled) {
     yield()
   } else {
-    is_cached <- base::exists("caching_layer.value", envir = object$state)
-
     ## If this resource has been parsed before but any of its dependencies
     ## have been modified, we should wipe the cache.
-    if (is_cached && isTRUE(object$injects$any_dependencies_modified)) {
-      base::rm("caching_layer.value", envir = object$state)
-      is_cached <- FALSE
-    }
+    is_cached <- 
+      !isTRUE(recompile.) && 
+      !isTRUE(object$injects$any_dependencies_modified) &&
+      base::exists("caching_layer.value", envir = object$state)
 
     if (is_cached) {
+      object$injects$cache_used <- TRUE
       object$state$caching_layer.value
     } else {
-      value <- yield()
-      object$state$caching_layer.value <- value
-      value
+      (object$state$caching_layer.value <- yield())
     }
   }
 }
