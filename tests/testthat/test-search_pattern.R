@@ -80,3 +80,17 @@ describe("applying patterns", {
   })
 })
 
+describe("operators", {
+  test_that("we can combine search patterns using operator &", {
+    expect_equal(apply_pattern(
+      search_pattern("foo", "partial") & search_pattern("bar", "partial"),
+      c("foobar", "barfo")), "foobar")
+  })
+
+  test_that("we can combine search patterns using operator |", {
+    expect_equal(apply_pattern(
+      search_pattern("foo", "partial") | search_pattern("bar", "partial"),
+      c("foobar", "barfo")), c("foobar", "barfo"))
+  })
+})
+
