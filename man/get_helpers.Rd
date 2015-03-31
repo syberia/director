@@ -4,10 +4,15 @@
 \alias{get_helpers}
 \title{Get all helper files associated with an idempotent resource directory.}
 \usage{
-get_helpers(path)
+get_helpers(path, ..., leave_idempotent = FALSE)
 }
 \arguments{
 \item{path}{character. The *absolute* path of the idempotent resource.}
+
+\item{...}{additional parameters to pass to \code{list.files}.}
+
+\item{leave_idempotent}{logical. Whether or not to leave the
+idempotent file (non-helper). By default \code{FALSE}.}
 }
 \value{
 a character list of relative helper paths.
