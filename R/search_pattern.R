@@ -47,7 +47,7 @@ search_pattern <- function(pattern, method) {
   if (!is.character(pattern)) { msg(pattern) }
 
   ## A search pattern is a method for filtering a set of strings that is highly
-  ## composable. For example, if we have `c("foobar", "barbaz" "bazbux")`,
+  ## composable. For example, if we have `c("foobar", "barbaz", "bazbux")`,
   ## we can use the pattern `search_pattern("bar", "partial")` to select the
   ## first two, since they have the substring "bar".
   ##
