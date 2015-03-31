@@ -112,7 +112,7 @@ as.search_pattern <- function(x) {
   ## Remember that when changing classes, the class should be prepended
   ## rather than appended, since R's S3 mechanism looks left-to-right for
   ## S3 methods.
-  class(x) <- c(class(x), "search_pattern")
+  class(x) <- c("search_pattern", class(x))
   x
 }
 
