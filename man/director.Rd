@@ -6,6 +6,222 @@
 \alias{director-package}
 \alias{director_}
 \title{Management and Tracking of Files in R Projects.}
+<<<<<<< HEAD
+||||||| 7e18eae... remove obsolete drop_idempotence helper
+\format{\preformatted{List of 8
+ $ new       :function (...)  
+ $ classname : chr "director"
+ $ public    :List of 30
+  ..$ dependency_stack       : NULL
+  ..$ cache                  : NULL
+  ..$ initialize             :function (root, project_name = "")  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 16 15 52 1 15 1 16 52
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x11a40ee70> 
+  ..$ exists                 :function (resource, helper = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 27 20 68 1 20 1 27 68
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x11b0ea8a0> 
+  ..$ resource               :function (name, ..., defining_environment = parent.frame())  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 146 13 149 1 13 1 146 149
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119de0190> 
+  ..$ register_parser        :function (path, parser = function() \{
+\}, overwrite = FALSE, cache = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 20 20 52 1 20 1 20 52
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119f2fc30> 
+  ..$ register_preprocessor  :function (path, preprocessor, overwrite = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 15 26 39 1 26 1 15 39
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119e03840> 
+  ..$ has_preprocessor       :function (resource_path)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 46 21 48 1 21 1 46 48
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119e03840> 
+  ..$ find                   :function (pattern = "", method = "wildcard", base = "", by_mtime = TRUE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 56 18 88 1 18 1 56 88
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x11a219460> 
+  ..$ match_preprocessor     :function (resource_name)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 80 26 83 5 26 5 80 83
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ match_parser           :function (resource_name)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 84 20 87 5 20 5 84 87
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ preprocessor           :function (x)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 88 20 88 63 20 63 88 88
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ parser                 :function (x)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 89 14 89 51 14 51 89 89
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ cached_resources       :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 90 24 90 51 24 51 90 90
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ cache_get              :function (k)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 92 17 92 44 17 44 92 92
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ cache_set              :function (k, v)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 93 17 93 50 17 50 93 93
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ tracking_dependencies  :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 95 29 95 73 29 73 95 95
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ clear_resource_stack   :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 96 28 96 102 28 102 96 96
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ increment_nesting_level:function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 97 31 97 105 31 105 97 97
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ decrement_nesting_level:function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 98 31 98 105 31 105 98 98
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ nesting_level          :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 99 21 99 60 21 60 99 99
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ push_dependency        :function (dependency)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 100 23 102 5 23 5 100 102
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ peek_dependency_stack  :function (...)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 103 29 103 72 29 72 103 103
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ pop_dependency_stack   :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 104 28 104 64 28 64 104 104
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ empty_dependency_stack :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 105 30 105 68 30 68 105 105
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ root                   :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 107 20 107 39 20 39 107 107
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ project_name           :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 108 20 108 47 20 47 108 108
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ absolute               :function (x)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 109 18 109 58 18 58 109 109
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ show                   :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 110 18 115 5 18 5 110 115
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x119dac318> 
+  ..$ filename               :function (name, absolute = FALSE, check.exists = TRUE, helper = FALSE, enclosing = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 16 22 43 1 22 1 16 43
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x11a752430> 
+ $ private   :List of 8
+  ..$ .root                    : NULL
+  ..$ .project_name            : NULL
+  ..$ .resource_cache          : list()
+  ..$ .registry                : NULL
+  ..$ .dependency_nesting_level: num 0
+  ..$ .parsers                 : list()
+  ..$ .preprocessors           : list()
+  ..$ .cached_resources        : list()
+ $ active    : NULL
+ $ inherit   : NULL
+ $ parent_env:<environment: namespace:director> 
+ $ lock      : logi TRUE
+ - attr(*, "class")= chr "R6ClassGenerator"
+}}
+=======
+\format{\preformatted{List of 8
+ $ new       :function (...)  
+ $ classname : chr "director"
+ $ public    :List of 30
+  ..$ dependency_stack       : NULL
+  ..$ cache                  : NULL
+  ..$ initialize             :function (root, project_name = "")  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 16 15 52 1 15 1 16 52
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12e94bd78> 
+  ..$ exists                 :function (resource, helper = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 27 20 68 1 20 1 27 68
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x10ccb5ab0> 
+  ..$ resource               :function (name, ..., defining_environment = parent.frame())  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 146 13 149 1 13 1 146 149
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d96dcd8> 
+  ..$ register_parser        :function (path, parser = function() \{
+\}, overwrite = FALSE, cache = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 20 20 52 1 20 1 20 52
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d998600> 
+  ..$ register_preprocessor  :function (path, preprocessor, overwrite = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 15 26 39 1 26 1 15 39
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d9832b0> 
+  ..$ has_preprocessor       :function (resource_path)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 46 21 48 1 21 1 46 48
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d9832b0> 
+  ..$ find                   :function (pattern = "", method = "wildcard", base = "", by_mtime = TRUE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 56 18 88 1 18 1 56 88
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12e9679f8> 
+  ..$ match_preprocessor     :function (resource_name)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 80 26 83 5 26 5 80 83
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ match_parser           :function (resource_name)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 84 20 87 5 20 5 84 87
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ preprocessor           :function (x)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 88 20 88 63 20 63 88 88
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ parser                 :function (x)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 89 14 89 51 14 51 89 89
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ cached_resources       :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 90 24 90 51 24 51 90 90
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ cache_get              :function (k)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 92 17 92 44 17 44 92 92
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ cache_set              :function (k, v)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 93 17 93 50 17 50 93 93
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ tracking_dependencies  :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 95 29 95 73 29 73 95 95
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ clear_resource_stack   :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 96 28 96 102 28 102 96 96
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ increment_nesting_level:function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 97 31 97 105 31 105 97 97
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ decrement_nesting_level:function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 98 31 98 105 31 105 98 98
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ nesting_level          :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 99 21 99 60 21 60 99 99
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ push_dependency        :function (dependency)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 100 23 102 5 23 5 100 102
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ peek_dependency_stack  :function (...)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 103 29 103 72 29 72 103 103
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ pop_dependency_stack   :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 104 28 104 64 28 64 104 104
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ empty_dependency_stack :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 105 30 105 68 30 68 105 105
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ root                   :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 107 20 107 39 20 39 107 107
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ project_name           :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 108 20 108 47 20 47 108 108
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ absolute               :function (x)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 109 18 109 58 18 58 109 109
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ show                   :function ()  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 110 18 115 5 18 5 110 115
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12d94b320> 
+  ..$ filename               :function (name, absolute = FALSE, check.exists = TRUE, helper = FALSE, enclosing = FALSE)  
+  .. ..- attr(*, "srcref")=Class 'srcref'  atomic [1:8] 16 22 43 1 22 1 16 43
+  .. .. .. ..- attr(*, "srcfile")=Classes 'srcfilecopy', 'srcfile' <environment: 0x12e9861c8> 
+ $ private   :List of 8
+  ..$ .root                    : NULL
+  ..$ .project_name            : NULL
+  ..$ .resource_cache          : list()
+  ..$ .registry                : NULL
+  ..$ .dependency_nesting_level: num 0
+  ..$ .parsers                 : list()
+  ..$ .preprocessors           : list()
+  ..$ .cached_resources        : list()
+ $ active    : NULL
+ $ inherit   : NULL
+ $ parent_env:<environment: namespace:director> 
+ $ lock      : logi TRUE
+ - attr(*, "class")= chr "R6ClassGenerator"
+}}
+>>>>>>> parent of 7e18eae... remove obsolete drop_idempotence helper
 \usage{
 director_
 }

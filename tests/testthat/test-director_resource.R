@@ -19,12 +19,23 @@ test_that('it marks a new resource as modified', {
   })
 })
 
+test_that('it marks a new resource as modified when referenced with .r', {
+  within_file_structure(list('blah.r'), { d <- director(tempdir)
+    expect_true(d$resource('blah', modification_tracker.return = "modified"))
+  })
+})
+
 # test modified key in resource list
 
 test_that('it marks an old resource as not modified', {
   within_file_structure(list('blah.r'), { d <- director(tempdir)
     d$resource('blah') # cache the resource info
-    expect_false(d$resource('blah', modification_tracker.return = "modified"))
+    expect_false(d$resource('blah.r', modification_tracker.return = "modified"))
+  })
+
+  within_file_structure(list('blah.r'), { d <- director(tempdir)
+    d$resource('blah') # cache the resource info
+    expect_false(d$resource('blah.R', modification_tracker.return = "modified"))
   })
 })
 

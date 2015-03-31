@@ -144,6 +144,6 @@
 #   directorResource_$new(director = self, ...)
 # }
 resource <- function(name, ..., defining_environment = parent.frame()) {
-  resource <- director_resource(self, name, defining_environment)
+  resource <- director_resource(self, resource_name(name), defining_environment)
   process_resource(resource, ...)
 }
