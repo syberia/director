@@ -75,3 +75,17 @@ describe("get_helpers", {
     })
   })
 })
+
+describe("resource_name", {
+  test_that("it can turn a non-idempotent resource into a resource name", {
+    expect_equal(resource_name("foo.R"), "foo")
+    expect_equal(resource_name("foo.r"), "foo")
+    expect_equal(resource_name("foo"), "foo")
+  })
+
+  test_that("it can turn a idempotent resource into a resource name", {
+    expect_equal(resource_name("foo/foo.R"), "foo")
+    expect_equal(resource_name("foo/foo.r"), "foo")
+    expect_equal(resource_name("foo/foo"), "foo")
+  })
+})
