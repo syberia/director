@@ -1,4 +1,4 @@
-context("resource refClass")
+context("director_resource")
 library(testthatsomemore)
 # TODO: (RK) Test the ... parameter of $value() / $compile() / $parse() 
 
@@ -22,5 +22,12 @@ test_that("it can process a virtual resource", {
 test_that("it errors on a non-existent resource", {
   within_file_structure(list(), { d <- director(tempdir)
     expect_error(d$resource("blah"), "Cannot find")
+  })
+})
+
+describe("process_resource", {
+  test_that("it errors if a non-resource is passed", {
+    for (x in list("foo", list(), 5, FALSE)) 
+      expect_error(process_resource(x), "parameter must be")
   })
 })

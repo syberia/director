@@ -9,10 +9,12 @@
 # Minimalist persistent global state.
 director_state <- new.env(parent = emptyenv())
 
-director_resource <- function(director, name, defining_environment = parent.frame()) {
-  structure(list(director = director, name = name,
-                 defining_environment = defining_environment),
-            class = "director_resource")
+director_resource <- function(director, name, defining_environment) {
+  structure(list(
+    director = director,
+    name = name,
+    defining_environment = defining_environment
+  ), class = "director_resource")
 }
 
 # Construct a resource-compiling tower.
