@@ -1,30 +1,5 @@
 `%||%` <- function(x, y) if (is.null(x)) y else x
 
-# Dynamically create an accessor method for reference classes.
-accessor_method <- function(attr) {
-  fn <- eval(bquote(
-    function(`*VALUE*` = NULL)
-      if (missing(`*VALUE*`)) .(substitute(attr))
-      else .(substitute(attr)) <<- `*VALUE*`
-  ))
-  environment(fn) <- parent.frame()
-  fn
-}
-
-#' Attempt to memoize a function using the memoise package.
-#' 
-#' @param fn function. The function to memoize.
-#' @return nothing, but \code{try_memoize} will use non-standard
-#'   evaluation to memoize in the calling environment.
-#' @name try_memoize
-try_memoize <- function(fn) {
-  if (requireNamespace("memoise", quietly = TRUE)) {
-    eval.parent(substitute(memoise::memoise(fn)))
-  } else {
-    fn
-  }
-}
-
 # A reference class that implements a stack data structure.
 shtack <- methods::setRefClass('stack', list(elements = 'list'), methods = list(
   clear      = function()  { elements <<- list() },

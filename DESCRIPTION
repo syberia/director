@@ -21,8 +21,7 @@ VignetteBuilder: knitr
 Suggests:
     knitr,
     testthatsomemore,
-    microbenchmark,
-    memoise
+    microbenchmark
 Roxygen: list(wrap = FALSE)
 Collate:
     'director-exists.R'
@@ -41,4 +40,5 @@ Collate:
     'resource_tower.R'
     'search_pattern.R'
     'tower.R'
+    'utils.r'
     'zzz.r'
