@@ -18,7 +18,7 @@
 #' 
 #' @param pattern character. The pattern to search for.
 #' @param method character. The search pattern method, one of "exact",
-#'    "partial", or "wildcard".
+#'    "partial", "wildcard", or "regex".
 #' @note Patterns can be combined using the \code{|} and \code{&} operators.
 #' @examples
 #' \dontrun{

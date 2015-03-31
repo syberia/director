@@ -10,7 +10,7 @@ search_pattern(pattern, method)
 \item{pattern}{character. The pattern to search for.}
 
 \item{method}{character. The search pattern method, one of "exact",
-"partial", or "wildcard".}
+"partial", "wildcard", or "regex".}
 }
 \description{
 A search pattern is one of the following:
