@@ -21,3 +21,8 @@ test_that("it is not possible to call any other method on the director class tha
   expect_error(director$parent_env)
   expect_error(director$lock)
 })
+
+test_that("is.director works", {
+  expect_false(is.director(list()))
+  expect_true(is.director(director$new(tempdir())))
+})
