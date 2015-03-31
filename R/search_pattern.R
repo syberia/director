@@ -214,13 +214,13 @@ apply_pattern.idempotence <- function(pattern, strings) {
   ## What are the actual directory names? (for example, "foo/bar")
   idem_dirs  <- dirname(strings[idempotent])
 
-  ## Helper files are the files in the idem_dirs computed above who do not
+  ## Helper files are the files in the `idem_dirs` computed above who do not
   ## share their name with the parent directory. We need to find the indices
   ## of these files in our strings.
   helpers <- vapply(strings, function(x) dirname(x) %in% idem_dirs, logical(1))
 
   ## Now replace the idempotent files with their directory names. In director,
-  ## the name of an idempotent resource is sans the basename
+  ## the name of an idempotent resource is the filename sans the basename
   ## (for example, "foo/bar" rather than "foo/bar/bar.R").
   strings[idempotent] <- idem_dirs
     

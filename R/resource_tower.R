@@ -1,11 +1,3 @@
-
-# director$resource <- function(name, ..., defining_environment. = parent.frame())  {
-#   name <- resource_name(name)
-#   force(defining_environment.)
-#   resource <- resource_class(self, name, defining_environment.)
-#   # Apply tower
-# }
-
 # Minimalist persistent global state.
 director_state <- new.env(parent = emptyenv())
 
