@@ -31,7 +31,7 @@ test_that("it is able to register a preprocessor", {
 test_that("it can use the trivial preprocessor", {
   within_file_structure(list(blah = list(one.R = '"test"')), {
     d <- director(tempdir)
-    d$register_preprocessor('blah', function() { base::source(filename)$value })
+    d$register_preprocessor('blah', function(filename) { base::source(filename)$value })
     expect_equal(d$resource('blah/one'), 'test')
   })
 })
@@ -39,7 +39,7 @@ test_that("it can use the trivial preprocessor", {
 test_that("it can use a preprocessor to do injection", {
   within_file_structure(list(blah = list(one.R = 'test')), {
     d <- director(tempdir)
-    d$register_preprocessor('blah', function() {
+    d$register_preprocessor('blah', function(source_env, filename) {
       source_env$test <- "test"
       base::source(filename, source_env)$value
     })
@@ -50,7 +50,7 @@ test_that("it can use a preprocessor to do injection", {
 test_that("it can use a preprocessor to pass information to a parser", {
   within_file_structure(list(blah = list(one.R = '"test"')), {
     d <- director(tempdir)
-    d$register_preprocessor('blah', function() {
+    d$register_preprocessor('blah', function(preprocessor_output, filename) {
       preprocessor_output$body <- readLines(filename)
       base::source(filename)$value
     })
@@ -62,7 +62,7 @@ test_that("it can use a preprocessor to pass information to a parser", {
 test_that("the 'source' shortcut works", {
   within_file_structure(list(blah = list(one.R = '"test"')), {
     d <- director(tempdir)
-    d$register_preprocessor('blah', function() { source() })
+    d$register_preprocessor('blah', function(source) { source() })
     expect_equal(d$resource('blah/one'), 'test')
   })
 })
