@@ -105,6 +105,8 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
         mtime <- file.info(filename)$mtime
       }
     } else {
+      # The current timestamp is <= the last modified time, so nothing could
+      # have possibly changed yet.
       mtime <- object$state$modification_tracker.queue$get(1)
     }
 
