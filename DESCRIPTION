@@ -40,5 +40,4 @@ Collate:
     'resource_tower.R'
     'search_pattern.R'
     'tower.R'
-    'utils.r'
     'zzz.r'
