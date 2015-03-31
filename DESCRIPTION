@@ -20,7 +20,7 @@ LazyData: true
 VignetteBuilder: knitr
 Suggests:
     knitr,
-    testthatsomemore,
+    testthatsomemore (>= 0.2.2),
     microbenchmark
 Roxygen: list(wrap = FALSE)
 Collate:

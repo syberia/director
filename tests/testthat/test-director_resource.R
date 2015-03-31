@@ -83,15 +83,13 @@ test_that('resources do not have access to the top environment', {
   })
 })
 
-### These tests go last because they must use Sys.sleep
-
 test_that('it marks a touched resource as modified', {
   within_file_structure(list('blah.r'), { d <- director(tempdir)
     r <- d$resource('blah') # cache the resource info
     r <- d$resource('blah') 
     expect_false(d$resource('blah', modification_tracker.return = "modified"))
-    Sys.sleep(1) # Annoying, but no other way because mtime precision is seconds
     writeLines('', file.path(tempdir, 'blah.r'))
+    touch_file(file.path(tempdir, 'blah.r'))
     expect_true(d$resource('blah', modification_tracker.return = "modified"))
   })
 })
@@ -99,8 +97,8 @@ test_that('it marks a touched resource as modified', {
 test_that('modification of resource helpers is reported correctly', {
   within_file_structure(list(blah = list('blah.r', 'helper.r')), { d <- director(tempdir)
     r <- d$resource('blah') # cache the resource info
-    Sys.sleep(1) # Annoying, but no other way because mtime precision is seconds
     writeLines('', file.path(tempdir, 'blah', 'helper.r'))
+    touch_file(file.path(tempdir, 'blah', 'helper.r'))
     expect_true(d$resource('blah', modification_tracker.touch = FALSE,
                            modification_tracker.return = "modified"))
   })
@@ -109,9 +107,10 @@ test_that('modification of resource helpers is reported correctly', {
 test_that('modified is FALSE if both get modified and a followup second check is made', {
   within_file_structure(list(blah = list('blah.r', 'helper.r', 'helper2.r')), { d <- director(tempdir)
     r <- d$resource('blah') # cache the resource info
-    Sys.sleep(1) # Annoying, but no other way because mtime precision is seconds
     writeLines('', file.path(tempdir, 'blah', 'helper.r'))
     writeLines('', file.path(tempdir, 'blah', 'helper2.r'))
+    touch_file(file.path(tempdir, 'blah', 'helper.r'))
+    touch_file(file.path(tempdir, 'blah', 'helper2.r'))
     d$resource('blah') # trigger cache hit
     d$resource('blah') # trigger cache hit
     expect_false(d$resource('blah', modification_tracker.touch = FALSE,

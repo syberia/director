@@ -78,16 +78,16 @@ test_that('it can find idempotent resources', {
 
 test_that('correctly finds files ordered by modification time', {
   within_file_structure(list('hello.R', 'boo.R'), { d <- director(tempdir)
-    Sys.sleep(1)
     writeLines("#", file.path(tempdir, "hello.R"))
+    touch_file(file.path(tempdir, "hello.R"))
     expect_identical(c('hello', 'boo'), d$find('', by_mtime = TRUE))
   })
 })
 
 test_that('ignores modification time when by_mtime = FALSE', {
   within_file_structure(list('hello.R', 'boo.R'), { d <- director(tempdir)
-    Sys.sleep(1)
     writeLines("#", file.path(tempdir, "hello.R"))
+    touch_file(file.path(tempdir, "hello.R"))
     expect_identical(c('boo', 'hello'), d$find('', by_mtime = FALSE))
   })
 })

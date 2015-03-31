@@ -28,10 +28,11 @@ test_that("it notices modification of a helper of a dependent resource", {
     replicate(2, d$resource('blah/one'))
     expect_false(d$resource("blah/one", modification_tracker.touch = FALSE,
                             dependency_tracker.return = "any_dependencies_modified"))
-    Sys.sleep(1)
-    touch(file.path(tempdir, 'foo', 'two', 'helper.R'))
-    d$resource('blah/one')
+    touch_file(file.path(tempdir, 'foo', 'two', 'helper.R'))
     expect_true(d$resource("blah/one", modification_tracker.touch = FALSE,
+                           dependency_tracker.return = "any_dependencies_modified"))
+    d$resource('blah/one')
+    expect_false(d$resource("blah/one", modification_tracker.touch = FALSE,
                            dependency_tracker.return = "any_dependencies_modified"))
   })
 })
@@ -44,10 +45,11 @@ test_that("it remembers dependencies", {
     replicate(2, d$resource('blah/one'))
     expect_false(d$resource("blah/one", modification_tracker.touch = FALSE,
                             dependency_tracker.return = "any_dependencies_modified"))
-    Sys.sleep(1)
-    touch(file.path(tempdir, 'foo', 'two.R'))
-    d$resource('blah/one')
+    touch_file(file.path(tempdir, 'foo', 'two.R'))
     expect_true(d$resource("blah/one", modification_tracker.touch = FALSE,
+                           dependency_tracker.return = "any_dependencies_modified"))
+    d$resource('blah/one')
+    expect_false(d$resource("blah/one", modification_tracker.touch = FALSE,
                            dependency_tracker.return = "any_dependencies_modified"))
   })
 })
@@ -129,8 +131,6 @@ test_that("it can ascertain dependencies for a complicated chain", {
   })
 })
 
-### These tests go last because they must use Sys.sleep
-
 test_that("it remembers depth-2 dependencies", {
   within_file_structure(list(blah = list('one.R'), foo = list('two.R'),
                              faz = list('three.R')), {
@@ -142,11 +142,14 @@ test_that("it remembers depth-2 dependencies", {
     d$resource('blah/one')
     expect_false(d$resource("blah/one", modification_tracker.touch = FALSE,
                             dependency_tracker.return = "any_dependencies_modified"))
-    Sys.sleep(1)
-    touch(file.path(tempdir, 'faz', 'three.R'))
-    d$resource('blah/one')
+
+    touch_file(file.path(tempdir, "faz", "three.R"))
     expect_true(d$resource("blah/one", modification_tracker.touch = FALSE,
                            dependency_tracker.return = "any_dependencies_modified"))
+
+    d$resource('blah/one')
+    expect_false(d$resource("blah/one", modification_tracker.touch = FALSE,
+                            dependency_tracker.return = "any_dependencies_modified"))
   })
 })
 

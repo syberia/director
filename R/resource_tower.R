@@ -104,6 +104,8 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
       } else {
         mtime <- file.info(filename)$mtime
       }
+    } else {
+      mtime <- object$state$modification_tracker.queue$get(1)
     }
 
     if (isTRUE(modification_tracker.touch)) {
