@@ -61,11 +61,10 @@ search_pattern <- function(pattern, method) {
 }
 
 search_pattern_ <- function(pattern, method) {
-  ## We use a recursive solution: either the pattern or the method can be
+  ## We use a recursive solution: the pattern can be 
   ## a "search pattern join" (the `&` and `|` operation described above).
   ## In this case, we just return the join.
   if (is.search_pattern_join(pattern)) { pattern }
-  else if (is.search_pattern_join(method)) { method }
   else if (length(pattern) > 1) {
     ## If there is more than one pattern specified, we treat this as an OR
     ## condition: either pattern 1, or pattern 2, etc.
