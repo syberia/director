@@ -120,18 +120,6 @@ resource_name <- function(filename) {
   drop_idempotence(strip_r_extension(filename))
 }
 
-#' Create a resource cache key from a resource key.
-#'
-#' This is the key under whose director cache the info about the resource
-#' as of previous execution will be stored.
-#'
-#' @param resource_key character. The resource key.
-#' @return a cache key, currently just \code{"resource_cache/"} followed by
-#'    the \code{resource_key}.
-resource_cache_key <- function(resource_key) {
- file.path('resource_cache', resource_key)
-}
-
 #' Get all helper files associated with an idempotent resource directory.
 #'
 #' @param path character. The *absolute* path of the idempotent resource.
