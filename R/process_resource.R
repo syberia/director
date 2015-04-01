@@ -56,30 +56,3 @@ generate_state <- function(resource) {
   state[[resource$name]]
 }
 
-
-## Virtual check:
-# - Check if virtual resource, inject "virtual"
-# - Error if no preprocessor exists (but should that be here or down there?)                  
-## Modification tracker:
-# - Compute modification info. Insert into injects. Insert into state iff soft. != FALSE
-# - If modification detected (on the directory level),
-#   inject "modified" to be TRUE, otherwise FALSE. Note we no longer need
-#   special behavior for idempotent resources since we are looking on the
-#   directory level                  
-# - on.exit, set "any_dependencies_modified" to be modified || any dependencies modified.
-## Dependency tracker:
-# - Inject dependencies from cached state.
-# - Start dependency tracking + nesting level.
-# - on.exit, place just-determined dependencies in state.
-## Caching layer:
-# - If caching is enabled (ask the director) and cached value is in state,
-#   just use it an return here, unless recompile. = TRUE
-# - If caching is enabled (ask the director) then on.exit place the computed
-#   value in *state*.
-## Preprocessor 
-# - Find preprocessor using director, throw in a ton of injects, send to preprocessor.
-#   TODO: How to pass preprocessed value to parser?
-#   If parse. = FALSE, just return preprocessed value.
-## Parser
-# - Find parser using director, throw in a ton of injects, send to parser.
-#   Return final output instead of yielding.
