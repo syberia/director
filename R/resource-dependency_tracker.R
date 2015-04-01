@@ -208,7 +208,6 @@ stop_tracking_dependencies <- function(active_resource) {
       vapply(dependencies, getElement, character(1), "resource_name")
   }
 
-  # TODO: (RK) This is incorrect, figure out right dependency modification check
   any_modified <- any(vapply(dependencies, function(d) {
     director$resource(d$resource_name, modification_tracker.touch = FALSE,
                    modification_tracker.return = "modified")

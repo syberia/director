@@ -72,6 +72,8 @@ caching_layer <- function(object, ..., recompile. = FALSE) {
       base::exists("caching_layer.value", envir = object$state)
 
     if (is_cached) {
+      ## This is used down the road by the `stop_tracking_dependencies`
+      ## helper of the `dependency_tracker`.
       object$injects$cache_used <- TRUE
       object$state$caching_layer.value
     } else {
