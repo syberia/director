@@ -187,12 +187,24 @@ dependencies <- function(active_resource) {
 begin_tracking_dependencies <- function(active_resource) {
   director <- active_resource$resource$director
 
-  any_modified <- director$resource(active_resource$resource$name,
+  ## First, we provide whether or not the resource or its dependencies
+  ## *as of the last time this resource was executed* have been
+  ## modified. (After all, we can't know a priori what its dependencies
+  ## are before executing it.)
+  any_modified <- director$resource(
+    active_resource$resource$name,
     dependency_tracker.return = "any_dependencies_modified",
-    modification_tracker.touch = FALSE)
+    modification_tracker.touch = FALSE
+  )
+
   active_resource$injects %<<% list(any_dependencies_modified = any_modified)
 
+  ## We will create a stack data structure to keep track of currently
+  ## processed resources. Recall that `director_state` is an environment within
+  ## the director package namespace that is used to explicitly represent
+  ## state global to the R session.
   if (!base::exists("dependency_stack", envir = director_state)) {
+    ## The "shtack" is defined in utils.R
     director_state$dependency_stack <- shtack$new()
   }
 
@@ -201,8 +213,6 @@ begin_tracking_dependencies <- function(active_resource) {
     director_state$dependency_stack$push(
       dependency(nesting_level, active_resource$resource$name)
     )
-  } else {
-    director_state$dependency_stack$clear()
   }
   director_state$dependency_nesting_level <- nesting_level + 1
 }
