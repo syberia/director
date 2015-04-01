@@ -54,7 +54,7 @@ preprocessor <- function(object, ..., parse. = TRUE) {
   if (is.null(route)) {
     object$preprocessed <- default_preprocessor(object) 
   } else {
-    object$preprocessed <- apply_preprocessor_route(object, route)
+    object$preprocessed <- apply_preprocessor_route(object, route, ...)
   }
 
   if (isTRUE(parse.)) {
@@ -81,31 +81,33 @@ default_preprocessor <- function(active_resource) {
   ) %<<% list(source_env = source_env)
 
   list(
-    value               = default_preprocessor(filename),
+    value               = default_preprocessor_fn(active_resource$injects$filename),
     preprocessor_output = new.env(parent = emptyenv())
   )
 }
 
-apply_preprocessor_route <- function(active_resource, route) {
-  object$state$preprocessor.source_env <- new.env(parent = object$injects)
+apply_preprocessor_route <- function(active_resource, route, ...) {
+  director <- active_resource$resource$director
+
+  active_resource$state$preprocessor.source_env <- new.env(parent = active_resource$injects)
 
   preprocessor_output <- new.env(parent = emptyenv())
   fn <- director$preprocessor(route)
-  environment(fn) <- new.env(parent = environment(fn)) %<<% object$injects %<<% list(
+  environment(fn) <- new.env(parent = environment(fn)) %<<% active_resource$injects %<<% list(
     # TODO: (RK) Intersect with preprocessor formals.
     # TODO: (RK) Use alist so these aren't evaluated right away.
-     resource = object$resource$name,
+     resource = active_resource$resource$name,
      director = director,
-     filename = filename,
      args = list(...),
-     source_env = object$state$preprocessor.source_env,
+     source_env = active_resource$state$preprocessor.source_env,
      source = function() eval.parent(quote(base::source(filename, source_env)$value)),
      preprocessor_output = preprocessor_output,
      "%||%" = function(x, y) if (is.null(x)) y else x
   )
 
-  object$preprocessed <- list(
+  list(
     value = fn(),
     preprocessor_output = preprocessor_output
   )
 }
+
