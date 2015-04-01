@@ -58,10 +58,15 @@
 #'   stopifnot(!identical(sr, sr3)) # A new runner, with hardly any work!
 #' }
 caching_layer <- function(object, ..., recompile. = FALSE) {
-  caching_enabled <- any_is_substring_of(object$resource$name,
-    object$resource$director$cached_resources())
+  # Ideally, caching should be as smart as preprocessor/parser routing
+  # but this is a cheap way to do it now.
+  caching_enabled <- any_is_substring_of(
+    object$resource$name,
+    object$resource$director$cached_resources()
+  )
 
   if (!caching_enabled) {
+    ## We skip the caching layer completely if this is not a cached resource.
     yield()
   } else {
     ## If this resource has been parsed before but any of its dependencies
@@ -69,6 +74,8 @@ caching_layer <- function(object, ..., recompile. = FALSE) {
     is_cached <- 
       !isTRUE(recompile.) && 
       !isTRUE(object$injects$any_dependencies_modified) &&
+      ## This will exist if and only if the resource has been parsed and its
+      ## value has been stored before.
       base::exists("caching_layer.value", envir = object$state)
 
     if (is_cached) {
@@ -77,6 +84,8 @@ caching_layer <- function(object, ..., recompile. = FALSE) {
       object$injects$cache_used <- TRUE
       object$state$caching_layer.value
     } else {
+      ## Note that wrapping an expression in parentheses in R will prevent
+      ## its output from becoming [invisible](http://stackoverflow.com/questions/11653127/what-does-the-function-invisible-do).
       (object$state$caching_layer.value <- yield())
     }
   }
