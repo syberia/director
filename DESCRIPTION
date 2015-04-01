@@ -36,6 +36,7 @@ Collate:
     'resource-initialize.R'
     'director.R'
     'registry.R'
+    'resource-virtual_check.R'
     'resource.R'
     'resource_tower.R'
     'search_pattern.R'

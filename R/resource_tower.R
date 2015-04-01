@@ -20,18 +20,18 @@ process_resource <- function(resource, ...) {
     caching_layer        %>>%
     preprocessor         %>>%
     parser               
-  )(as.active_resource(resource), ...)
+  )(active_resource(resource), ...)
 }
 
 # An active resource is just a list that holds a resource,
 # but also an "injects" environment and "state", which is
 # like the equivalent of the Haskell IO monad.
-as.active_resource <- function(resource) {
-  list(
+active_resource <- function(resource) {
+  structure(class = "active_resource", list(
     resource = resource,
     injects  = new.env(parent = topenv(resource$defining_environment)),
     state    = generate_state(resource)
-  )
+  ))
 }
 
 # Generate the persistent global state for a resource.
@@ -54,22 +54,6 @@ generate_state <- function(resource) {
     state[[resource$name]] <- new.env(parent = emptyenv())
   }
   state[[resource$name]]
-}
-
-virtual_check <- function(object, ...) {
-  director <- object$resource$director
-  virtual  <- !director$exists(object$resource$name)
-  object$injects %<<% list(virtual = virtual)
-  
-  if (virtual && !director$has_preprocessor(object$resource$name)) {
-    project_name <- director$project_name()
-    stop(sprintf("Cannot find resource %s, in%s project %s.",
-      sQuote(crayon::red(object$resource$name)),
-      if (nzchar(project_name)) paste0(" ", project_name) else "",
-      sQuote(crayon::blue(director$root()))))
-  }
-
-  yield()
 }
 
 modification_tracker <- function(object, ..., modification_tracker.return = "object",

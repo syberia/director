@@ -4,7 +4,7 @@
 \alias{resource}
 \title{Fetch a resource relative to a director object.}
 \usage{
-resource(name, ..., defining_environment = parent.frame())
+resource(name, ..., defining_environment. = parent.frame())
 }
 \arguments{
 \item{name}{character. The name of the resource (i.e. R script) relative
