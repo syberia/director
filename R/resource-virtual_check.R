@@ -44,7 +44,7 @@
 #'     if (virtual) {
 #'       if (exists(mungebit, envir = getNamespace("syberiaMungebits"), inherits = FALSE)) {
 #'          # The function exists in the syberiaMungebits package.
-#'          get(mungebit, envir = getNamespace("syberiaMungebits")
+#'          get(mungebit, envir = getNamespace("syberiaMungebits")))))
 #'        } else {
 #'          stop("No mungebit called ", sQuote(resource))
 #'        }

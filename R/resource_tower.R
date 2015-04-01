@@ -56,36 +56,6 @@ generate_state <- function(resource) {
   state[[resource$name]]
 }
 
-dependency <- function(nesting_level, resource_name) {
-  structure(class = "directorDependency", list(
-    level = nesting_level, resource_name = resource_name
-  ))
-}
-
-# If recompile. = TRUE, the caching layer will always be ignored.
-caching_layer <- function(object, ..., recompile. = FALSE) {
-  caching_enabled <- any_is_substring_of(object$resource$name,
-    object$resource$director$cached_resources())
-
-  if (!caching_enabled) {
-    yield()
-  } else {
-    ## If this resource has been parsed before but any of its dependencies
-    ## have been modified, we should wipe the cache.
-    is_cached <- 
-      !isTRUE(recompile.) && 
-      !isTRUE(object$injects$any_dependencies_modified) &&
-      base::exists("caching_layer.value", envir = object$state)
-
-    if (is_cached) {
-      object$injects$cache_used <- TRUE
-      object$state$caching_layer.value
-    } else {
-      (object$state$caching_layer.value <- yield())
-    }
-  }
-}
-
 # Apply the preprocessor to a resource. If parse. = TRUE, the parser will be
 # applied as well.
 preprocessor <- function(object, ..., parse. = TRUE) {

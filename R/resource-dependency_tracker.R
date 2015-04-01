@@ -38,9 +38,13 @@
 #'    The last (default) choice, \code{"object"}, will return the parsed
 #'    resource's value as usual by proceeding with the resource parsing
 #'    tower.
-#' @seealso \code{\link{active_resource}}
+#' @seealso \code{\link{active_resource}}, \code{\link{resource_caching}}
 #' @return The parsed resource.
-#' @note The parameters must be named \code{object} and \code{...} due to
+#' @note The local \code{any_dependencies_modified} rarely needs to be
+#'    used by a preprocessor or parser. You should usually use 
+#'    \code{resource caching} instead.
+#'
+#'    The parameters must be named \code{object} and \code{...} due to
 #'    this method's inclusion in a \code{\link{tower}}.
 #' @examples
 #' \dontrun{
@@ -90,7 +94,7 @@
 #'     # stageRunner.
 #'     director$cache_set("last_runner", runner)
 #'     runner
-#'   }
+#'   })
 #'
 #'   sr  <- d$resource("runners/project1") # A fresh new stageRunner!
 #'   sr2 <- d$resource("runners/project1") # Same one, since it used the cache.
@@ -171,4 +175,10 @@ dependency_tracker <- function(object, ..., dependency_tracker.return = "object"
   }
   
   value
+}
+
+dependency <- function(nesting_level, resource_name) {
+  structure(class = "directorDependency", list(
+    level = nesting_level, resource_name = resource_name
+  ))
 }

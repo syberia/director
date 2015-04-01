@@ -53,7 +53,11 @@ The local \code{dependencies}, a character vector of (recursive)
 dependencies is also injected.
 }
 \note{
-The parameters must be named \code{object} and \code{...} due to
+The local \code{any_dependencies_modified} rarely needs to be
+   used by a preprocessor or parser. You should usually use
+   \code{resource caching} instead.
+
+   The parameters must be named \code{object} and \code{...} due to
    this method's inclusion in a \code{\link{tower}}.
 }
 \examples{
@@ -103,7 +107,7 @@ The parameters must be named \code{object} and \code{...} due to
     # stageRunner.
     director$cache_set("last_runner", runner)
     runner
-  }
+  })
 
   sr  <- d$resource("runners/project1") # A fresh new stageRunner!
   sr2 <- d$resource("runners/project1") # Same one, since it used the cache.
@@ -120,6 +124,6 @@ The parameters must be named \code{object} and \code{...} due to
 }
 }
 \seealso{
-\code{\link{active_resource}}
+\code{\link{active_resource}}, \code{\link{resource_caching}}
 }
 
