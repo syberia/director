@@ -1,3 +1,4 @@
+## Take a look at virtual_checker.R prior to reading this file.
 #' Detect modifications to a resource.
 #'
 #' The \code{modification_tracker} is responsible for determining whether
@@ -23,6 +24,13 @@
 #' @param object active_resource. See \code{\link{active_resource}}.
 #' @param ... additional parameters to pass to the next layer in the resource
 #'    parsing tower.
+## The incorporation of these parameters is a little suspect, but I saw no
+## no other way to retain the elegance and composability of the tower
+## abstraction while providing the ability to fetch information from
+## "halfway down the stream." 
+##
+## A possible alternative is to implement the equivalent of Scala's "Breaks"
+## by exploiting the R condition system.
 #' @param modification_tracker.return character. What to return in this layer
 #'    of the parsing tower. The options are \code{c("modified", "object")}.
 #'
@@ -96,52 +104,95 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
                                  modification_tracker.touch = TRUE) {
   director <- object$resource$director
 
+  ## We injected `virtual` in the previous layer, `virtual_checker`, using 
+  ## `object$injects %<<% list(virtual = virtual)`
   if (isTRUE(object$injects$virtual)) {
     ## Virtual resources are always considered to be modified, since we have
-    ## no way to tell.
+    ## have no corresponding file and we have no way to tell.
     object$injects %<<% list(modified = TRUE)
     yield()
   } else {
+    ## In order to keep track of whether the resource has been modified,
+    ## we will need to store the previous and current modification time
+    ## and compare them to see if anything has changed.
+    ##
+    ## To this end, we make use of a `sized_queue`, a queue (in this
+    ## case of length 2) where pushing a new element pops off the last
+    ## if there are more than 2. This may seem extravagant, but will
+    ## make it trivial to extend director to keep track of longer modification
+    ## histories if we ever need to do so.
+    ##
+    ## We use `base::exists` instead of `exists` to make it clear we are
+    ## not calling `exists` on the `director` object.
     if (!base::exists("modification_tracker.queue", envir = object$state)) {
       object$state$modification_tracker.queue <- sized_queue(size = 2)
     }
 
-    if (Sys.time() > object$state$modification_tracker.queue$get(1) %||% 0) {
-      # Directory modification is only defined as adding files.
-      filename <- director$filename(object$resource$name,
-                                    absolute = TRUE, enclosing = TRUE)
-      if (is.idempotent_directory(filename)) {
-        files <- c(filename, get_helpers(filename, full.names = TRUE, leave_idempotent = TRUE))
-        mtime <- max(file.info(files)$mtime, na.rm = TRUE)
-      } else {
-        mtime <- file.info(filename)$mtime
-      }
-    } else {
-      # The current timestamp is <= the last modified time, so nothing could
-      # have possibly changed yet.
-      mtime <- object$state$modification_tracker.queue$get(1)
-    }
+    mtime <- determine_last_modified_time(object)
 
+    ## The `modification_tracker.touch` argument says we would like to
+    ## explicitly modify the allocated queue of modification times.
+    ## This means that we will have to wait until the resource's file changes
+    ## again to mark it as modified.
     if (isTRUE(modification_tracker.touch)) {
       object$state$modification_tracker.queue$push(mtime)
-      modified <- function() {
-        ## A resource has been modified if its modification time has changed. 
-        !do.call(identical, lapply(seq(2), object$state$modification_tracker.queue$get))
-      }
+      ## In this case, a resource has been modified if its modification time
+      ## is not the same as last time, i.e., the first and second element in
+      ## the queue are not identical.
+      modified <- !do.call(identical,
+        lapply(seq(2), object$state$modification_tracker.queue$get)
+      )
     } else {
-      modified <- function() { !identical(object$state$modification_tracker.queue$get(1), mtime) }
+      modified <- !identical(object$state$modification_tracker.queue$get(1), mtime)
     }
 
-    object$injects %<<% list(modified = modified())
+    # Ferry whether or not the resource has been modified to the preprocessor
+    # and parser down the stream.
+    object$injects %<<% list(modified = modified)
 
     if (identical(modification_tracker.return, "modified")) {
       object$injects$modified
     } else if (identical(modification_tracker.return, "mtime")) {
-      object$state$modification_tracker.queue$get(1)
+      mtime
     } else {
       yield()
     }
-    # TODO: (RK) Set any_dependencies_modified on exit
   }
+}
+
+determine_last_modified_time <- function(active_resource) {
+  director <- active_resource$resource$director
+
+  ## It only makes sense to check for modifications (and thus query the
+  ## file system) if the current time is later than the last modification
+  ## time--otherwise, the file could not possibly have been updated yet.
+  ##
+  ## The operator `%|||%` is defined in utils.R and means "if the former 
+  ## argument is `NULL` or `NA`, use the latter instead."
+  if (Sys.time() > active_resource$state$modification_tracker.queue$get(1) %|||% 0) {
+    ## We use the `director$filename` method to obtain the file associated
+    ## with the resource. By setting `enclosing = TRUE`, we ensure that
+    ## in the case of idempotent resources this will be directory instead
+    ## of the .R file (e.g. "foo" instead of "foo/foo.R").
+    filename <- director$filename(active_resource$resource$name,
+                                  absolute = TRUE, enclosing = TRUE)
+    if (is.idempotent_directory(filename)) {
+      ## We use the `get_helpers` function in utils.R to get all
+      ## the helper files. If the resource file ("foo/foo.R") or its
+      ## helpers ("foo/helper.R", etc) have been modified, it will be
+      ## reflected in the maximum of their modification times.
+      files <- c(filename, get_helpers(filename, full.names = TRUE, leave_idempotent = TRUE))
+      mtime <- max(file.info(files)$mtime, na.rm = TRUE)
+    } else {
+      mtime <- file.info(filename)$mtime
+    }
+  } else {
+    ## In this case, the current timestamp is <= the last modified time,
+    ## so nothing could have possibly changed yet. We use the cached
+    ## modification time from the queue defined earlier.
+    mtime <- active_resource$state$modification_tracker.queue$get(1)
+  }
+
+  mtime
 }
 
