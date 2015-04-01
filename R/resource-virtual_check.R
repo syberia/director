@@ -17,7 +17,7 @@
 #'
 #' @name virtual resource
 #' @aliases virtual_check
-#' @param object active_resource.
+#' @param object active_resource. See \code{\link{active_resource}}.
 #' @param ... additional parameters to pass to the next layer in the resource
 #'    parsing tower.
 #' @seealso \code{\link{active_resource}}

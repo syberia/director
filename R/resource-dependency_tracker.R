@@ -1,23 +1,20 @@
-#' Detect modifications to a resource.
+#' Track the dependencies of a resource.
 #'
-#' The \code{modification_tracker} is responsible for determining whether
-#' any changes have been made to the file(s) associated to the given
-#' resource.
+#' Virtual resources are those that are not recorded as a .R file. Instead,
+#' the resource's value must be computed using a preprocessor.
 #'
-#' If a modification has been detected, the local \code{modified}
-#' will be injected for use in the preprocessor or parser for the resource.
+#' For example, imagine we have a directory of resources where some of the
+#' resources have been re-factored into a package. We would still like to be
+#' able to turn objects from that package into proper resources, but they
+#' may no longer be encoded as files in the Syberia project.
 #'
-#' Note that we can use the \code{modification_tracker} to determine
-#' whether the resource has been modified:
+#' Instead, we could define a preprocessor that looks for those special values
+#' and uses the package objects instead.
 #'
-#' \code{director_object$resource(resource_name,
-#'   modification_tracker.touch = FALSE,
-#'   modification_tracker.return = "modified")}
-#' 
-#' The use of \code{modification_tracker.touch = FALSE} is necessary to avoid
-#' polluting the internal cache that determines whether or not the resource
-#' has been modified.
-#' 
+#' When parsing a resource, the local \code{virtual} is injected for use in
+#' the preprocessor which corresponds to whether the resource seems
+#' non-existent to the director (i.e., has no supporting .R file).
+#'
 #' @name modification tracking
 #' @aliases modification_tracker
 #' @param object active_resource. See \code{\link{active_resource}}.
@@ -92,55 +89,70 @@
 #'   sr3 <- d$resource("runners/project1") # Now it re-builds the runner.
 #'   stopifnot(!identical(sr, sr3)) # A new runner!
 #' }
-modification_tracker <- function(object, ..., modification_tracker.return = "object",
-                                 modification_tracker.touch = TRUE) {
+dependency_tracker <- function(object, ..., dependency_tracker.return = "object") {
   director <- object$resource$director
 
-  if (isTRUE(object$injects$virtual)) {
-    ## Virtual resources are always considered to be modified, since we have
-    ## no way to tell.
-    object$injects %<<% list(modified = TRUE)
-    yield()
-  } else {
-    if (!base::exists("modification_tracker.queue", envir = object$state)) {
-      object$state$modification_tracker.queue <- sized_queue(size = 2)
+  if (identical(dependency_tracker.return, "any_dependencies_modified")) {
+    dependencies <- object$state$dependency_tracker.dependencies %||% character(0)
+    modified <- object$injects$modified
+    is_modified <- function(name) {
+      object$resource$director$resource(name, modification_tracker.touch = FALSE,
+        dependency_tracker.return = "any_dependencies_modified")
     }
-
-    if (Sys.time() > object$state$modification_tracker.queue$get(1) %||% 0) {
-      # Directory modification is only defined as adding files.
-      filename <- director$filename(object$resource$name,
-                                    absolute = TRUE, enclosing = TRUE)
-      if (is.idempotent_directory(filename)) {
-        files <- c(filename, get_helpers(filename, full.names = TRUE, leave_idempotent = TRUE))
-        mtime <- max(file.info(files)$mtime, na.rm = TRUE)
-      } else {
-        mtime <- file.info(filename)$mtime
-      }
-    } else {
-      # The current timestamp is <= the last modified time, so nothing could
-      # have possibly changed yet.
-      mtime <- object$state$modification_tracker.queue$get(1)
-    }
-
-    if (isTRUE(modification_tracker.touch)) {
-      object$state$modification_tracker.queue$push(mtime)
-      modified <- function() {
-        ## A resource has been modified if its modification time has changed. 
-        !do.call(identical, lapply(seq(2), object$state$modification_tracker.queue$get))
-      }
-    } else {
-      modified <- function() { !identical(object$state$modification_tracker.queue$get(1), mtime) }
-    }
-
-    object$injects %<<% list(modified = modified())
-
-    if (identical(modification_tracker.return, "modified")) {
-      object$injects$modified
-    } else if (identical(modification_tracker.return, "mtime")) {
-      object$state$modification_tracker.queue$get(1)
-    } else {
-      yield()
-    }
-    # TODO: (RK) Set any_dependencies_modified on exit
+    return(modified || any(vapply(dependencies, is_modified, logical(1))))
+  } else if (identical(dependency_tracker.return, "dependencies")) {
+    dependencies <- object$state$dependency_tracker.dependencies %||% character(0)
+    nested_dependencies <- lapply(
+      dependencies,
+      director$resource,
+      modification_tracker.touch = FALSE,
+      dependency_tracker.return  = "dependencies"
+    )
+    # TODO: (RK) Figure out why we need unique, nested dependencies should not need it.
+    return(unique(c(recursive = TRUE, dependencies, nested_dependencies)))
   }
+
+  any_modified <- director$resource(object$resource$name,
+    dependency_tracker.return = "any_dependencies_modified",
+    modification_tracker.touch = FALSE)
+  object$injects %<<% list(any_dependencies_modified = any_modified)
+
+  if (!base::exists("dependency_stack", envir = director_state)) {
+    director_state$dependency_stack <- shtack$new()
+  }
+
+  nesting_level <- director_state$dependency_nesting_level %||% 0
+  if (nesting_level > 0L) {
+    director_state$dependency_stack$push(
+      dependency(nesting_level, object$resource$name)
+    )
+  } else {
+    director_state$dependency_stack$clear()
+  }
+  director_state$dependency_nesting_level <- nesting_level + 1
+
+  value <- yield()
+
+  director_state$dependency_nesting_level <- nesting_level
+  dependencies <- Filter(
+    function(dependency) dependency$level == nesting_level + 1, 
+    director_state$dependency_stack$peek(TRUE)
+  )
+  if (!isTRUE(object$injects$cache_used)) {
+    object$state$dependency_tracker.dependencies <-
+      vapply(dependencies, getElement, character(1), "resource_name")
+  }
+
+  # TODO: (RK) This is incorrect, figure out right dependency modification check
+  any_modified <- any(vapply(dependencies, function(d) {
+    director$resource(d$resource_name, modification_tracker.touch = FALSE,
+                   modification_tracker.return = "modified")
+  }, logical(1)))
+
+  while (!director_state$dependency_stack$empty() &&
+         director_state$dependency_stack$peek()$level == nesting_level + 1) {
+    director_state$dependency_stack$pop()
+  }
+  
+  value
 }

@@ -8,7 +8,7 @@
 virtual_check(object, ...)
 }
 \arguments{
-\item{object}{active_resource.}
+\item{object}{active_resource. See \code{\link{active_resource}}.}
 
 \item{...}{additional parameters to pass to the next layer in the resource
 parsing tower.}
