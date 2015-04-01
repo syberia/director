@@ -39,6 +39,7 @@ Collate:
     'resource-caching_layer.R'
     'resource-dependency_tracker.R'
     'resource-modification_tracker.R'
+    'resource-preprocessor.R'
     'resource-virtual_check.R'
     'resource.R'
     'resource_tower.R'
