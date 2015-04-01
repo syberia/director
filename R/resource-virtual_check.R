@@ -63,17 +63,30 @@
 #' }
 virtual_check <- function(object, ...) {
   director <- object$resource$director
+
+  ## An object is considered to be "virtual" if it has no corresponding file,
+  ## that is, the director object cannot find a resource by that name.
   virtual  <- !director$exists(object$resource$name)
+    
+  ## Since `object$injects` is an environment, this is equivalent to
+  ## `object$injects$virtual <- virtual`, but this notation is clearer as it
+  ## is stylistically similar to the later layers in the resource parsing tower
+  ## where multiple values are injected simultaneously.
   object$injects %<<% list(virtual = virtual)
   
+
+  ## If a resource is virtual but has no preprocessor, we cannot possibly
+  ## parse it, as the default preprocessor is simply sourcing the file 
+  ## corresponding to the resource.
   if (virtual && !director$has_preprocessor(object$resource$name)) {
     project_name <- director$project_name()
-    stop(sprintf("Cannot find resource %s, in%s project %s.",
+    stop(sprintf("Cannot find resource %s in%s project %s.",
       sQuote(crayon::red(object$resource$name)),
       if (nzchar(project_name)) paste0(" ", project_name) else "",
       sQuote(crayon::blue(director$root()))))
   }
 
+  ## See tower.R for an explanation of `yield`.
   yield()
 }
 
