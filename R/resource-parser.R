@@ -21,22 +21,28 @@ parser <- function(object, ...) {
     # Use the default parser, just grab the value.
     object <- object$preprocessed$value
   } else {
-    fn <- director$parser(route)
-    environment(fn) <- new.env(parent = environment(fn)) %<<% list(
-      # TODO: (RK) Intersect with parser formals.
-      # TODO: (RK) Use alist so these aren't evaluated right away.
-       resource = object$resource$name,
-       input = object$state$preprocessor.source_env,
-       output = object$preprocessed$value,
-       director = director,
-       preprocessor_output = object$preprocessed$preprocessor_output,
-       filename = object$state$filename,
-       args = list(...),
-       "%||%" = function(x, y) if (is.null(x)) y else x
-    )
-    object <- fn()
+    object <- apply_parser(object, route, ...)
   }
 
   yield()
+}
+
+apply_parser <- function(active_resource, route, ...) {
+  director <- active_resource$resource$director
+
+  parser_function <- director$parser(route)
+  environment(parser_function) <- new.env(parent = environment(parser_function)) %<<% list(
+    # TODO: (RK) Intersect with parser formals.
+    # TODO: (RK) Use alist so these aren't evaluated right away.
+     resource = active_resource$resource$name,
+     input = active_resource$state$preprocessor.source_env,
+     output = active_resource$preprocessed$value,
+     director = director,
+     preprocessor_output = active_resource$preprocessed$preprocessor_output,
+     filename = active_resource$state$filename,
+     args = list(...),
+     "%||%" = function(x, y) if (is.null(x)) y else x
+  )
+  parser_function()
 }
 
