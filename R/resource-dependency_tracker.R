@@ -257,10 +257,15 @@ stop_tracking_dependencies <- function(active_resource) {
       vapply(dependencies, getElement, character(1), "resource_name")
   }
 
+  ## This is after all a dependency *stack*. We can remove all the
+  ## dependencies of this resource by popping those with the current
+  ## nesting level. Those with higher nesting levels will have been
+  ## recursively popped off already.
   while (!director_state$dependency_stack$empty() &&
          director_state$dependency_stack$peek()$level == nesting_level) {
     director_state$dependency_stack$pop()
   }
 
+  ## And we're back, cap'n.
   director_state$dependency_nesting_level <- nesting_level - 1
 }
