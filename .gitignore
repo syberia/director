@@ -3,5 +3,8 @@ vignettes/*.html
 vignettes/*.md
 *.zip
 
+\.o$
+\.so$
+
 \.Rcheck
 \.tar\.gz$
