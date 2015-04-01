@@ -208,8 +208,18 @@ begin_tracking_dependencies <- function(active_resource) {
     director_state$dependency_stack <- shtack$new()
   }
 
+  ## The `nesting_level` will keep track of how far down the "resource
+  ## call stack" we are. Every time we process a resource while amidst
+  ## the processing of a parent resource, this number will get
+  ## incremented by one.
   nesting_level <- director_state$dependency_nesting_level %||% 0
   if (nesting_level > 0L) {
+    ## If this is not a top-level resource (i.e., one called directly
+    ## using `director$resource` rather than from another resource),
+    ## push this dependency onto the stack.
+    ##
+    ## We do not need to push top-level resources onto the stack
+    ## since they aren't anyone's dependency!
     director_state$dependency_stack$push(
       dependency(nesting_level, active_resource$resource$name)
     )
