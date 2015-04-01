@@ -16,7 +16,7 @@
 #' non-existent to the director (i.e., has no supporting .R file).
 #'
 #' @name virtual resource
-#' @aliases virtual_check, virtual resources
+#' @aliases virtual_check
 #' @param object active_resource.
 #' @param ... additional parameters to pass to the next layer in the resource
 #'    parsing tower.
