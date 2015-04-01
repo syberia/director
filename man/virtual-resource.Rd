@@ -39,6 +39,9 @@ The parameters must be named \code{object} and \code{...} due to
 }
 \examples{
 \dontrun{
+  # We will use the example of a syberia project.
+  # See github.com/robertzk/syberia.
+
   # lib/mungebits has imputer.R and no other files, but the package
   # syberiaMungebits has more mungebits. We can define the following
   # preprocessor.

@@ -56,59 +56,6 @@ generate_state <- function(resource) {
   state[[resource$name]]
 }
 
-modification_tracker <- function(object, ..., modification_tracker.return = "object",
-                                 modification_tracker.touch = TRUE) {
-  director <- object$resource$director
-
-  if (isTRUE(object$injects$virtual)) {
-    ## Virtual resources are always considered to be modified, since we have
-    ## no way to tell.
-    object$injects %<<% list(modified = TRUE)
-    yield()
-  } else {
-    if (!base::exists("modification_tracker.queue", envir = object$state)) {
-      object$state$modification_tracker.queue <- sized_queue(size = 2)
-    }
-
-    if (Sys.time() > object$state$modification_tracker.queue$get(1) %||% 0) {
-      # Directory modification is only defined as adding files.
-      filename <- director$filename(object$resource$name,
-                                    absolute = TRUE, enclosing = TRUE)
-      if (is.idempotent_directory(filename)) {
-        files <- c(filename, get_helpers(filename, full.names = TRUE, leave_idempotent = TRUE))
-        mtime <- max(file.info(files)$mtime, na.rm = TRUE)
-      } else {
-        mtime <- file.info(filename)$mtime
-      }
-    } else {
-      # The current timestamp is <= the last modified time, so nothing could
-      # have possibly changed yet.
-      mtime <- object$state$modification_tracker.queue$get(1)
-    }
-
-    if (isTRUE(modification_tracker.touch)) {
-      object$state$modification_tracker.queue$push(mtime)
-      modified <- function() {
-        ## A resource has been modified if its modification time has changed. 
-        !do.call(identical, lapply(seq(2), object$state$modification_tracker.queue$get))
-      }
-    } else {
-      modified <- function() { !identical(object$state$modification_tracker.queue$get(1), mtime) }
-    }
-
-    object$injects %<<% list(modified = modified())
-
-    if (identical(modification_tracker.return, "modified")) {
-      object$injects$modified
-    } else if (identical(modification_tracker.return, "mtime")) {
-      object$state$modification_tracker.queue$get(1)
-    } else {
-      yield()
-    }
-    # TODO: (RK) Set any_dependencies_modified on exit
-  }
-}
-
 dependency_tracker <- function(object, ..., dependency_tracker.return = "object") {
   director <- object$resource$director
 
