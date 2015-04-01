@@ -117,6 +117,18 @@ dependency_tracker <- function(object, ..., dependency_tracker.return = "object"
   } else if (identical(dependency_tracker.return, "dependencies")) {
     dependencies(object)
   } else {
+    ## While a resource is being sourced it can reference other resources.
+    ## For example, it could use the `resource(...)` function provided in
+    ## the resource's sourcing environment. Its parser or preprocessor
+    ## could call `director$resource(...)` directly to load another
+    ## resource.
+    ##
+    ## In other words, while the execution of this resource is on the
+    ## call stack, whole swaths of other resources may be getting
+    ## processed. To "remember" what resources have been referenced
+    ## we will use some unfortunately necessary global state
+    ## in the `begin_tracking_dependencies` helper, and then 
+    ## undo our work in `stop_tracking_dependencies`.
     begin_tracking_dependencies(object)
 
     value <- yield()
