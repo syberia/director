@@ -65,7 +65,7 @@
 #'       # Construct a new stageRunner, since the file has been modified.
 #'       source()
 #'     } else { runner }
-#'   }
+#'   })
 #'
 #'   d$register_parser("runners/", function(output) {
 #'     # If it is a stageRunner, it must have been retrieved from the cache.
@@ -78,7 +78,7 @@
 #'     # stageRunner.
 #'     director$cache_set("last_runner", runner)
 #'     runner
-#'   }
+#'   })
 #'
 #'   sr  <- d$resource("runners/project1") # A fresh new stageRunner!
 #'   sr2 <- d$resource("runners/project1") # Same one, since it used the cache.

@@ -1,39 +1,43 @@
 #' Track the dependencies of a resource.
 #'
-#' Virtual resources are those that are not recorded as a .R file. Instead,
-#' the resource's value must be computed using a preprocessor.
+#' More complex resources are often built from simpler resources. It is 
+#' the responsibility of the \code{dependency_tracker} to determine
+#' whether any dependencies have been modified.
 #'
-#' For example, imagine we have a directory of resources where some of the
-#' resources have been re-factored into a package. We would still like to be
-#' able to turn objects from that package into proper resources, but they
-#' may no longer be encoded as files in the Syberia project.
+#' The \code{dependency_tracker} is very good at its job and can track
+#' arbitrarily nested dependencies (for example, if resource \code{"foo"}
+#' needs resource \code{"bar"} who needs resource \code{"baz"}, etc.).
+#' But beware! The \code{dependency_tracker} won't tolerate circular
+#' dependencies with anything except tears of anguish.
 #'
-#' Instead, we could define a preprocessor that looks for those special values
-#' and uses the package objects instead.
+#' The local \code{any_dependencies_modified} is injected by the 
+#' \code{dependency_tracker} for use in the preprocessor or parser
+#' of a resource. Note this is based off the dependencies \emph{last time}
+#' the resource was executed, since it is impossible to know a priori
+#' what the dependencies will be prior to sourcing the resource's file.
 #'
-#' When parsing a resource, the local \code{virtual} is injected for use in
-#' the preprocessor which corresponds to whether the resource seems
-#' non-existent to the director (i.e., has no supporting .R file).
+#' The local \code{dependencies}, a character vector of (recursive)
+#' dependencies is also injected.
 #'
-#' @name modification tracking
-#' @aliases modification_tracker
+#' @name dependency tracking
+#' @aliases dependency_tracker
 #' @param object active_resource. See \code{\link{active_resource}}.
 #' @param ... additional parameters to pass to the next layer in the resource
 #'    parsing tower.
-#' @param modification_tracker.return character. What to return in this layer
-#'    of the parsing tower. The options are \code{c("modified", "object")}.
+#' @param dependency_tracker.return. What to return in this layer
+#'    of the parsing tower. The options are \code{"dependencies"},
+#'    \code{"any_dependencies_modified"}, and \code{"object"}.
+#'  
+#'    The former returns the list of recursive dependencies of the resource,
+#'    as of last time the resource was executed.
+#'   
+#'    Choosing \code{"any_dependencies_modified"} will answer whether any
+#'    of the files associated with the dependencies, \emph{or the resource
+#'    itself}, have been modified.
 #'
-#'    The former returns whether or not the file associated with the resource
-#'    has been modified (or in the case of idempotent resources, the file and
-#'    its helpers). The resource itself will not be parsed.
-#'
-#'    The latter, \code{"object"}, will parse the resource as usual. This is
-#'    the default.
-#' @param modification_tracker.touch logical. Whether or not to update an
-#'    internal cache that keeps track of last time the resource is modified.
-#'    This is an internal parameter that is set to \code{FALSE} by recursive
-#'    calls to \code{director$resource} to avoid polluting the modification
-#'    cache while investigating dependency changes. The default is \code{TRUE}.
+#'    The last (default) choice, \code{"object"}, will return the parsed
+#'    resource's value as usual by proceeding with the resource parsing
+#'    tower.
 #' @seealso \code{\link{active_resource}}
 #' @return The parsed resource.
 #' @note The parameters must be named \code{object} and \code{...} due to
@@ -53,16 +57,27 @@
 #'     "export model" = resource("exporters/file")  # files.
 #'   )
 #'
+#'   #=== /dir/importers/db.R ===
+#'   conn <- resource("connections/dev") # A list representing a connection
+#'     # setting to a development database.
+#'   DBI::dbReadTable(conn, "some_table")
+#'
+#'   #=== /dir/connections/dev.R
+#    # Some file that sets up and returns a database connection.
+#'
 #'   #=== R console ===
 #'   d <- director("/dir") # Create a director object.
-#'   d$register_preprocessor("runners/", function(director, source, modified) {
-#'     # `modified` has been set by the modification_tracker to
-#'     # TRUE or FALSE according as /dir/runners/project1.R has been modified.
-#'     if (modified || is.null(runner <- director$cache_get("last_runner"))) {
-#'       # Construct a new stageRunner, since the file has been modified.
-#'       source()
-#'     } else { runner }
-#'   }
+#'   d$register_preprocessor("runners/",
+#'     function(director, source, any_dependencies_modified) {
+#'       # `any_dependencies_modified` has been set by the dependency_tracker to
+#'       # TRUE or FALSE according as /dir/runners/project1.R *or any of its
+#'       # dependencies* has been modified.
+#'       if (any_dependencies_modified ||
+#'           is.null(runner <- director$cache_get("last_runner"))) {
+#'         # Construct a new stageRunner, since a dependency has been modified.
+#'         source()
+#'       } else { runner }
+#'   })
 #'
 #'   d$register_parser("runners/", function(output) {
 #'     # If it is a stageRunner, it must have been retrieved from the cache.
@@ -82,8 +97,9 @@
 #'   stopifnot(identical(sr, sr2))
 #'
 #'   # We can use base::Sys.setFileTime to pretend like we updated the
-#'   # modified time of the project1.R file, triggering `modified = TRUE`.
-#'   Sys.setFileTime(file.path(d$root(), "runners", "project1.R"),
+#'   # modified time of the /dir/connections/dev.R file, triggering
+#'   # `any_dependencies_modified = TRUE`.
+#'   Sys.setFileTime(file.path(d$root(), "connections", "dev.R"),
 #'     Sys.time() - as.difftime(1, units = "mins"))
 #'
 #'   sr3 <- d$resource("runners/project1") # Now it re-builds the runner.
