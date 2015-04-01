@@ -117,50 +117,12 @@ dependency_tracker <- function(object, ..., dependency_tracker.return = "object"
   } else if (identical(dependency_tracker.return, "dependencies")) {
     dependencies(object)
   } else {
-    director <- object$resource$director
-
-    any_modified <- director$resource(object$resource$name,
-      dependency_tracker.return = "any_dependencies_modified",
-      modification_tracker.touch = FALSE)
-    object$injects %<<% list(any_dependencies_modified = any_modified)
-
-    if (!base::exists("dependency_stack", envir = director_state)) {
-      director_state$dependency_stack <- shtack$new()
-    }
-
-    nesting_level <- director_state$dependency_nesting_level %||% 0
-    if (nesting_level > 0L) {
-      director_state$dependency_stack$push(
-        dependency(nesting_level, object$resource$name)
-      )
-    } else {
-      director_state$dependency_stack$clear()
-    }
-    director_state$dependency_nesting_level <- nesting_level + 1
+    begin_tracking_dependencies(object)
 
     value <- yield()
-
-    director_state$dependency_nesting_level <- nesting_level
-    dependencies <- Filter(
-      function(dependency) dependency$level == nesting_level + 1, 
-      director_state$dependency_stack$peek(TRUE)
-    )
-    if (!isTRUE(object$injects$cache_used)) {
-      object$state$dependency_tracker.dependencies <-
-        vapply(dependencies, getElement, character(1), "resource_name")
-    }
-
-    # TODO: (RK) This is incorrect, figure out right dependency modification check
-    any_modified <- any(vapply(dependencies, function(d) {
-      director$resource(d$resource_name, modification_tracker.touch = FALSE,
-                     modification_tracker.return = "modified")
-    }, logical(1)))
-
-    while (!director_state$dependency_stack$empty() &&
-           director_state$dependency_stack$peek()$level == nesting_level + 1) {
-      director_state$dependency_stack$pop()
-    }
     
+    stop_tracking_dependencies(object)
+
     value
   }
 }
@@ -209,3 +171,53 @@ dependencies <- function(active_resource) {
   unique(c(recursive = TRUE, dependencies, nested_dependencies))
 }
 
+## This function is purely used for its side effects.
+begin_tracking_dependencies <- function(active_resource) {
+  director <- active_resource$resource$director
+
+  any_modified <- director$resource(active_resource$resource$name,
+    dependency_tracker.return = "any_dependencies_modified",
+    modification_tracker.touch = FALSE)
+  active_resource$injects %<<% list(any_dependencies_modified = any_modified)
+
+  if (!base::exists("dependency_stack", envir = director_state)) {
+    director_state$dependency_stack <- shtack$new()
+  }
+
+  nesting_level <- director_state$dependency_nesting_level %||% 0
+  if (nesting_level > 0L) {
+    director_state$dependency_stack$push(
+      dependency(nesting_level, active_resource$resource$name)
+    )
+  } else {
+    director_state$dependency_stack$clear()
+  }
+  director_state$dependency_nesting_level <- nesting_level + 1
+}
+
+stop_tracking_dependencies <- function(active_resource) {
+  director <- active_resource$resource$director
+
+  nesting_level <- director_state$dependency_nesting_level
+  dependencies <- Filter(
+    function(dependency) dependency$level == nesting_level, 
+    director_state$dependency_stack$peek(TRUE)
+  )
+  if (!isTRUE(active_resource$injects$cache_used)) {
+    active_resource$state$dependency_tracker.dependencies <-
+      vapply(dependencies, getElement, character(1), "resource_name")
+  }
+
+  # TODO: (RK) This is incorrect, figure out right dependency modification check
+  any_modified <- any(vapply(dependencies, function(d) {
+    director$resource(d$resource_name, modification_tracker.touch = FALSE,
+                   modification_tracker.return = "modified")
+  }, logical(1)))
+
+  while (!director_state$dependency_stack$empty() &&
+         director_state$dependency_stack$peek()$level == nesting_level) {
+    director_state$dependency_stack$pop()
+  }
+
+  director_state$dependency_nesting_level <- nesting_level - 1
+}
