@@ -1,4 +1,4 @@
-## Take a look at virtual_checker.R prior to reading this file.
+## Take a look at resource-virtual_checker.R prior to reading this file.
 #' Detect modifications to a resource.
 #'
 #' The \code{modification_tracker} is responsible for determining whether

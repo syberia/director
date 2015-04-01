@@ -1,3 +1,5 @@
+## Before reading this file, you should probably take a look at
+## resource-modification_tracker.R.
 #' Track the dependencies of a resource.
 #'
 #' More complex resources are often built from simpler resources. It is 
@@ -110,76 +112,100 @@
 #'   stopifnot(!identical(sr, sr3)) # A new runner!
 #' }
 dependency_tracker <- function(object, ..., dependency_tracker.return = "object") {
-  director <- object$resource$director
-
   if (identical(dependency_tracker.return, "any_dependencies_modified")) {
-    dependencies <- object$state$dependency_tracker.dependencies %||% character(0)
-    modified <- object$injects$modified
-    is_modified <- function(name) {
-      object$resource$director$resource(name, modification_tracker.touch = FALSE,
-        dependency_tracker.return = "any_dependencies_modified")
-    }
-    return(modified || any(vapply(dependencies, is_modified, logical(1))))
+    any_dependencies_modified(object)
   } else if (identical(dependency_tracker.return, "dependencies")) {
-    dependencies <- object$state$dependency_tracker.dependencies %||% character(0)
-    nested_dependencies <- lapply(
-      dependencies,
-      director$resource,
-      modification_tracker.touch = FALSE,
-      dependency_tracker.return  = "dependencies"
-    )
-    # TODO: (RK) Figure out why we need unique, nested dependencies should not need it.
-    return(unique(c(recursive = TRUE, dependencies, nested_dependencies)))
-  }
-
-  any_modified <- director$resource(object$resource$name,
-    dependency_tracker.return = "any_dependencies_modified",
-    modification_tracker.touch = FALSE)
-  object$injects %<<% list(any_dependencies_modified = any_modified)
-
-  if (!base::exists("dependency_stack", envir = director_state)) {
-    director_state$dependency_stack <- shtack$new()
-  }
-
-  nesting_level <- director_state$dependency_nesting_level %||% 0
-  if (nesting_level > 0L) {
-    director_state$dependency_stack$push(
-      dependency(nesting_level, object$resource$name)
-    )
+    dependencies(object)
   } else {
-    director_state$dependency_stack$clear()
+    director <- object$resource$director
+
+    any_modified <- director$resource(object$resource$name,
+      dependency_tracker.return = "any_dependencies_modified",
+      modification_tracker.touch = FALSE)
+    object$injects %<<% list(any_dependencies_modified = any_modified)
+
+    if (!base::exists("dependency_stack", envir = director_state)) {
+      director_state$dependency_stack <- shtack$new()
+    }
+
+    nesting_level <- director_state$dependency_nesting_level %||% 0
+    if (nesting_level > 0L) {
+      director_state$dependency_stack$push(
+        dependency(nesting_level, object$resource$name)
+      )
+    } else {
+      director_state$dependency_stack$clear()
+    }
+    director_state$dependency_nesting_level <- nesting_level + 1
+
+    value <- yield()
+
+    director_state$dependency_nesting_level <- nesting_level
+    dependencies <- Filter(
+      function(dependency) dependency$level == nesting_level + 1, 
+      director_state$dependency_stack$peek(TRUE)
+    )
+    if (!isTRUE(object$injects$cache_used)) {
+      object$state$dependency_tracker.dependencies <-
+        vapply(dependencies, getElement, character(1), "resource_name")
+    }
+
+    # TODO: (RK) This is incorrect, figure out right dependency modification check
+    any_modified <- any(vapply(dependencies, function(d) {
+      director$resource(d$resource_name, modification_tracker.touch = FALSE,
+                     modification_tracker.return = "modified")
+    }, logical(1)))
+
+    while (!director_state$dependency_stack$empty() &&
+           director_state$dependency_stack$peek()$level == nesting_level + 1) {
+      director_state$dependency_stack$pop()
+    }
+    
+    value
   }
-  director_state$dependency_nesting_level <- nesting_level + 1
-
-  value <- yield()
-
-  director_state$dependency_nesting_level <- nesting_level
-  dependencies <- Filter(
-    function(dependency) dependency$level == nesting_level + 1, 
-    director_state$dependency_stack$peek(TRUE)
-  )
-  if (!isTRUE(object$injects$cache_used)) {
-    object$state$dependency_tracker.dependencies <-
-      vapply(dependencies, getElement, character(1), "resource_name")
-  }
-
-  # TODO: (RK) This is incorrect, figure out right dependency modification check
-  any_modified <- any(vapply(dependencies, function(d) {
-    director$resource(d$resource_name, modification_tracker.touch = FALSE,
-                   modification_tracker.return = "modified")
-  }, logical(1)))
-
-  while (!director_state$dependency_stack$empty() &&
-         director_state$dependency_stack$peek()$level == nesting_level + 1) {
-    director_state$dependency_stack$pop()
-  }
-  
-  value
 }
 
 dependency <- function(nesting_level, resource_name) {
   structure(class = "directorDependency", list(
-    level = nesting_level, resource_name = resource_name
+    level = nesting_level,
+    resource_name = resource_name
   ))
+}
+
+any_dependencies_modified <- function(active_resource) {
+  ## If the resource has ever been parsed before, we will remember
+  ## its dependencies in `state$dependency_tracker.dependencies`
+  ## (as a character vector of resource names).
+  dependencies <- active_resource$state$dependency_tracker.dependencies %||% character(0)
+
+  ## Recall that the `modified` local was injected back in the
+  ## `modification_tracker`.
+  modified <- active_resource$injects$modified
+
+  ## We recursively determine if this resource or any of its dependencies
+  ## have been modified.
+  is_modified <- function(name) {
+    ## We have to set `modification_tracker.touch = FALSE` to not disturb
+    ## the `modification_tracker.queue` -- this is a read-only operation
+    ## and should not update any cached modification times!
+    active_resource$resource$director$resource(name, modification_tracker.touch = FALSE,
+      dependency_tracker.return = "any_dependencies_modified")
+  }
+  modified || any(vapply(dependencies, is_modified, logical(1)))
+}
+
+dependencies <- function(active_resource) {
+  dependencies <- active_resource$state$dependency_tracker.dependencies %||% character(0)
+
+  nested_dependencies <- lapply(
+    dependencies,
+    active_resource$resource$director$resource,
+    modification_tracker.touch = FALSE,
+    dependency_tracker.return  = "dependencies"
+  )
+  
+  # Some resources may depend on the same dependencies, so we `unique`
+  # at the end to jiggle those away.
+  unique(c(recursive = TRUE, dependencies, nested_dependencies))
 }
 
