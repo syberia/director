@@ -230,12 +230,29 @@ begin_tracking_dependencies <- function(active_resource) {
 stop_tracking_dependencies <- function(active_resource) {
   director <- active_resource$resource$director
 
+  ## Recall the nesting level from `start_dependency_tracker`.
+  ## It has been incremented by one until this method finishes.
   nesting_level <- director_state$dependency_nesting_level
+
+  ## This is the key to determining a resource's immediate
+  ## (as opposed to recursive) dependencies. Say we have
+  ## "foo" which calls "bar" whichs calls "baz". The
+  ## nesting level will get incremented once during the execution
+  ## of "bar" and once again during "baz".
+  ##
+  ## Thus, we can tell "bar" is an immediate direct dependency
+  ## of "foo" which "baz" is an implicit dependency through "bar"
+  ## by noting the nesting level.
   dependencies <- Filter(
     function(dependency) dependency$level == nesting_level, 
-    director_state$dependency_stack$peek(TRUE)
+    director_state$dependency_stack$peek(TRUE) # everything on the stack
   )
+
+  ## If retrieved the resource from cache in the `caching_layer` we should
+  ## not update its dependencies, since it will look like it has none.
   if (!isTRUE(active_resource$injects$cache_used)) {
+    ## Now that we have snatched the correct dependencies in the previous
+    ## statement, we just extract their proper resource names.
     active_resource$state$dependency_tracker.dependencies <-
       vapply(dependencies, getElement, character(1), "resource_name")
   }
