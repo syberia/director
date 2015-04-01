@@ -1,5 +1,14 @@
 #' Apply the preprocessor to a resource.
 #'
+#' Hand in hand with parsers, preprocessors are the heart of director. The idea
+#' is to allow the developer to do any additional stuff prior to sourcing an R
+#' file. For example, if some helper functions are desired or some operators
+#' should be overloaded for a DSL (domain-specific language), the preprocessor
+#' can perform this prior to sourcing the R file.
+#' 
+#' To define a preprocessor for routes in a given path, you can use the
+#' \code{\link{register_preprocessor}} method on the director object.
+#'
 #' @name preprocessor
 #' @aliases preprocessors
 #' @param object active_resource. See \code{\link{active_resource}}.
@@ -8,6 +17,8 @@
 #' @param parse. logical. Whether or not to apply the \link{parser} to the
 #'    resource. If \code{FALSE}, this is equivalent to sourcing the resource's
 #'    file without running its parser. By default, \code{TRUE}.
+#' @seealso \code{\link{register_preprocessor}}, \code{\link{active_resource}},
+#'    \code{\link{tower}}
 #' @return The parsed resource if \code{parse. = TRUE}, and the preprocessed
 #'    resource otherwise.
 #' @note The parameters must be named \code{object} and \code{...} due to

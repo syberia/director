@@ -40,7 +40,8 @@
 #'    The last (default) choice, \code{"object"}, will return the parsed
 #'    resource's value as usual by proceeding with the resource parsing
 #'    tower.
-#' @seealso \code{\link{active_resource}}, \code{\link{resource_caching}}
+#' @seealso \code{\link{active_resource}}, \code{\link{resource_caching}},
+#'    \code{\link{tower}}
 #' @return The parsed resource.
 #' @note The local \code{any_dependencies_modified} rarely needs to be
 #'    used by a preprocessor or parser. You should usually use 

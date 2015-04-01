@@ -22,10 +22,22 @@ The parsed resource if \code{parse. = TRUE}, and the preprocessed
    resource otherwise.
 }
 \description{
-Apply the preprocessor to a resource.
+Hand in hand with parsers, preprocessors are the heart of director. The idea
+is to allow the developer to do any additional stuff prior to sourcing an R
+file. For example, if some helper functions are desired or some operators
+should be overloaded for a DSL (domain-specific language), the preprocessor
+can perform this prior to sourcing the R file.
+}
+\details{
+To define a preprocessor for routes in a given path, you can use the
+\code{\link{register_preprocessor}} method on the director object.
 }
 \note{
 The parameters must be named \code{object} and \code{...} due to
    this method's inclusion in a \code{\link{tower}}.
+}
+\seealso{
+\code{\link{register_preprocessor}}, \code{\link{active_resource}},
+   \code{\link{tower}}
 }
 

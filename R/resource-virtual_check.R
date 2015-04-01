@@ -20,7 +20,7 @@
 #' @param object active_resource. See \code{\link{active_resource}}.
 #' @param ... additional parameters to pass to the next layer in the resource
 #'    parsing tower.
-#' @seealso \code{\link{active_resource}}
+#' @seealso \code{\link{active_resource}}, \code{\link{tower}}
 #' @return The parsed resource.
 #' @note The parameters must be named \code{object} and \code{...} due to
 #'    this method's inclusion in a \code{\link{tower}}.

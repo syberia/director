@@ -17,7 +17,7 @@
 #' @param recompile. logical. Whether or not to force the resource to
 #'    be recompiled (instead of retrieved from cache), regardless of
 #'    whether the resource or any of its dependencies have been modified.
-#' @seealso \code{\link{active_resource}}
+#' @seealso \code{\link{active_resource}}, \code{\link{tower}}
 #' @return The parsed resource, retrieved from cache since the last time
 #'    the resource was executed if and only if the resource's file(s) and
 #'    none of its (recursive) dependencies have been modified.
