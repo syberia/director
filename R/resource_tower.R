@@ -56,37 +56,6 @@ generate_state <- function(resource) {
   state[[resource$name]]
 }
 
-# Apply the parser to a resource. If parse. = TRUE, the parser will be
-# applied as well.
-parser <- function(object, ...) {
-  director <- object$resource$director
-
-  route <- director$match_parser(object$resource$name)
-
-  if (is.null(route)) {
-    # No parser for this resource.
-    # Use the default parser, just grab the value.
-    object <- object$preprocessed$value
-  } else {
-    fn <- director$parser(route)
-    environment(fn) <- new.env(parent = environment(fn)) %<<% list(
-      # TODO: (RK) Intersect with parser formals.
-      # TODO: (RK) Use alist so these aren't evaluated right away.
-       resource = object$resource$name,
-       input = object$state$preprocessor.source_env,
-       output = object$preprocessed$value,
-       director = director,
-       preprocessor_output = object$preprocessed$preprocessor_output,
-       filename = object$state$filename,
-       args = list(...),
-       "%||%" = function(x, y) if (is.null(x)) y else x
-    )
-    object <- fn()
-  }
-
-  yield()
-}
-
 
 ## Virtual check:
 # - Check if virtual resource, inject "virtual"

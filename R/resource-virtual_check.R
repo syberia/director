@@ -76,3 +76,4 @@ virtual_check <- function(object, ...) {
 
   yield()
 }
+

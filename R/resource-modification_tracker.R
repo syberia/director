@@ -144,3 +144,4 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
     # TODO: (RK) Set any_dependencies_modified on exit
   }
 }
+

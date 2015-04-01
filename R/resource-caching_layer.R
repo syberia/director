@@ -79,3 +79,4 @@ caching_layer <- function(object, ..., recompile. = FALSE) {
     }
   }
 }
+
