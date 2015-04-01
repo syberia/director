@@ -13,6 +13,9 @@ virtual_check(object, ...)
 \item{...}{additional parameters to pass to the next layer in the resource
 parsing tower.}
 }
+\value{
+The parsed resource.
+}
 \description{
 Virtual resources are those that are not recorded as a .R file. Instead,
 the resource's value must be computed using a preprocessor.
@@ -29,6 +32,10 @@ and uses the package objects instead.
 When parsing a resource, the local \code{virtual} is injected for use in
 the preprocessor which corresponds to whether the resource seems
 non-existent to the director (i.e., has no supporting .R file).
+}
+\note{
+The parameters must be named \code{object} and \code{...} due to
+   this method's inclusion in a \code{\link{tower}}.
 }
 \examples{
 \dontrun{

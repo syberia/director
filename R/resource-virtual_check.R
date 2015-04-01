@@ -21,6 +21,9 @@
 #' @param ... additional parameters to pass to the next layer in the resource
 #'    parsing tower.
 #' @seealso \code{\link{active_resource}}
+#' @return The parsed resource.
+#' @note The parameters must be named \code{object} and \code{...} due to
+#'    this method's inclusion in a \code{\link{tower}}.
 #' @examples
 #' \dontrun{
 #'   # lib/mungebits has imputer.R and no other files, but the package
