@@ -257,11 +257,6 @@ stop_tracking_dependencies <- function(active_resource) {
       vapply(dependencies, getElement, character(1), "resource_name")
   }
 
-  any_modified <- any(vapply(dependencies, function(d) {
-    director$resource(d$resource_name, modification_tracker.touch = FALSE,
-                   modification_tracker.return = "modified")
-  }, logical(1)))
-
   while (!director_state$dependency_stack$empty() &&
          director_state$dependency_stack$peek()$level == nesting_level) {
     director_state$dependency_stack$pop()
