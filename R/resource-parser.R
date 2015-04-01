@@ -24,6 +24,10 @@ parser <- function(object, ...) {
     object <- apply_parser(object, route, ...)
   }
 
+  ## This will yield to the identity function, simply returning `object`
+  ## and thus the parsed resource. Every function in a `tower` (see tower.R)
+  ## must call `yield`. This also encourages us to plan ahead if we ever
+  ## want to add even further layers in the resource parsing tower.
   yield()
 }
 
