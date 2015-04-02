@@ -69,7 +69,7 @@ default_preprocessor <- function(active_resource) {
   # use the default preprocessor, base::source.
   default_preprocessor_fn <- function(filename) {
     # TODO: (RK) Figure out correct environment assignment.
-    base::source(filename, local = source_env)$value
+    base::source(filename, local = source_env, keep.source = TRUE)$value
   }
 
   source_env <- new.env(parent = parent.env(topenv(parent.env(environment()))))
@@ -100,7 +100,9 @@ apply_preprocessor_route <- function(active_resource, route, ...) {
      director = director,
      args = list(...),
      source_env = active_resource$state$preprocessor.source_env,
-     source = function() eval.parent(quote(base::source(filename, source_env)$value)),
+     source = function() eval.parent(quote(
+      base::source(filename, source_env, keep.source = TRUE)$value
+     )),
      preprocessor_output = preprocessor_output,
      "%||%" = function(x, y) if (is.null(x)) y else x
   )
