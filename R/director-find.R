@@ -88,6 +88,13 @@ director_find <- function(pattern = "", method = "wildcard", base = "", by_mtime
 }
 
 find_ <- function(director, pattern, method, base, by_mtime) {
+  ## Listing all the files below will be slow if we need to look
+  ## for an exact match, so we implement a separate helper for
+  ## finding exact matches.
+  if (identical(tolower(method), "exact")) {
+    return(exact_find(director, pattern, base))
+  }
+
   all_files <- list.files(file.path(director$root(), base),
                           pattern = "\\.[rR]$", recursive = TRUE)
   all_files <- strip_r_extension(all_files)
@@ -115,7 +122,8 @@ sort_by_mtime <- function(files, by_mtime, director) {
     modified_time <- function(file) {
       ## `director$filename(..., absolute = TRUE)` will convert 
       ## the resource name into a full file path.
-      file.info(director$filename(file, absolute = TRUE))$mtime
+      file.info(director$filename(file, absolute = TRUE,
+                                  check.exists = FALSE))$mtime
     }
 
     by_modification_time <- vapply(files, modified_time, numeric(1))
@@ -123,5 +131,37 @@ sort_by_mtime <- function(files, by_mtime, director) {
   } else {
     files
   }
+}
+
+exact_find <- function(director, pattern, base) {
+  if (nzchar(base)) pattern <- file.path(base, pattern)
+
+  ## A resource "foo" can correspond to either "foo.r", "foo.R",
+  ## "foo/foo.r", or "foo/foo.R".
+  candidates <- as.character(t(outer(
+    c(pattern, file.path(pattern, basename(pattern))),
+    c(".r", ".R"), paste0
+  )))
+
+  ## However, if it is "foo.r" or "foo.R", we must ensure it is not
+  ## the helper of an idempotent resource. If the resource is 
+  ## prefixed by, say, "bar", we check "bar/bar.r" and "bar/bar.R"
+  ## in addition to "bar/foo.r" and "bar.foo.R".
+  to_idempotent <- function(f) {
+    file.path(dirname(f), paste0(basename(dirname(f)), c(".r", ".R")))
+  }
+  absolute_candidates <- file.path(director$root(), candidates)
+  absolute_candidates <- c(absolute_candidates,
+    sapply(absolute_candidates[1], to_idempotent))
+
+  ## Batching the exists check is faster because there is only one system call.
+  exists <- file.exists(absolute_candidates)
+
+  ## If "foo.r" or "foo.R" exist but they are helpers, do not treat them
+  ## as resources.
+  if (any(exists[1:2]) && any(exists[5:6])) character(0) 
+  ## Otherwise, if it is a proper resource, select the first match.
+  else if (any(exists[1:4])) pattern
+  else character(0)
 }
 
