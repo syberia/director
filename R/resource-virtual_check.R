@@ -20,6 +20,8 @@
 #' @param object active_resource. See \code{\link{active_resource}}.
 #' @param ... additional parameters to pass to the next layer in the resource
 #'    parsing tower.
+#' @param virtual_check.skip logical. Whether or not to skip the virtual
+#'    check entirely. Generally only used by internal calls.
 #' @seealso \code{\link{active_resource}}, \code{\link{tower}}
 #' @return The parsed resource.
 #' @note The parameters must be named \code{object} and \code{...} due to
@@ -61,7 +63,9 @@
 #'   d$resource("lib/mungebits/imputer") # Will use lib/mungebits/imputer.R
 #'   d$resource("lib/mungebits/discretizer") # Will use syberiaMungebits::discretizer
 #' }
-virtual_check <- function(object, ...) {
+virtual_check <- function(object, ..., virtual_check.skip = FALSE) {
+  if (isTRUE(virtual_check.skip)) { return(yield()) }
+
   director <- object$resource$director
 
   ## An object is considered to be "virtual" if it has no corresponding file,

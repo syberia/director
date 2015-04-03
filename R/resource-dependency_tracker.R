@@ -163,8 +163,10 @@ any_dependencies_modified <- function(active_resource) {
     ## We have to set `modification_tracker.touch = FALSE` to not disturb
     ## the `modification_tracker.queue` -- this is a read-only operation
     ## and should not update any cached modification times!
-    active_resource$resource$director$resource(name, modification_tracker.touch = FALSE,
-      dependency_tracker.return = "any_dependencies_modified")
+    active_resource$resource$director$resource(name,
+      modification_tracker.touch = FALSE,
+      dependency_tracker.return  = "any_dependencies_modified"
+    )
   }
   modified || any(vapply(dependencies, is_modified, logical(1)))
 }
@@ -194,7 +196,8 @@ begin_tracking_dependencies <- function(active_resource) {
   ## are before executing it.)
   any_modified <- director$resource(
     active_resource$resource$name,
-    dependency_tracker.return = "any_dependencies_modified",
+    virtual_check.skip         = TRUE,
+    dependency_tracker.return  = "any_dependencies_modified",
     modification_tracker.touch = FALSE
   )
 
