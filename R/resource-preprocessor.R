@@ -38,7 +38,7 @@ preprocessor <- function(object, ..., parse. = TRUE) {
     ## We place the filename in the object's injects to make it
     ## available to the `parser` down the stream.
     filename <- object$injects$filename <-
-      director$filename(object$resource$name, absolute = TRUE)
+      director$filename(object$resource$name, absolute = TRUE, check.exists = FALSE)
   }
 
   object$injects %<<% list(

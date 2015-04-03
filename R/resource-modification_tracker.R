@@ -174,7 +174,7 @@ determine_last_modified_time <- function(active_resource) {
     ## with the resource. By setting `enclosing = TRUE`, we ensure that
     ## in the case of idempotent resources this will be directory instead
     ## of the .R file (e.g. "foo" instead of "foo/foo.R").
-    filename <- director$filename(active_resource$resource$name,
+    filename <- director$filename(active_resource$resource$name, check.exists = FALSE,
                                   absolute = TRUE, enclosing = TRUE)
     if (is.idempotent_directory(filename)) {
       ## We use the `get_helpers` function in utils.R to get all
