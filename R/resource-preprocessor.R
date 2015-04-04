@@ -93,8 +93,13 @@ apply_preprocessor_route <- function(active_resource, route, ...) {
 
   preprocessor_output <- new.env(parent = emptyenv())
   preprocessor_function <- director$preprocessor(route)
-  environment(preprocessor_function) <-
+
+  sourcing_env <-
     new.env(parent = active_resource$resource$defining_environment) %<<%
+    environment(preprocessor_function)
+
+  environment(preprocessor_function) <-
+    new.env(parent = sourcing_env) %<<%
     active_resource$injects %<<% list(
       # TODO: (RK) Intersect with preprocessor formals.
       # TODO: (RK) Use alist so these aren't evaluated right away.

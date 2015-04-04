@@ -35,8 +35,13 @@ apply_parser <- function(active_resource, route, ...) {
   director <- active_resource$resource$director
 
   parser_function <- director$parser(route)
+
+  sourcing_env <-
+    new.env(parent = active_resource$resource$defining_environment) %<<%
+    environment(parser_function)
+
   environment(parser_function) <-
-    new.env(parent = active_resource$resource$defining_environment) %<<% list(
+    new.env(parent = sourcing_env) %<<% list(
     # TODO: (RK) Intersect with parser formals.
     # TODO: (RK) Use alist so these aren't evaluated right away.
      resource = active_resource$resource$name,
