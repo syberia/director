@@ -92,23 +92,25 @@ apply_preprocessor_route <- function(active_resource, route, ...) {
   active_resource$state$preprocessor.source_env <- new.env(parent = active_resource$injects)
 
   preprocessor_output <- new.env(parent = emptyenv())
-  fn <- director$preprocessor(route)
-  environment(fn) <- new.env(parent = environment(fn)) %<<% active_resource$injects %<<% list(
-    # TODO: (RK) Intersect with preprocessor formals.
-    # TODO: (RK) Use alist so these aren't evaluated right away.
-     resource = active_resource$resource$name,
-     director = director,
-     args = list(...),
-     source_env = active_resource$state$preprocessor.source_env,
-     source = function() eval.parent(quote(
-      base::source(filename, source_env, keep.source = TRUE)$value
-     )),
-     preprocessor_output = preprocessor_output,
-     "%||%" = function(x, y) if (is.null(x)) y else x
-  )
+  preprocessor_function <- director$preprocessor(route)
+  environment(preprocessor_function) <-
+    new.env(parent = active_resource$resource$defining_environment) %<<%
+    active_resource$injects %<<% list(
+      # TODO: (RK) Intersect with preprocessor formals.
+      # TODO: (RK) Use alist so these aren't evaluated right away.
+       resource = active_resource$resource$name,
+       director = director,
+       args = list(...),
+       source_env = active_resource$state$preprocessor.source_env,
+       source = function() eval.parent(quote(
+        base::source(filename, source_env, keep.source = TRUE)$value
+       )),
+       preprocessor_output = preprocessor_output,
+       "%||%" = function(x, y) if (is.null(x)) y else x
+    )
 
   list(
-    value = fn(),
+    value = preprocessor_function(),
     preprocessor_output = preprocessor_output
   )
 }
