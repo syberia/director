@@ -95,7 +95,7 @@ apply_preprocessor_route <- function(active_resource, route, ...) {
   preprocessor_function <- director$preprocessor(route)
 
   sourcing_env <-
-    new.env(parent = active_resource$resource$defining_environment) %<<%
+    new.env(parent = director_state$defining_environment) %<<%
     environment(preprocessor_function)
 
   environment(preprocessor_function) <-

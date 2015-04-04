@@ -37,7 +37,7 @@ apply_parser <- function(active_resource, route, ...) {
   parser_function <- director$parser(route)
 
   sourcing_env <-
-    new.env(parent = active_resource$resource$defining_environment) %<<%
+    new.env(parent = director_state$defining_environment) %<<%
     environment(parser_function)
 
   environment(parser_function) <-
