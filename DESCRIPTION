@@ -5,7 +5,7 @@ Description: Director is responsible for managing and loading resources in
     consecutive loads of resources (so that we can tell if a script was modified
     since we last ran it) and defining parsers that allow us to generalize from
     the pernicious simple linear execution that is common to R.
-Version: 0.3.0
+Version: 0.3.0.1
 Authors@R: c(person("Robert", "Krzyzanowski",
     email = "technoguyrob@gmail.com", role = c("aut", "cre")))
 Depends:

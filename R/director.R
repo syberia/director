@@ -93,6 +93,7 @@ director_ <- R6::R6Class("director",
 
     cache_get = function(k) { cache$get(k) },
     cache_set = function(k, v) { cache$set(k, v) },
+    cache_exists = function(k) { cache$exists(k) },
 
     tracking_dependencies = function() { .dependency_nesting_level > 0L },
     clear_resource_stack = function() { if (.dependency_nesting_level == 0) dependency_stack$clear() },
