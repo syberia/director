@@ -123,7 +123,7 @@ dependency_tracker <- function(object, ..., dependency_tracker.return = "object"
     ## the resource's sourcing environment. Its parser or preprocessor
     ## could call `director$resource(...)` directly to load another
     ## resource.
-    ##
+    ## 
     ## In other words, while the execution of this resource is on the
     ## call stack, whole swaths of other resources may be getting
     ## processed. To "remember" what resources have been referenced
@@ -221,7 +221,7 @@ begin_tracking_dependencies <- function(active_resource) {
     ## If this is not a top-level resource (i.e., one called directly
     ## using `director$resource` rather than from another resource),
     ## push this dependency onto the stack.
-    ##
+    ## 
     ## We do not need to push top-level resources onto the stack
     ## since they aren't anyone's dependency!
     director_state$dependency_stack$push(
@@ -253,7 +253,7 @@ stop_tracking_dependencies <- function(active_resource) {
   ## "foo" which calls "bar" whichs calls "baz". The
   ## nesting level will get incremented once during the execution
   ## of "bar" and once again during "baz".
-  ##
+  ## 
   ## Thus, we can tell "bar" is an immediate direct dependency
   ## of "foo" which "baz" is an implicit dependency through "bar"
   ## by noting the nesting level.

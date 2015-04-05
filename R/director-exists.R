@@ -34,7 +34,7 @@ director_exists <- function(resource, helper = FALSE) {
 
   ## Since R is a language that does not have good support for mixins
   ## and hierarchical structure, we will borrow ideas from node.js,
-  ## who has a similar problem. If a file becomes too complex, we should
+  ## which has a similar problem. If a file becomes too complex, we should
   ## be able to split it up into multiple pieces -- but only "export" a
   ## single thing. You can do this by turning moving your "file.R" to
   ## the directory "file" (note that the name must match) and placing
@@ -42,7 +42,7 @@ director_exists <- function(resource, helper = FALSE) {
   ## directory, like "file/helper_function.R" or "file/constants.R"
   ## will not be detectable to the director object. This allows us to
   ## follow the important developer principles of Don't Repeat Yourself
-  ## and maintaining modularity without polluting what our direcotr sees.
+  ## and maintaining modularity without polluting what our director sees.
   ## 
   ## Idempotence only applies to files in the same directory. If you have
   ## files "foo/bar/bar.R", "foo/bar/baz.R", and "foo/bar/bux/bux.R", then

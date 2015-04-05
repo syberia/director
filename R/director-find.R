@@ -79,7 +79,7 @@ director_find <- function(pattern = "", method = "wildcard", base = "", by_mtime
     ## This function is already getting too complex, so delegate the
     ## job of actually finding resources that match this `pattern`
     ## to a helper function.
-    ##
+    ## 
     ## The keyword `self` is an [R6 class keyword](https://github.com/wch/R6)  
     ## that represents the environment containing this R6 object. It is
     ## similar to other languages' `this` keyword.
@@ -146,7 +146,7 @@ exact_find <- function(director, pattern, base) {
   ## However, if it is "foo.r" or "foo.R", we must ensure it is not
   ## the helper of an idempotent resource. If the resource is 
   ## prefixed by, say, "bar", we check "bar/bar.r" and "bar/bar.R"
-  ## in addition to "bar/foo.r" and "bar.foo.R".
+  ## in addition to "bar/foo.r" and "bar/foo.R".
   to_idempotent <- function(f) {
     file.path(dirname(f), paste0(basename(dirname(f)), c(".r", ".R")))
   }
