@@ -14,8 +14,8 @@
 #'                                   # the ending "in project 'my project'".
 #' }
 initialize <- function(root, project_name = '') {
-  # Reference class objects are sometimes initialized on package install, but
-  # no arguments are passed! We let it through to avoid installation problems.
+  ## Reference class objects are sometimes initialized on package install, but
+  ## no arguments are passed! We let it through to avoid installation problems.
   if (missing(root)) return() 
 
   enforce_type(project_name, "character", "director$new")
