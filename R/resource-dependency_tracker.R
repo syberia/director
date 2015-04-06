@@ -227,15 +227,10 @@ begin_tracking_dependencies <- function(active_resource) {
     director_state$dependency_stack$push(
       dependency(nesting_level, active_resource$resource$name)
     )
-
-    # TODO: (RK) Explain this tricky point.
-    director_state$defining_environment <- 
-      director_state$defining_environment %||%
-      active_resource$resource$defining_environment
-      
   } else {
     # TODO: (RK) Explain this tricky point.
-    director_state$defining_environment <- NULL
+    director_state$defining_environment <- 
+      active_resource$resource$defining_environment
   }
 
   director_state$dependency_nesting_level <- nesting_level + 1
