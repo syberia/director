@@ -1,4 +1,4 @@
-# Director [![Build Status](https://travis-ci.org/robertzk/director.svg?branch=master)](https://travis-ci.org/robertzk/director) [![Coverage Status](https://coveralls.io/repos/robertzk/director/badge.png)](https://coveralls.io/r/robertzk/director)
+# Director [![Build Status](https://travis-ci.org/robertzk/director.svg?branch=master)](https://travis-ci.org/robertzk/director) [![Coverage Status](https://coveralls.io/repos/robertzk/director/badge.png)](https://coveralls.io/r/robertzk/director) [![Documentation](https://img.shields.io/badge/rocco--docs-%E2%9C%93-blue.svg)](http://robertzk.github.io/director/)
 
 Due to its interactive nature, R tends to produce project structures
 that are a collection of loosely organized scripts. With the exception
