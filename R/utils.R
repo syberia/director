@@ -213,7 +213,7 @@ simple_cache <- function() {
     ## If instead we said `cache[[key]] <<- value`, `NULL` values would be
     ## cached incorrectly, since assigning `NULL` remove the key.
     set    = function(key, value) cache[key] <<- structure(list(value), .Names = key),
-    exists = function(key) is.element(key, names(key)),
+    exists = function(key) is.element(key, names(cache)),
     unset  = function(key) cache[[key]] <<- NULL
   )
 }

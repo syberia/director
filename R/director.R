@@ -54,6 +54,8 @@ NULL
 #' @format NULL
 director_ <- R6::R6Class("director",
   private = list(
+  ),
+  public = list(                    
     .root           = NULL, # character
     .project_name   = NULL, # character
     .resource_cache = list(), # list
@@ -61,9 +63,7 @@ director_ <- R6::R6Class("director",
     .dependency_nesting_level = 0, # integer
     .parsers        = list(), # list
     .preprocessors  = list(), # list
-    .cached_resources = list() # character
-  ),
-  public = list(                    
+    .cached_resources = list(), # character
     # Members
     dependency_stack = NULL, # stack
     cache            = NULL,
@@ -127,6 +127,11 @@ director <- structure(
 `$.director_` <- function(...) {
   stopifnot(identical(..2, "new"))
   ..1
+}
+
+#' @export
+print.director <- function(x, ...) {
+  x$show()
 }
 
 #' @docType function
