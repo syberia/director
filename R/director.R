@@ -2,7 +2,6 @@
 #' @include director-initialize.R director-parsers.R
 #' @include director-preprocessors.R director-resource.R
 #' @include utils.R
-#' @include resource-initialize.R
 NULL
 
 # NOTE: This file is prepended with "zzz_" to ensure other files are parsed

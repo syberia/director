@@ -5,13 +5,16 @@
 \alias{virtual_check}
 \title{Mark a resource as virtual.}
 \usage{
-virtual_check(object, ...)
+virtual_check(object, ..., virtual_check.skip = FALSE)
 }
 \arguments{
 \item{object}{active_resource. See \code{\link{active_resource}}.}
 
 \item{...}{additional parameters to pass to the next layer in the resource
 parsing tower.}
+
+\item{virtual_check.skip}{logical. Whether or not to skip the virtual
+check entirely. Generally only used by internal calls.}
 }
 \value{
 The parsed resource.
