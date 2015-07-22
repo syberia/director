@@ -89,3 +89,12 @@ describe("resource_name", {
     expect_equal(resource_name("foo/foo"), "foo")
   })
 })
+
+describe("simple_cache", {
+  test_that("it can determine whether an element exists", {
+    cache <- simple_cache()
+    cache$set("foo", "bar")
+    expect_true(cache$exists("foo"))
+    expect_false(cache$exists("bar"))
+  })
+})
