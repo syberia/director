@@ -8,3 +8,4 @@ vignettes/*.md
 
 \.Rcheck
 \.tar\.gz$
+src/*.so
