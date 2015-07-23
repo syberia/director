@@ -66,7 +66,7 @@ director_ <- R6::R6Class("director",
     .preprocessors  = list(), # list
     .cached_resources = list(), # character
     # Members
-    self$dependency_stack = NULL, # stack
+    dependency_stack = NULL, # stack
     cache            = NULL,
 
     # Methods
