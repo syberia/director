@@ -53,6 +53,7 @@ NULL
 #' @rdname director
 #' @format NULL
 director_ <- R6::R6Class("director",
+  portable = TRUE,                        
   private = list(
   ),
   public = list(                    
@@ -65,7 +66,7 @@ director_ <- R6::R6Class("director",
     .preprocessors  = list(), # list
     .cached_resources = list(), # character
     # Members
-    dependency_stack = NULL, # stack
+    self$dependency_stack = NULL, # stack
     cache            = NULL,
 
     # Methods
@@ -80,39 +81,39 @@ director_ <- R6::R6Class("director",
 
     match_preprocessor = function(resource_name) {
       Find(function(x) substring(resource_name, 1, nchar(x)) == x,
-           substring(names(.preprocessors), 2))
+           substring(names(self$.preprocessors), 2))
     },
     match_parser = function(resource_name) {
       Find(function(x) substring(resource_name, 1, nchar(x)) == x,
-           substring(names(.parsers), 2))
+           substring(names(self$.parsers), 2))
     },
-    preprocessor = function(x) .preprocessors[[paste0("/", x)]],
-    parser = function(x) .parsers[[paste0("/", x)]],
-    cached_resources = function() .cached_resources,
+    preprocessor = function(x) self$.preprocessors[[paste0("/", x)]],
+    parser = function(x) self$.parsers[[paste0("/", x)]],
+    cached_resources = function() self$.cached_resources,
 
-    cache_get = function(k) { cache$get(k) },
-    cache_set = function(k, v) { cache$set(k, v) },
-    cache_exists = function(k) { cache$exists(k) },
+    cache_get = function(k) { self$cache$get(k) },
+    cache_set = function(k, v) { self$cache$set(k, v) },
+    cache_exists = function(k) { self$cache$exists(k) },
 
-    tracking_dependencies = function() { .dependency_nesting_level > 0L },
-    clear_resource_stack = function() { if (.dependency_nesting_level == 0) dependency_stack$clear() },
-    increment_nesting_level = function() { .dependency_nesting_level <<- .dependency_nesting_level + 1L },
-    decrement_nesting_level = function() { .dependency_nesting_level <<- .dependency_nesting_level - 1L },
-    nesting_level = function() { .dependency_nesting_level },
+    tracking_dependencies = function() { self$.dependency_nesting_level > 0L },
+    clear_resource_stack = function() { if (self$.dependency_nesting_level == 0) self$dependency_stack$clear() },
+    increment_nesting_level = function() { self$.dependency_nesting_level <<- self$.dependency_nesting_level + 1L },
+    decrement_nesting_level = function() { self$.dependency_nesting_level <<- self$.dependency_nesting_level - 1L },
+    nesting_level = function() { self$.dependency_nesting_level },
     push_dependency = function(dependency) {
-      dependency_stack$push(dependency)
+      self$dependency_stack$push(dependency)
     },
-    peek_dependency_stack = function(...) { dependency_stack$peek(...) },
-    pop_dependency_stack = function() { dependency_stack$pop() },
-    empty_dependency_stack = function() { dependency_stack$empty() },
+    peek_dependency_stack = function(...) { self$dependency_stack$peek(...) },
+    pop_dependency_stack = function() { self$dependency_stack$pop() },
+    empty_dependency_stack = function() { self$dependency_stack$empty() },
 
-    root         = function() { .root },
-    project_name = function() { .project_name },
+    root         = function() { self$.root },
+    project_name = function() { self$.project_name },
     absolute   = function(x) { file.path(self$root(), x) },
     show       = function() {
       cat(sep = '', "Director object",
-          if (isTRUE(nzchar(.root))) paste0(" monitoring ", sQuote(.root),
-            if (isTRUE(nzchar(.project_name))) paste(" for", .project_name, "project")),
+          if (isTRUE(nzchar(self$.root))) paste0(" monitoring ", sQuote(self$.root),
+            if (isTRUE(nzchar(self$.project_name))) paste(" for", self$.project_name, "project")),
           ".\n")
     },
     filename  = director_filename
