@@ -32,22 +32,22 @@ register_parser <- function(path, parser = function() { }, overwrite = FALSE, ca
     formals(parser) <- NULL
   }
   
-  if (is.element(paste0("/", path), names(.parsers)) && !isTRUE(overwrite)) {
+  if (is.element(paste0("/", path), names(self$.parsers)) && !isTRUE(overwrite)) {
     stop("Parser already registered for path ", crayon::red(path))
   }
 
   if (isTRUE(cache)) {
-    .cached_resources <<- c(.cached_resources, path)
+    self$.cached_resources <<- c(self$.cached_resources, path)
   }
 
   # Prefix "/" for empty paths.
-  .parsers[[paste0("/", path)]] <<- parser
+  self$.parsers[[paste0("/", path)]] <<- parser
 
   ## We store each parser function by path in descending order by length.
   ## This will favor paths that are more fully specified. For example,
   ## if we have a parser for `"models"` and a parser  for `"models/ensembles"`,
   ## the latter has a longer length and will be preferred when selecting the 
   ## function used for parsing resources in the `"models/ensembles"` directory.
-  .parsers         <<- .parsers[names(.parsers)[rev(order(sapply(names(.parsers), nchar)))]]
+  self$.parsers         <<- self$.parsers[names(self$.parsers)[rev(order(sapply(names(self$.parsers), nchar)))]]
 }
 

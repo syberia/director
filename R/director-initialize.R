@@ -37,17 +37,17 @@ initialize <- function(root, project_name = '') {
   }
 
   # Set R6 fields.
-  .dependency_nesting_level <<- 0L
-  .root             <<- normalizePath(root)
+  self$.dependency_nesting_level <<- 0L
+  self$.root             <<- normalizePath(root)
   # TODO: (RK) Customize location of the registry: https://github.com/robertzk/director/issues/20
-  .registry         <<- registry(file.path(.root, '.registry'))
-  .project_name     <<- project_name
-  dependency_stack  <<- shtack$new()
+  self$.registry         <<- registry(file.path(self$.root, '.registry'))
+  self$.project_name     <<- project_name
+  self$dependency_stack  <<- shtack$new()
 
-  .resource_cache   <<- list()
-  .parsers          <<- list()
-  .preprocessors    <<- list()
-  .cached_resources <<- list()
-  cache             <<- simple_cache()
+  self$.resource_cache   <<- list()
+  self$.parsers          <<- list()
+  self$.preprocessors    <<- list()
+  self$.cached_resources <<- list()
+  self$cache             <<- simple_cache()
 }
 

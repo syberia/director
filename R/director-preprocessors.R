@@ -27,12 +27,12 @@ register_preprocessor <- function(path, preprocessor, overwrite = FALSE) {
     formals(preprocessor) <- NULL
   }
   
-  if (is.element(paste0("/", path), names(.preprocessors)) && !isTRUE(overwrite)) {
+  if (is.element(paste0("/", path), names(self$.preprocessors)) && !isTRUE(overwrite)) {
     stop("Preprocessor already registered for path ", crayon::red(path), ".")
   }
 
   # Prefix "/" for empty paths.
-  .preprocessors[[paste0("/", path)]] <<- preprocessor
+  self$.preprocessors[[paste0("/", path)]] <<- preprocessor
 
   ## We store each preprocessor function by path in descending order by length.
   ## This will favor paths that are more fully specified. For example,
@@ -40,8 +40,8 @@ register_preprocessor <- function(path, preprocessor, overwrite = FALSE) {
   ## `"models/ensembles"`, ## the latter has a longer length and will be
   ## preferred when selecting the function used for parsing resources in
   ## the `"models/ensembles"` directory.
-  .preprocessors         <<- .preprocessors[
-    names(.preprocessors)[rev(order(sapply(names(.preprocessors), nchar)))]]
+  self$.preprocessors         <<- self$.preprocessors[
+    names(self$.preprocessors)[rev(order(sapply(names(self$.preprocessors), nchar)))]]
 }
 
 #' Whether there exists a preprocessor for a resource.
