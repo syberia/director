@@ -166,15 +166,10 @@ any_dependencies_modified <- function(active_resource) {
     ## We have to set `modification_tracker.touch = FALSE` to not disturb
     ## the `modification_tracker.queue` -- this is a read-only operation
     ## and should not update any cached modification times!
-    if (active_resource$resource$name == "config/engines") browser()
-    tryCatch(error = function(e) { 
-             cat("WHAT THE FACK")
-             browser()
-},
     active_resource$resource$director$resource(name,
       modification_tracker.touch = FALSE,
       dependency_tracker.return  = "any_dependencies_modified"
-  )  )
+    )
   }
   modified || any(vapply(dependencies, is_modified, logical(1)))
 }

@@ -45,7 +45,8 @@ preprocessor <- function(object, ..., parse. = TRUE) {
     # TODO: (RK) Use alist so these aren't evaluated right away.
     root = director$root,
     # TODO: (RK) Use find_director helper to go off root + project_name
-    resource = function(...) director$resource(...),
+    # TODO: (RK) Determine how to handle defining_environment. problems here.
+    resource = function(...) director$resource(..., defining_environment. = parent.frame()),
     resource_name = object$resource$name,
     resource_exists = function(...) director$exists(...),
     helper = NULL # TODO: (RK) Allow helper parsing.
