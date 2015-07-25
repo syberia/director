@@ -46,7 +46,10 @@ preprocessor <- function(object, ..., parse. = TRUE) {
     root = director$root,
     # TODO: (RK) Use find_director helper to go off root + project_name
     # TODO: (RK) Determine how to handle defining_environment. problems here.
-    resource = function(...) director$resource(..., defining_environment. = parent.frame()),
+    resource = function(...) {
+      defining_environment <- parent.frame()
+      director$resource(..., defining_environment. = defining_environment)
+    },
     resource_name = object$resource$name,
     resource_exists = function(...) director$exists(...),
     helper = NULL # TODO: (RK) Allow helper parsing.
@@ -73,7 +76,15 @@ default_preprocessor <- function(active_resource) {
     base::source(filename, local = source_env, keep.source = TRUE)$value
   }
 
-  source_env <- new.env(parent = parent.env(topenv(parent.env(environment()))))
+  parent_env <- active_resource$resource$defining_environment
+  if (!identical(topenv(parent_env), baseenv())) {
+    parent_env <- parent.env(topenv(parent_env))
+  } else {
+    parent_env <- parent.env(parent_env)
+  }
+
+  source_env <- new.env(parent = parent_env)
+  # source_env <- new.env(parent = parent.env(topenv(parent.env(environment()))))
   source_env %<<% active_resource$injects
   active_resource$state$preprocessor.source_env <- source_env
 
