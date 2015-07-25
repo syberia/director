@@ -49,5 +49,10 @@ initialize <- function(root, project_name = '') {
   self$.preprocessors    <<- list()
   self$.cached_resources <<- list()
   self$cache             <<- simple_cache()
+
+  ## We need a unique identifier for each director object, so we can keep track
+  ## of state separately in the `active_resource` helper.
+  .director_env$count <- (.director_env$count %||% 0) + 1
+  self$.id <<- .director_env$count
 }
 

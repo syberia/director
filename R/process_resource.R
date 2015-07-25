@@ -40,7 +40,8 @@ generate_state <- function(resource) {
   # same project name are instantiated, as they will conflict with each
   # others' global state: https://github.com/robertzk/director/issues/25
   director_key <- (function(director) {
-    digest::digest(list(director$root(), director$project_name()))
+    # digest::digest(list(director$root(), director$project_name()))
+    paste0("director", director$.id)
   })(resource$director)
 
   ## We do not need `inherits = FALSE` because the parent environment is

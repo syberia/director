@@ -10,3 +10,6 @@
 #' @name director
 #' @import digest crayon R6 methods
 NULL
+
+## Used to keep track of what directors are currently active.
+.director_env <- new.env(parent = emptyenv())

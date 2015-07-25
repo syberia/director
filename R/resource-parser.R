@@ -33,6 +33,7 @@ parser <- function(object, ...) {
 
 apply_parser <- function(active_resource, route, ...) {
   director <- active_resource$resource$director
+  #if (isTRUE(foo) && grepl("modeling", director$root())) browser()
 
   parser_function <- director$parser(route)
 
