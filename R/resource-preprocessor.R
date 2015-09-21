@@ -119,14 +119,14 @@ apply_preprocessor_route <- function(active_resource, route, ...) {
        director = director,
        args = list(...),
        source_env = active_resource$state$preprocessor.source_env,
-       source = function() eval.parent(quote(
+       source = function() eval.parent(quote({
         if (!file.exists(filename)) {
           stop("Director of project ", sQuote(crayon::yellow(director$root())),
                " attempted to source ", sQuote(crayon::red(filename)),
                ", but this file does not exist.", call. = FALSE)
         }
         base::source(filename, source_env, keep.source = TRUE)$value
-       )),
+       })),
        preprocessor_output = preprocessor_output,
        "%||%" = function(x, y) if (is.null(x)) y else x
     )
