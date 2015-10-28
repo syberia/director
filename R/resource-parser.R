@@ -21,7 +21,10 @@ parser <- function(object, ...) {
     # Use the default parser, just grab the value.
     object <- object$preprocessed$value
   } else {
-    object <- apply_parser(object, route, ...)
+    args <- list(...)
+    # TODO: (RK) Use `args` to carry around to prevent partial matching
+    # on "object" ...
+    object <- apply_parser(object, route, args)
   }
 
   ## This will yield to the identity function, simply returning `object`
@@ -31,7 +34,7 @@ parser <- function(object, ...) {
   yield()
 }
 
-apply_parser <- function(active_resource, route, ...) {
+apply_parser <- function(active_resource, route, args) {
   director <- active_resource$resource$director
 
   parser_function <- director$parser(route)
@@ -50,7 +53,7 @@ apply_parser <- function(active_resource, route, ...) {
      director = director,
      preprocessor_output = active_resource$preprocessed$preprocessor_output,
      filename = active_resource$state$filename,
-     args = list(...),
+     args = args,
      "%||%" = function(x, y) if (is.null(x)) y else x
   )
   parser_function()
