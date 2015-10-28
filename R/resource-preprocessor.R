@@ -38,7 +38,8 @@ preprocessor <- function(object, ..., parse. = TRUE) {
     ## We place the filename in the object's injects to make it
     ## available to the `parser` down the stream.
     filename <- object$injects$filename <-
-      director$filename(object$resource$name, absolute = TRUE, check.exists = FALSE)
+      normalizePath(director$filename(object$resource$name,
+                                      absolute = TRUE, check.exists = FALSE))
   }
 
   object$injects %<<% list(
@@ -58,7 +59,7 @@ preprocessor <- function(object, ..., parse. = TRUE) {
   if (is.null(route)) {
     object$preprocessed <- default_preprocessor(object) 
   } else {
-    object$preprocessed <- apply_preprocessor_route(object, route, ...)
+    object$preprocessed <- apply_preprocessor_route(object, route, list(...))
   }
 
   if (isTRUE(parse.)) {
@@ -98,7 +99,7 @@ default_preprocessor <- function(active_resource) {
   )
 }
 
-apply_preprocessor_route <- function(active_resource, route, ...) {
+apply_preprocessor_route <- function(active_resource, route, args, filename) {
   director <- active_resource$resource$director
 
   active_resource$state$preprocessor.source_env <- new.env(parent = active_resource$injects)
@@ -117,7 +118,8 @@ apply_preprocessor_route <- function(active_resource, route, ...) {
       # TODO: (RK) Use alist so these aren't evaluated right away.
        resource = active_resource$resource$name,
        director = director,
-       args = list(...),
+       args = args,
+       filename = active_resource$injects$filename,
        source_env = active_resource$state$preprocessor.source_env,
        source = function() eval.parent(quote({
         if (!file.exists(filename)) {

@@ -52,7 +52,7 @@ apply_parser <- function(active_resource, route, args) {
      output = active_resource$preprocessed$value,
      director = director,
      preprocessor_output = active_resource$preprocessed$preprocessor_output,
-     filename = active_resource$state$filename,
+     filename = active_resource$injects$filename,
      args = args,
      "%||%" = function(x, y) if (is.null(x)) y else x
   )
