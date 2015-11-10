@@ -8,6 +8,6 @@ vignettes/*.md
 
 \.Rcheck
 \.tar\.gz$
-src/*.so$
+src/*.so
 src/*.o$
 
