@@ -20,8 +20,8 @@ LazyData: true
 VignetteBuilder: knitr
 Suggests:
     knitr,
-    testthatsomemore (>= 0.2.2),
-    microbenchmark
+    microbenchmark,
+    testthatsomemore (>= 0.2.2)
 Roxygen: list(wrap = FALSE)
 Collate:
     'director-exists.R'
