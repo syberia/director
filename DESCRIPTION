@@ -12,8 +12,8 @@ Depends:
     R (>= 3.0.1),
     methods
 Imports:
-    digest,
     crayon,
+    digest,
     R6
 License: MIT
 LazyData: true
