@@ -15,7 +15,7 @@ Imports:
     crayon,
     digest,
     R6
-License: MIT
+License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr
 Suggests:
