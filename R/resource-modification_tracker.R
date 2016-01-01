@@ -107,10 +107,16 @@ modification_tracker <- function(object, ..., modification_tracker.return = "obj
   ## We injected `virtual` in the previous layer, `virtual_checker`, using 
   ## `object$injects %<<% list(virtual = virtual)`
   if (isTRUE(object$injects$virtual)) {
-    ## Virtual resources are always considered to be modified, since we have
+    ## Virtual resources are never considered to be modified, since we have
     ## have no corresponding file and we have no way to tell.
-    object$injects %<<% list(modified = TRUE)
-    yield()
+    if (identical(modification_tracker.return, "modified")) {
+      FALSE
+    } else if (identical(modification_tracker.return, "mtime")) {
+      NULL
+    } else {
+      object$injects %<<% list(modified = FALSE)
+      yield()
+    }
   } else {
     ## In order to keep track of whether the resource has been modified,
     ## we will need to store the previous and current modification time
