@@ -58,12 +58,14 @@
 resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
                      tracking = TRUE, check.helpers = TRUE) {
 
+  defining_environment <- globalenv()
+
   if (!is.environment(provides)) {
     provides <-
-      if (length(provides) == 0) new.env(parent = parent.frame())
+      if (length(provides) == 0) new.env(parent = defining_environment)
       else {
         env <- as.environment(provides)
-        parent.env(env) <- parent.frame()
+        parent.env(env) <- defining_environment
         env
       }
 
@@ -87,8 +89,8 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     # If this resource does not exist, let the preprocessor handle it instead.
     return(directorResource(current = NULL, cached = NULL,
       modified = TRUE, resource_key = name,
-      source_args = list(local = new.env(parent = parent.frame())), director = .self,
-      defining_environment = parent.frame()))
+      source_args = list(local = new.env(parent = defining_environment)), director = .self,
+      defining_environment = defining_environment))
   }
 
   filename        <- .filename(name, FALSE, FALSE, !isTRUE(check.helpers)) # Convert resource to filename.
@@ -125,7 +127,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
     for (file in helper_files) {
       helper <- resource(file.path(resource_key, file), body = FALSE,
                          tracking = FALSE, check.helpers = FALSE,
-                         defining_environment = parent.frame())
+                         defining_environment = defining_environment)
       if (tracking_is_on_and_resource_has_helpers)
         modified <- modified || helper$modified
     }
@@ -135,7 +137,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   output <- directorResource(current = current_details, cached = cached_details,
        modified = modified, resource_key = resource_key,
        source_args = source_args, director = .self,
-       defining_environment = parent.frame()) 
+       defining_environment = defining_environment) 
 
   if (.dependency_nesting_level > 0 && isTRUE(check.helpers))
     .stack$push(list(level = .dependency_nesting_level,
