@@ -93,6 +93,7 @@ director_find <- function(search = '', method = 'wildcard', base = '', by_mtime 
   # this separation is necessary to prevent things like looking for "2.1.2"
   # catching "model/2.1.1/2.1.1", which would be wrong.
   if (identical(method, 'exact')) {
+    all_files <- unname(c(all_files, idempotent_objects))
     return(file.path(base, Find(function(x) x == search, all_files) %||% character(0)))
   } else if (!identical(search, '')) {
     pattern <- strip_r_extension(search) # Strip file extension
