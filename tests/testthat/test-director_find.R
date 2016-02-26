@@ -103,3 +103,19 @@ test_that("it can find files with multiple extensions", {
     expect_identical(d$find(""), "foo.sql")
   })
 })
+
+test_that("it correctly does an exact match on idempotent resources", {
+  within_file_structure(list(uno = list(dos = list('dos.R'))), { d <- director(tempdir)
+    expect_identical('uno/dos', d$find("uno/dos", method = "exact"),
+      info = "Exact matching shoudl find uno/dos as an idempotent resource.")
+  })
+})
+
+test_that("it correctly does an exact match on idempotent resources with base", {
+  within_file_structure(list(uno = list(dos = list('dos.R'))), { d <- director(tempdir)
+    expect_identical('uno/dos', d$find("dos", base = "uno", method = "exact"),
+      info = "Exact matching shoudl find uno/dos as an idempotent resource.")
+  })
+})
+
+
