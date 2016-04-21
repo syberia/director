@@ -149,6 +149,9 @@ resource_cache_key <- function(resource_key) {
 #' Get all helper files associated with an idempotent resource directory.
 #'
 #' @param path character. The *absolute* path of the idempotent resource.
+#' @param ... additional parameters to pass to \code{list.files}.
+#' @param leave_idempotent logical. Whether or not to leave the
+#'   idempotent file (non-helper). By default \code{FALSE}.
 #' @return a character list of relative helper paths.
 #' @examples
 #' \dontrun{
@@ -157,11 +160,15 @@ resource_cache_key <- function(resource_key) {
 #'   # below will return \code{c("constants.R", "functions.R")}.
 #'   get_helpers("model")
 #' }
-get_helpers <- function(path) {
-  helper_files <- list.files(path, pattern = '\\.[rR]$') # TODO: (RK) Recursive helpers?
-  same_file <- which(vapply(helper_files, 
-    function(f) strip_r_extension(f) == basename(path), logical(1)))
-  helper_files <- helper_files[-same_file]
+get_helpers <- function(path, ..., leave_idempotent = FALSE) {
+  helper_files <- list.files(path, pattern = '\\.[rR]$', ...)
+  if (leave_idempotent) {
+    helper_files
+  } else {
+    same_file <- which(vapply(helper_files, 
+      function(f) basename(strip_r_extension(f)) == basename(path), logical(1)))
+    helper_files[-same_file]
+  }
 }
 
 #' Whether or not any substring of a string is any of a set of strings.

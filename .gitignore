@@ -2,3 +2,5 @@
 vignettes/*.html
 vignettes/*.md
 *.zip
+src/*.so
+src/*.o

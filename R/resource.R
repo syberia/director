@@ -123,13 +123,13 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
       !isTRUE(modified) # No point in checking modifications in helpers otherwise
       
     # Touch helper files to see if they got modified.
-    helper_files <- get_helpers(resource_dir)
-    for (file in helper_files) {
-      helper <- resource(file.path(resource_key, file), body = FALSE,
-                         tracking = FALSE, check.helpers = FALSE,
-                         defining_environment = defining_environment)
-      if (tracking_is_on_and_resource_has_helpers)
-        modified <- modified || helper$modified
+    if (tracking_is_on_and_resource_has_helpers) {
+      helper_files <- get_helpers(dirname(filename), full.names = TRUE, leave_idempotent = TRUE)
+      mtime <- max(file.info(helper_files)$mtime, na.rm = TRUE)
+      if (!is.null(cached_details$info$mtime) && mtime > cached_details$info$mtime) {
+        modified <- TRUE
+        .cache[[cache_key]]$info$mtime <<- mtime
+      }
     }
   }
 

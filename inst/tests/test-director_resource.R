@@ -187,12 +187,11 @@ test_that('a sourced resource can pass args', {
 })
 
 test_that("it does not allow access to another resource file's locals", {
-  within_file_structure(list(one.R = "one <- 1; browser(); resource('two')$value()", two.R = "2"), {
+  within_file_structure(list(one.R = "one <- 1; resource('two')$value()", two.R = "2"), {
     d <- director(tempdir)
     d$register_parser("one", function(source_args, source) { 
       source_args$local$resource <- d$resource
     })
-    browser()
     expect_error(d$resource("one")$value())
   })
 })
