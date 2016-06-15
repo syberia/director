@@ -108,6 +108,13 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
 
   if (identical(soft, FALSE)) .cache[[cache_key]] <<- current_details
 
+  # To provide better stacktraces with the bettertrace library
+  # (see http://github.com/robertzk/bettertrace), we tag the
+  # environment a resource is sourced in with a "stacktrace_label".
+  if (!isNamespace(provides)) {
+    attr(provides, "stacktrace_label") <- paste("resource", resource_key)
+  }
+
   source_args <- append(list(filename, local = provides), list(...))
   # TODO: (RK) Check if `local` is an environment in case user overwrote.
 
