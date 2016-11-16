@@ -196,3 +196,14 @@ test_that("it does not allow access to another resource file's locals", {
   })
 })
 
+test_that("it does not call the preprocessor for a helper", {
+  within_file_structure(list(blah = list(blah.R = 'helper("blah/foo")', foo.R = '1')), {
+    d <- director(tempdir)
+    d$register_preprocessor("blah", function(source_args, source, resource) { 
+      if (resource == "blah/foo") stop("Did not expect to call preprocessor when resourcing a helper.")                          
+      source()
+    })
+    d$resource("blah")$value()
+  })
+})
+

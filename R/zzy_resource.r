@@ -11,10 +11,10 @@ directorResource <- setRefClass('directorResource',
                 source_args = 'list', director = 'director',
                 defining_environment = 'environment',
                 .dependencies = 'character', .compiled = 'logical',
-                .value = 'ANY'),
+                .value = 'ANY', helper = 'logical'),
   methods = list(
     initialize = function(current, cached, modified, resource_key,
-                          source_args, director, defining_environment) {
+                          source_args, director, defining_environment, helper = FALSE) {
       current      <<- current
       cached       <<- cached
       modified     <<- modified
@@ -23,6 +23,7 @@ directorResource <- setRefClass('directorResource',
       director     <<- director
       defining_environment <<- defining_environment
       .compiled    <<- FALSE
+      helper       <<- helper
     },
     
     value = function(..., recompile. = FALSE) {
@@ -51,6 +52,11 @@ directorResource <- setRefClass('directorResource',
         stop("To compile ", sQuote(source_args[[1]] %||% 'this resource'),
              " you must include an ", "environment in the ", dQuote('local'),
              " parameter to base::source.")
+
+      if (isTRUE(helper)) {
+        .value <<- do.call(base::source, source_args)$value
+        return(TRUE)
+      }
 
       # We will be tracking what dependencies (other resources) are loaded
       # during the compilation of this resource. We have a dependency nesting
