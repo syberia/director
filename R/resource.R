@@ -144,7 +144,7 @@ resource <- function(name, provides = list(), body = TRUE, soft = FALSE, ...,
   output <- directorResource(current = current_details, cached = cached_details,
        modified = modified, resource_key = resource_key,
        source_args = source_args, director = .self,
-       defining_environment = defining_environment) 
+       defining_environment = defining_environment, helper = !isTRUE(check.helpers)) 
 
   if (.dependency_nesting_level > 0 && isTRUE(check.helpers))
     .stack$push(list(level = .dependency_nesting_level,

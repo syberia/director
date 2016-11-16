@@ -32,3 +32,4 @@ test_that('it errors on a non-existent resource', {
     expect_error(d$resource('blah')$value(), 'Cannot find')
   })
 })
+
