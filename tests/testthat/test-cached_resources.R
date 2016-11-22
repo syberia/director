@@ -9,9 +9,9 @@ test_that("pinging a cached resource's dependencies wipes the cache", {
     d$register_parser('baz', function() director$resource('bum'))
     expect_output(d$resource('bar'), "^barNULL$")
     expect_output(d$resource('bar'), "^NULL$")
-    writeLines("'foo'", file.path(tempdir, "bum.R"))
+    writeLines("cat('foo')", file.path(tempdir, "bum.R"))
     touch_file(file.path(tempdir, "bum.R"))
-    expect_output(d$resource('bar'), "^bar\\[1\\] \"foo\"")
+    expect_output(d$resource('bar'), "^barfoo")
   })
 })
 
