@@ -1,3 +1,7 @@
+## 0.3.0.5.9001
+
+* Added the `helper` inject to the preprocessor.
+
 ## 0.3.0.5.9000
 
 * Started development version and fixed issue with modification

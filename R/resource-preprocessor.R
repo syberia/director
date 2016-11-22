@@ -53,7 +53,9 @@ preprocessor <- function(object, ..., parse. = TRUE) {
     },
     resource_name = object$resource$name,
     resource_exists = function(...) director$exists(...),
-    helper = NULL # TODO: (RK) Allow helper parsing.
+    helper = function(...) {
+      director$resource(..., parse. = FALSE, virtual_check.skip = TRUE)
+    }
   )
 
   if (is.null(route)) {

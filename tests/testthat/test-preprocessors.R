@@ -80,3 +80,19 @@ test_that("it can tell if a preprocessor doesn't exists for a resource", {
   })
 })
 
+describe("the `helper` inject", {
+  test_that("it works as expected with a pure helper", {
+    within_file_structure(list(blah = list(blah.R = "helper('blah/foo')", foo.R = "1")), { d <- director(tempdir)
+      expect_equal(d$resource("blah"), 1)
+    })
+  })
+
+  test_that("it runs the preprocessor but not the parser when sourcing a helper", {
+    within_file_structure(list(blah.R = "helper('foo')", foo.R = "x"), { d <- director(tempdir)
+      d$register_preprocessor("foo", function(source, source_env) { source_env$x <- 1; source() })
+      d$register_parser("foo", function() { stop("should not be called") })
+      expect_equal(d$resource("blah"), 1)
+    })
+  })
+})
+
