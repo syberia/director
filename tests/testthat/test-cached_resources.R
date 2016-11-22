@@ -3,15 +3,16 @@ library(testthatsomemore)
 
 test_that("pinging a cached resource's dependencies wipes the cache", {
   within_file_structure(list(bar.R = 'cat("bar")', 'foo.R', 'baz.R', 'bum.R'), {
+    sink()
     d <- director(tempdir)
     d$register_parser('bar', function() director$resource('foo'), cache = TRUE)
     d$register_parser('foo', function() director$resource('baz'))
     d$register_parser('baz', function() director$resource('bum'))
-    expect_output(d$resource('bar'), "^bar(NULL)?$")
-    expect_output(d$resource('bar'), "^(NULL)?$")
+    expect_output(d$resource('bar'), "^bar(NULL)?$", info = "expected bar")
+    expect_output(d$resource('bar'), "^(NULL)?$", info = "expected nothing")
     writeLines("cat('foo')", file.path(tempdir, "bum.R"))
     touch_file(file.path(tempdir, "bum.R"))
-    expect_output(d$resource('bar'), "^barfoo")
+    expect_output(d$resource('bar'), "^barfoo", info = "expected barfoo")
   })
 })
 
