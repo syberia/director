@@ -1,6 +1,7 @@
-## 0.3.0.5.9001
+## 0.3.0.5.9001-9002
 
 * Added the `helper` inject to the preprocessor.
+* Added a typecheck to the preprocessor `source` inject.
 
 ## 0.3.0.5.9000
 

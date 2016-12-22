@@ -124,6 +124,10 @@ apply_preprocessor_route <- function(active_resource, route, args, filename) {
        filename = active_resource$injects$filename,
        source_env = active_resource$state$preprocessor.source_env,
        source = function() eval.parent(quote({
+        if (!is.character(filename)) {
+          stop("Director of project ", sQuote(crayon::yellow(director$root())),
+               " attempted to source filename of class ", class(filename)[1L], call. = FALSE)
+        }
         if (!file.exists(filename)) {
           stop("Director of project ", sQuote(crayon::yellow(director$root())),
                " attempted to source ", sQuote(crayon::red(filename)),
