@@ -161,8 +161,8 @@ check_if_parser_and_preprocessor_are_identical <- function(director, path) {
   }
   if (has_same_body(director$.parsers[[paste0("/", path)]],
                     director$.preprocessors[[paste0("/", path)]])) {
-    warning(crayon::red("The path at ", sQuote(path), " has the same ",
-                        "preprocessor and parser -- are you sure you ",
+    warning(crayon::red("The path at ", sQuote(path), " has the same",
+                        "preprocessor and parser -- are you sure you",
                         "included a parser?"))
   }
 }

@@ -159,3 +159,19 @@ test_that("supports missing parsers", {
   })
 })
 
+test_that("it warns when preprocessor is identical to parser", {
+  within_file_structure(list(), { d <- director(tempdir)
+    d$register_preprocessor("foo", function(foo) { bar })
+    expect_warning(
+      d$register_parser("foo", function(foo) { bar }),
+      "are you sure you included a parser")
+  })
+
+  within_file_structure(list(), { d <- director(tempdir)
+    d$register_parser("foo", function(foo) { bar })
+    expect_warning(
+      d$register_preprocessor("foo", function(foo) { bar }),
+      "are you sure you included a parser")
+  })
+})
+
