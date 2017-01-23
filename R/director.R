@@ -146,3 +146,24 @@ NULL
 #' @export
 is.director <- function(x) is(x, 'director')
 
+#' If the parser and preprocessor for a path is the same, the user has probably made a mistake.
+#'
+#' @param director director. The director object.
+#' @param path character. The path to check for whether the preprocessor and
+#'   parser are identical.
+#'
+#' @return Nothing, but issue a warning in red crayon if they are identical,
+#'   since it likely means the user forgot to specify a parser.
+check_if_parser_and_preprocessor_are_identical <- function(director, path) {
+  has_same_body <- function(fn1, fn2) {
+    is.function(fn1) && is.function(fn2) && 
+      isTRUE(all.equal(body(fn1), body(fn2)))
+  }
+  if (has_same_body(director$.parsers[[paste0("/", path)]],
+                    director$.preprocessors[[paste0("/", path)]])) {
+    warning(crayon::red("The path at ", sQuote(path), " has the same ",
+                        "preprocessor and parser -- are you sure you ",
+                        "included a parser?"))
+  }
+}
+

@@ -42,7 +42,11 @@ register_preprocessor <- function(path, preprocessor, overwrite = FALSE) {
   ## the `"models/ensembles"` directory.
   self$.preprocessors         <<- self$.preprocessors[
     names(self$.preprocessors)[rev(order(sapply(names(self$.preprocessors), nchar)))]]
+
+  check_if_parser_and_preprocessor_are_identical(self, path)
+  invisible(TRUE)
 }
+
 
 #' Whether there exists a preprocessor for a resource.
 #'
