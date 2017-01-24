@@ -49,5 +49,8 @@ register_parser <- function(path, parser = function() { }, overwrite = FALSE, ca
   ## the latter has a longer length and will be preferred when selecting the 
   ## function used for parsing resources in the `"models/ensembles"` directory.
   self$.parsers         <<- self$.parsers[names(self$.parsers)[rev(order(sapply(names(self$.parsers), nchar)))]]
+
+  check_if_parser_and_preprocessor_are_identical(self, path)
+  invisible(TRUE)
 }
 
