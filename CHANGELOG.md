@@ -1,3 +1,7 @@
+## 0.3.0.5.9003
+
+* Fix NA detection in `%|||%` operator to work with POSIXct objects.
+
 ## 0.3.0.5.9001-9002
 
 * Added the `helper` inject to the preprocessor.
