@@ -127,3 +127,4 @@ The local \code{any_dependencies_modified} rarely needs to be
 \code{\link{active_resource}}, \code{\link{resource_caching}},
    \code{\link{tower}}
 }
+

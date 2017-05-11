@@ -22,3 +22,4 @@ Strip a root file path from an absolute filename.
   stopifnot("test" == strip_root("foo/bar/test", "test"))
 }
 }
+

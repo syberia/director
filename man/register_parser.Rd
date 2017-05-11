@@ -33,3 +33,4 @@ Register a resource parser.
   r$value() # Will print: I am a models/some_model, a model!
 }
 }
+

@@ -40,3 +40,4 @@ The parameters must be named \code{object} and \code{...} due to
 \code{\link{register_preprocessor}}, \code{\link{active_resource}},
    \code{\link{tower}}
 }
+

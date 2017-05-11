@@ -81,3 +81,4 @@ The parameters must be named \code{object} and \code{...} due to
 \seealso{
 \code{\link{active_resource}}, \code{\link{tower}}
 }
+

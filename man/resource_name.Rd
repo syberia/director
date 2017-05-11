@@ -15,3 +15,4 @@ the resource name (i.e., stripped of idempotence and extension).
 \description{
 Convert a filename to a resource name.
 }
+
