@@ -13,3 +13,4 @@ A list of four methods \code{get}, \code{set}, \code{exists}
 \description{
 A simple caching structure.
 }
+

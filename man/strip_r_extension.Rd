@@ -15,3 +15,4 @@ the filename without the '.r' or '.R' at the end.
 \description{
 Strip R extension.
 }
+

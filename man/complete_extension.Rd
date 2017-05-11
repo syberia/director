@@ -32,3 +32,4 @@ This function assumes at least one file ending in .r or .R exists.
  stopifnot(complete_extension("bar") == "bar.R")
 }
 }
+
