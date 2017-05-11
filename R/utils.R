@@ -1,5 +1,5 @@
 `%||%` <- function(x, y) if (is.null(x)) y else x
-`%|||%` <- function(x, y) if (is.null(x) || identical(NA, x)) y else x
+`%|||%` <- function(x, y) if (is.null(x) || isTRUE(is.na(x))) y else x
 
 # A reference class that implements a stack data structure.
 shtack <- methods::setRefClass('stack', list(elements = 'list'), methods = list(

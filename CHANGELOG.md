@@ -1,3 +1,7 @@
+## 0.3.0.5.9003
+
+* Fix NA detection in `%|||%` operator to work with POSIXct objects.
+
 ## 0.3.0.5.9001-9002
 
 * Added the `helper` inject to the preprocessor.
@@ -9,6 +13,6 @@
   tracking on virtual resources.
 
 ## 0.3.0.5
- 
+
  * Fix an issue where sourcing a virtual resource with a preprocessor
    that fails on a `source()` gives an non-descriptive error.
