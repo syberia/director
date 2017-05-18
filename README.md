@@ -1,4 +1,4 @@
-# Director [![Build Status](https://travis-ci.org/syberia/director.svg?branch=master)](https://travis-ci.org/syberia/director) [![Coverage Status](https://coveralls.io/repos/syberia/director/badge.png)](https://coveralls.io/r/syberia/director) [![Documentation](https://img.shields.io/badge/rocco--docs-%E2%9C%93-blue.svg)](http://syberia.github.io/director/)
+# Director [![Build Status](https://travis-ci.org/syberia/director.svg?branch=master)](https://travis-ci.org/syberia/director) [![Coverage Status](https://coveralls.io/repos/syberia/director/badge.png)](https://coveralls.io/r/syberia/director) [![Documentation](https://img.shields.io/badge/rocco--docs-%E2%9C%93-blue.svg)](http://syberia.github.io/director/) [![Join the chat at https://gitter.im/syberia/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/syberia/Lobby)
 
 Due to its interactive nature, R tends to produce project structures
 that are a collection of loosely organized scripts. With the exception
