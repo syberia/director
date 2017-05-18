@@ -112,7 +112,7 @@ our choice.
 
 # Installation
 
-Director is not yet available on CRAN (as of March 1, 2015).
+Director is in active development and not yet available on CRAN (as of May 18, 2017).
 To install the latest development build directly from Github,
 run the following in the R console.
 
@@ -133,7 +133,7 @@ You can now look for all files in your project using `d$find()`.
 
 This project is licensed under the MIT License:
 
-Copyright (c) 2014-2016 Syberia, Avant, Robert Krzyzanowski
+Copyright (c) 2014-2017 Syberia, Avant, Robert Krzyzanowski
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
