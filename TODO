@@ -1,5 +1,0 @@
-- Optional existence check on resources (pure preprocessor)
-- Support virtual resources (so parsers and preprocessors dont need actual files present)
-- Finish README.
-- Use tools::file_ext for file extension checks instead of regex hack
-- Incorporate rlist package
