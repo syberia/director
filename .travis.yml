@@ -2,6 +2,11 @@ language: r
 sudo: required
 cache: packages
 dist: trusty
+r:
+  - oldrel
+  - release
+  - devel
+
 r_github_packages:
     - robertzk/testthatsomemore
     - kirillseva/covr
