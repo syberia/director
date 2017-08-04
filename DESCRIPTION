@@ -23,7 +23,7 @@ Suggests:
     microbenchmark,
     testthatsomemore (>= 0.2.2)
 Roxygen: list(wrap = FALSE)
-Collate:
+Collate: 
     'director-exists.R'
     'director-filename.R'
     'director-find.R'
@@ -34,6 +34,7 @@ Collate:
     'director-resource.R'
     'utils.R'
     'director.R'
+    'mocks.R'
     'process_resource.R'
     'registry.R'
     'resource-caching_layer.R'
