@@ -61,15 +61,15 @@ preprocessor <- function(object, ..., parse. = TRUE, preprocessor.route = NULL) 
   )
 
   if (is.null(route)) {
-    object$preprocessed <- default_preprocessor(object) 
+    object$resource$preprocessed <- default_preprocessor(object) 
   } else {
-    object$preprocessed <- apply_preprocessor_route(object, route, list(...))
+    object$resource$preprocessed <- apply_preprocessor_route(object, route, list(...))
   }
 
   if (isTRUE(parse.)) {
     yield() # Apply parser.
   } else {
-    object$preprocessed$value
+    object$resource$preprocessed$value
   }
 }
 

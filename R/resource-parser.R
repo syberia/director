@@ -16,12 +16,12 @@
 parser <- function(object, ..., parser.route = NULL) {
   director <- object$resource$director
 
-  route <- director$match_parser(object$resource$name)
+  route <- parser.route %||% director$match_parser(object$resource$name)
 
   if (is.null(route)) {
     # No parser for this resource.
     # Use the default parser, just grab the value.
-    object <- object$preprocessed$value
+    object <- object$resource$preprocessed$value
   } else {
     args <- list(...)
     # TODO: (RK) Use `args` to carry around to prevent partial matching
@@ -51,14 +51,23 @@ apply_parser <- function(active_resource, route, args) {
     # TODO: (RK) Intersect with parser formals.
     # TODO: (RK) Use alist so these aren't evaluated right away.
      resource = active_resource$resource$name,
-     input = active_resource$state$preprocessor.source_env,
-     output = active_resource$preprocessed$value,
+     input    = active_resource$state$preprocessor.source_env,
+     output   = output_for_resource(active_resource$resource),
      director = director,
-     preprocessor_output = active_resource$preprocessed$preprocessor_output,
+     preprocessor_output = active_resource$resource$preprocessed$preprocessor_output,
      filename = active_resource$injects$filename,
      args = args,
      "%||%" = function(x, y) if (is.null(x)) y else x
   )
   parser_function()
 }
+
+output_for_resource <- function(resource) {
+  UseMethod("output_for_resource")
+}
+
+output_for_resource.director_resource <- function(resource) { 
+  resource$preprocessed$value
+}
+
 

@@ -43,3 +43,7 @@ source_function_for_resource.director_resource_mock <- function(resource) {
   function() { eval.parent(quote({ output })) }
 }
 
+output_for_resource.director_resource_mock <- function(resource) { 
+  resource$output
+}
+
