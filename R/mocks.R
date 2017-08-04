@@ -18,11 +18,18 @@ director_resource_mock <- function(director, mock, defining_environment) {
 ## a parser or preprocessor.
 process_resource.director_resource_mock <- function(resource, ...) {
   tower(
-    virtual_check        %>>%
-    modification_tracker %>>%
-    dependency_tracker   %>>% 
-    caching_layer        %>>%
-    preprocessor         %>>%
+    mock_injects %>>%
+    preprocessor %>>%
     parser               
   )(active_resource(resource), ...)
 }
+
+mock_injects <- function(object, ...) {
+  object$injects %<<% list(
+    virtual  = TRUE, # Every mocked resource has no file and is thus virtual.
+    modified = TRUE, # The resource changes on each invoked function call.
+    any_dependencies_modified = TRUE
+  )
+  yield()
+}
+
