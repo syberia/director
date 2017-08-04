@@ -48,19 +48,24 @@
 #'   other \code{directorResource} features. By default, \code{helper = FALSE}.
 #' @return A \code{\link{directorResource}} object.
 resource <- function(name, ..., defining_environment. = parent.frame()) {
-  UseMethod("resource")
+  resource_(name, self, ..., defining_environment.)
 }
 
-#' @export
-resource.character <- function(name, ..., defining_environment. = parent.frame()) {
+resource_ <- function(name, director, ..., defining_environment.) {
+  UseMethod("resource_")
+}
+
+resource_.character <- function(name, director, ..., defining_environment. = parent.frame()) {
+  resource_common(director, resource_name(name), ..., defining_environment. = defining_environment.)
+}
+
+resource_.list <- function(name, director, ..., defining_environment. = parent.frame()) {
+  resource_common(director, name, ..., defining_environment. = defining_environment.)
+}
+
+resource_common <- function(director, object, ..., defining_environment. = parent.frame()) {
   force(defining_environment.)
-  resource <- director_resource(self, resource_name(name), defining_environment.)
+  resource <- director_resource(director, object, defining_environment.)
   process_resource(resource, ...)
-}
-
-resource.list <- function(name, ..., defining_environment. = parent.frame()) {
-  force(defining_environment.)
-  resource <- director_resource_mock(self, mock, defining_environment.)
-  process_resource_mock(resource, ...)
 }
 

@@ -28,6 +28,6 @@ test_that("it errors on a non-existent resource", {
 describe("process_resource", {
   test_that("it errors if a non-resource is passed", {
     for (x in list("foo", list(), 5, FALSE)) 
-      expect_error(process_resource(x), "parameter must be")
+      expect_error(process_resource(x), "no applicable method")
   })
 })

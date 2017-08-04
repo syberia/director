@@ -15,7 +15,7 @@ process_resource <- function(resource, ...) {
 }
 
 ## If `resource` is a character, we assume it refers to a filename.
-process_resource.process_resource <- function(resource, ...) {
+process_resource.director_resource <- function(resource, ...) {
   tower(
     virtual_check        %>>%
     modification_tracker %>>%
