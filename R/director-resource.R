@@ -48,8 +48,19 @@
 #'   other \code{directorResource} features. By default, \code{helper = FALSE}.
 #' @return A \code{\link{directorResource}} object.
 resource <- function(name, ..., defining_environment. = parent.frame()) {
+  UseMethod("resource")
+}
+
+#' @export
+resource.character <- function(name, ..., defining_environment. = parent.frame()) {
   force(defining_environment.)
   resource <- director_resource(self, resource_name(name), defining_environment.)
   process_resource(resource, ...)
+}
+
+resource.list <- function(name, ..., defining_environment. = parent.frame()) {
+  force(defining_environment.)
+  resource <- director_resource_mock(self, mock, defining_environment.)
+  process_resource_mock(resource, ...)
 }
 

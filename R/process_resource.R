@@ -11,8 +11,11 @@ director_resource <- function(director, name, defining_environment) {
 
 # Construct a resource-compiling tower.
 process_resource <- function(resource, ...) {
-  enforce_type(resource, "director_resource", "process_resource")
+  UseMethod("process_resource")
+}
 
+## If `resource` is a character, we assume it refers to a filename.
+process_resource.process_resource <- function(resource, ...) {
   tower(
     virtual_check        %>>%
     modification_tracker %>>%
