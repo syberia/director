@@ -7,9 +7,15 @@
 ## In a resource mock, we hold a list of stubbed inputs rather than the
 ## filename.
 director_resource_mock <- function(director, mock, defining_environment) {
+  if (!is.element("name", names(mock))) {
+    stop("When passing a list to the resource method, provide a filename ",
+         "to determine which controller and preprocessor to apply.", call. = FALSE)
+  }
+
   structure(list(
     director = director,
     mock = mock,
+    name = mock$name,
     defining_environment = defining_environment
   ), class = "director_resource_mock")
 }
@@ -31,5 +37,9 @@ mock_injects <- function(object, ...) {
     any_dependencies_modified = TRUE
   )
   yield()
+}
+
+source_function_for_resource.director_resource_mock <- function(resource) {
+  function() { eval.parent(quote({ output })) }
 }
 

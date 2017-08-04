@@ -17,18 +17,20 @@
 #' @param parse. logical. Whether or not to apply the \link{parser} to the
 #'    resource. If \code{FALSE}, this is equivalent to sourcing the resource's
 #'    file without running its parser. By default, \code{TRUE}.
+#' @param preprocessor.route character. If provided, use an explicit preprocessor
+#'    route rather than inferring it from the resource name.
 #' @seealso \code{\link{register_preprocessor}}, \code{\link{active_resource}},
 #'    \code{\link{tower}}
 #' @return The parsed resource if \code{parse. = TRUE}, and the preprocessed
 #'    resource otherwise.
 #' @note The parameters must be named \code{object} and \code{...} due to
 #'    this method's inclusion in a \code{\link{tower}}.
-preprocessor <- function(object, ..., parse. = TRUE) {
+preprocessor <- function(object, ..., parse. = TRUE, preprocessor.route = NULL) {
   director <- object$resource$director
 
   ## Find the character string representing the preprocessor route used
   ## for preprocessing the resource.
-  route <- director$match_preprocessor(object$resource$name)
+  route <- preprocessor.route %||% director$match_preprocessor(object$resource$name)
 
   if (isTRUE(object$injects$virtual)) {
     ## Virtual resources are by definition those with no corresponding
@@ -120,21 +122,10 @@ apply_preprocessor_route <- function(active_resource, route, args, filename) {
       # TODO: (RK) Use alist so these aren't evaluated right away.
        resource = active_resource$resource$name,
        director = director,
-       args = args,
+       args     = args,
        filename = active_resource$injects$filename,
        source_env = active_resource$state$preprocessor.source_env,
-       source = function() eval.parent(quote({
-        if (!is.character(filename)) {
-          stop("Director of project ", sQuote(crayon::yellow(director$root())),
-               " attempted to source filename of class ", class(filename)[1L], call. = FALSE)
-        }
-        if (!file.exists(filename)) {
-          stop("Director of project ", sQuote(crayon::yellow(director$root())),
-               " attempted to source ", sQuote(crayon::red(filename)),
-               ", but this file does not exist.", call. = FALSE)
-        }
-        base::source(filename, source_env, keep.source = TRUE)$value
-       })),
+       source = source_function_for_resource(active_resource$resource),
        preprocessor_output = preprocessor_output,
        "%||%" = function(x, y) if (is.null(x)) y else x
     )
@@ -143,5 +134,26 @@ apply_preprocessor_route <- function(active_resource, route, args, filename) {
     value = preprocessor_function(),
     preprocessor_output = preprocessor_output
   )
+}
+
+source_function_for_resource <- function(resource) { 
+  UseMethod("source_function_for_resource")
+}
+
+source_function_for_resource.director_resource <- function(resource) {
+  function() {
+    eval.parent(quote({
+      if (!is.character(filename)) {
+        stop("Director of project ", sQuote(crayon::yellow(director$root())),
+             " attempted to source filename of class ", class(filename)[1L], call. = FALSE)
+      }
+      if (!file.exists(filename)) {
+        stop("Director of project ", sQuote(crayon::yellow(director$root())),
+             " attempted to source ", sQuote(crayon::red(filename)),
+             ", but this file does not exist.", call. = FALSE)
+      }
+      base::source(filename, source_env, keep.source = TRUE)$value
+    }))
+  }
 }
 
