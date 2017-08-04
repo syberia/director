@@ -5,7 +5,7 @@
 \alias{preprocessors}
 \title{Apply the preprocessor to a resource.}
 \usage{
-preprocessor(object, ..., parse. = TRUE)
+preprocessor(object, ..., parse. = TRUE, preprocessor.route = NULL)
 }
 \arguments{
 \item{object}{active_resource. See \code{\link{active_resource}}.}
@@ -16,6 +16,9 @@ parsing tower.}
 \item{parse.}{logical. Whether or not to apply the \link{parser} to the
 resource. If \code{FALSE}, this is equivalent to sourcing the resource's
 file without running its parser. By default, \code{TRUE}.}
+
+\item{preprocessor.route}{character. If provided, use an explicit preprocessor
+route rather than inferring it from the resource name.}
 }
 \value{
 The parsed resource if \code{parse. = TRUE}, and the preprocessed
@@ -40,4 +43,3 @@ The parameters must be named \code{object} and \code{...} due to
 \code{\link{register_preprocessor}}, \code{\link{active_resource}},
    \code{\link{tower}}
 }
-

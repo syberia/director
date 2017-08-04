@@ -12,4 +12,3 @@ is.director(x)
 \description{
 Whether or not an object is a director.
 }
-

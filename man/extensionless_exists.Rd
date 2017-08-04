@@ -24,4 +24,3 @@ Determine whether an R file exists regardless of case of extension.
  extensionless_exists('foo')
 }
 }
-

@@ -5,6 +5,7 @@
 \alias{director}
 \alias{director-package}
 \alias{director_}
+\alias{director}
 \title{Management and Tracking of Files in R Projects.}
 \usage{
 director_
@@ -60,4 +61,3 @@ Throughout, a "resource" refers to an R script
 }
 }
 \keyword{datasets}
-

@@ -8,10 +8,12 @@
 #' @param parse. logical. Whether or not to apply the \link{parser} to the
 #'    resource. If \code{FALSE}, this is equivalent to sourcing the resource's
 #'    file without running its parser. By default, \code{TRUE}.
+#' @param parser.route character. If given, use an explicit parser route
+#'    instead of inferring it from the filename.
 #' @return The parsed resource, usually some useful R object.
 #' @note The parameters must be named \code{object} and \code{...} due to
 #'    this method's inclusion in a \code{\link{tower}}.
-parser <- function(object, ...) {
+parser <- function(object, ..., parser.route = NULL) {
   director <- object$resource$director
 
   route <- director$match_parser(object$resource$name)

@@ -51,4 +51,3 @@ Patterns can be combined using the \code{|} and \code{&} operators.
   # exactly the name "root".
 }
 }
-

@@ -46,4 +46,4 @@ Collate:
     'search_pattern.R'
     'tower.R'
     'zzz.r'
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

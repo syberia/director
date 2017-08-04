@@ -3,6 +3,7 @@
 \docType{class}
 \name{registry}
 \alias{registry}
+\alias{registry}
 \title{A persistent on-disk cache of R objects associated with a directory.}
 \description{
 Having a registry attached to a project is very helpful for maintaining
@@ -19,6 +20,7 @@ You can then use \code{r$set('some/key', some_value)} and
 \describe{
 \item{\code{initialize(root = NULL)}}{Initialize a registry.}
 }}
+
 \examples{
 \dontrun{
   r <- registry('some/dir') # Create "some/dir" and make a registry there.
@@ -26,4 +28,3 @@ You can then use \code{r$set('some/key', some_value)} and
   stopifnot(r$get('some/key'), value)
 }
 }
-

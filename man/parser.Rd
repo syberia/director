@@ -5,13 +5,16 @@
 \alias{parsers}
 \title{Apply the parser to a resource.}
 \usage{
-parser(object, ...)
+parser(object, ..., parser.route = NULL)
 }
 \arguments{
 \item{object}{active_resource. See \code{\link{active_resource}}.}
 
 \item{...}{additional parameters to pass to the next layer in the resource
 parsing tower.}
+
+\item{parser.route}{character. If given, use an explicit parser route
+instead of inferring it from the filename.}
 
 \item{parse.}{logical. Whether or not to apply the \link{parser} to the
 resource. If \code{FALSE}, this is equivalent to sourcing the resource's
@@ -27,4 +30,3 @@ Apply the parser to a resource.
 The parameters must be named \code{object} and \code{...} due to
    this method's inclusion in a \code{\link{tower}}.
 }
-

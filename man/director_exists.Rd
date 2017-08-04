@@ -39,4 +39,3 @@ Determine whether a resource exists relative to a director object.
   d$exists('two')
 }
 }
-

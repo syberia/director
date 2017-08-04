@@ -25,4 +25,3 @@ Append to a list or environment, overwriting if necessary.
   y \%<<\% list(a = 2) # environment with a = 2
 }
 }
-

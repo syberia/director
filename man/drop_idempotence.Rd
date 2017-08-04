@@ -15,4 +15,3 @@ the non-idempotent filename.
 \description{
 Convert an idempotent resource name to a non-idempotent resource name.
 }
-
