@@ -1,3 +1,7 @@
+## 0.3.0.5.9004
+
+* Fix usage of `base` parameter in `$find` method with idempotent resources.
+
 ## 0.3.0.5.9003
 
 * Fix NA detection in `%|||%` operator to work with POSIXct objects.

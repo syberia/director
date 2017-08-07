@@ -107,15 +107,25 @@ test_that("it can find files with multiple extensions", {
 test_that("it correctly does an exact match on idempotent resources", {
   within_file_structure(list(uno = list(dos = list('dos.R'))), { d <- director(tempdir)
     expect_identical('uno/dos', d$find("uno/dos", method = "exact"),
-      info = "Exact matching shoudl find uno/dos as an idempotent resource.")
+      info = "Exact matching should find uno/dos as an idempotent resource.")
   })
 })
 
 test_that("it correctly does an exact match on idempotent resources with base", {
   within_file_structure(list(uno = list(dos = list('dos.R'))), { d <- director(tempdir)
     expect_identical('uno/dos', d$find("dos", base = "uno", method = "exact"),
-      info = "Exact matching shoudl find uno/dos as an idempotent resource.")
+      info = "Exact matching should find uno/dos as an idempotent resource.")
   })
 })
+
+test_that("it only find a single idempotent resource when the base is the resource", {
+  within_file_structure(list(uno = list('uno.R', 'bar.R')), { d <- director(tempdir)
+    expect_identical('uno', d$find(base = "uno", method = "partial"),
+      info = "Partial matching should find uno as an idempotent resource.")
+    expect_identical('uno', d$find(base = "uno", method = "exact"),
+      info = "Exact matching should find uno as an idempotent resource.")
+  })
+})
+
 
 

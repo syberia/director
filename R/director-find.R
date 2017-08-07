@@ -97,6 +97,9 @@ find_ <- function(director, pattern, method, base, by_mtime) {
 
   all_files <- list.files(file.path(director$root(), base),
                           pattern = "\\.[rR]$", recursive = TRUE)
+  if (nzchar(base)) {
+    all_files <- file.path(base, all_files)
+  }
   all_files <- strip_r_extension(all_files)
 
   ## We will use the `apply_pattern` helper below, so all patterns should
@@ -113,7 +116,7 @@ find_ <- function(director, pattern, method, base, by_mtime) {
   ## we would find files that contain "foo" as a substring.
   resources <- apply_pattern(pattern, all_files)
 
-  if (nzchar(base)) resources <- file.path(base, resources)
+  # if (nzchar(base)) resources <- file.path(base, resources)
   sort_by_mtime(resources, by_mtime, director)
 }
 
@@ -134,7 +137,13 @@ sort_by_mtime <- function(files, by_mtime, director) {
 }
 
 exact_find <- function(director, pattern, base) {
-  if (nzchar(base)) pattern <- file.path(base, pattern)
+  if (nzchar(base)) {
+    if (nzchar(pattern)) {
+      pattern <- file.path(base, pattern)
+    } else {
+      pattern <- base
+    }
+  }
 
   ## A resource "foo" can correspond to either "foo.r", "foo.R",
   ## "foo/foo.r", or "foo/foo.R".
