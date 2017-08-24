@@ -1,3 +1,7 @@
+## 0.3.0.5.9005
+
+* Return `NULL` in registry getting regardless of error.
+
 ## 0.3.0.5.9004
 
 * Fix usage of `base` parameter in `$find` method with idempotent resources.
