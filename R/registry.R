@@ -166,7 +166,8 @@ registry <- methods::setRefClass('registry',
                     sQuote(crayon::red(key)), " in registry with root ",
                     sQuote(crayon::blue(.root)))
         } else if (file.info(filename)$isdir) {
-          stop("There is no registry item with key ", sQuote(crayon::red(key)),
+          if (soft) NULL
+          else stop("There is no registry item with key ", sQuote(crayon::red(key)),
                " in registry with root ", sQuote(crayon::blue(.root)),
                " because this key points to a directory.")
         } else filename

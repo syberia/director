@@ -62,8 +62,7 @@ within_file_structure(list(), {
 
   test_that('the .sanitize_key method errors if read = TRUE and the key is a directory', {
     within_file_structure(dir = root, list(some_dir = list()), {
-      expect_error(registry(root)$.sanitize_key('some_dir', read = TRUE),
-                   'this key points to a directory')
+      expect_null(registry(root)$.sanitize_key('some_dir', read = TRUE, soft = TRUE))
     })
   })
 
