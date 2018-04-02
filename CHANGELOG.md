@@ -1,3 +1,7 @@
+## 0.3.0.5.9006
+
+* Replace `duplicate` helper implementation with R-native version to avoid C dependencies.
+
 ## 0.3.0.5.9005
 
 * Return `NULL` in registry getting regardless of error.
