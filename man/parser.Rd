@@ -27,4 +27,3 @@ Apply the parser to a resource.
 The parameters must be named \code{object} and \code{...} due to
    this method's inclusion in a \code{\link{tower}}.
 }
-

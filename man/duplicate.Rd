@@ -12,4 +12,3 @@ duplicate(original)
 \description{
 Duplicate a function object.
 }
-

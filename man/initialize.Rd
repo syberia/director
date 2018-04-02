@@ -28,4 +28,3 @@ director(tempdir(), "my project") # Error messages on using the director's
                                   # the ending "in project 'my project'".
 }
 }
-

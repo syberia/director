@@ -221,9 +221,8 @@ simple_cache <- function() {
 #' Duplicate a function object.
 #'
 #' @param original function.
-#' @useDynLib director duplicate_
 duplicate <- function(original) {
-  .Call(duplicate_, original)
+  (`environment<-`(eval(call("function", formals(original), body(original))), environment(original)))
 }
 
 #' Append to a list or environment, overwriting if necessary.
