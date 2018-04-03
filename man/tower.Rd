@@ -64,4 +64,3 @@ v <- t(1) # This is now 5, since in the tower, we increment object,
           # again after receiving the previous function.
 stopifnot(v == 5)
 }
-

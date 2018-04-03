@@ -14,4 +14,3 @@ apply_pattern(pattern, strings)
 \description{
 Apply a pattern filter to a character vector.
 }
-

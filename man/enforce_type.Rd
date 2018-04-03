@@ -34,4 +34,3 @@ enforce_type(x, "logical", "myfunction")
 # a logical.
 }
 }
-

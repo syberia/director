@@ -71,4 +71,3 @@ The available search methods are:
   d$find('none', method = 'exact')    # ""
 }
 }
-

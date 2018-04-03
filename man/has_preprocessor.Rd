@@ -16,4 +16,3 @@ has_preprocessor(resource_path)
 \description{
 Whether there exists a preprocessor for a resource.
 }
-

@@ -19,6 +19,7 @@ You can then use \code{r$set('some/key', some_value)} and
 \describe{
 \item{\code{initialize(root = NULL)}}{Initialize a registry.}
 }}
+
 \examples{
 \dontrun{
   r <- registry('some/dir') # Create "some/dir" and make a registry there.
@@ -26,4 +27,3 @@ You can then use \code{r$set('some/key', some_value)} and
   stopifnot(r$get('some/key'), value)
 }
 }
-

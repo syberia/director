@@ -28,4 +28,3 @@ Get all helper files associated with an idempotent resource directory.
   get_helpers("model")
 }
 }
-
